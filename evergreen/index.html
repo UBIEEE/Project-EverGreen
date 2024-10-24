@@ -63,6 +63,95 @@
         </form>
     </div>
 
+    <div class="login">
+        Registration:
+        <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
+            {% csrf_token %}
+            <label>UB Email:
+                <input type="email" id="email" name="email"/>
+            </label>
+            <br/>
+            <label>Password:&nbsp;
+                <input type="password" id="password" name="password">
+
+            </label>
+
+            <button type="button" onclick="validate()">Validate Registration</button>
+
+            <br/>
+            <label>Confirm Password:&nbsp;
+                <input type="password" name="confirm_password">
+            </label>
+            <input type="submit" value="Post">
+            <br/>
+            <br/>
+        </form>
+
+        <div id="passwordMessage"></div>
+
+
+
+        Login:
+        <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+            {% csrf_token %}
+            <label>UB Email:
+                <input type="email" name="email"/>
+            </label>
+            <br/>
+            <label>Password:&nbsp;
+                <input type="password" name="password">
+            </label>
+            <input type="submit" value="Post">
+            <br/>
+        </form>
+    </div>
+
+    <script>
+    var validateUrl = "{% url 'validate' %}";
+
+    async function validate() {
+
+
+        const password = document.getElementById("password").value;
+        const email = document.getElementById("email").value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+         const response = await fetch("{% url 'validate' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": csrfToken,
+
+                    },
+
+                    body: `password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`
+                });
+
+
+        const result = await response.json();
+
+
+    const messageDiv = document.getElementById("passwordMessage");
+    let out = [];
+
+    if (String(result.valid_pass) === "False") {
+        out.push("PASSWORDS MUST BE 12 OR GREATER IN LENGTH");
+    }
+    if (String(result.valid_email) === "False") {
+        out.push("ONLY VALID UB EMAILS ACCEPTED");
+    }
+
+    if (out.length === 0) {
+        messageDiv.style.color = "green";
+        messageDiv.innerHTML = "VALID EMAIL AND PASS";
+    } else {
+        messageDiv.style.color = "red";
+        messageDiv.innerHTML = out.join("<br>");
+    }
+}
+</script>
+
+
     <script src="{% static 'js/functions.js' %}"></script>
     <img src="{% static 'images/plant.jpg' %}" alt="A logo pic of a plant">
 </body>

@@ -27,6 +27,7 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('',views.index,name='index'),
+    path('validate',views.validate,name='validate'), # type: ignore
 
 
 ]
