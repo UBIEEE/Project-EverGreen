@@ -1,13 +1,18 @@
 version: '3.9'
 services:
-  mongo:
-    image: mongo:4.2.5
+  database:
+    image: postgres:17
+    restart: always #unless-stopped # change to always when in production
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    env_file: ".env"
+
   django:
     build: ./evergreen
     command: python manage.py runserver 0.0.0.0:8080
     ports:
       - '8080:8080'
-    environment:
-      WAIT_HOSTS: mongo:27017
+    env_file: ".env"
     depends_on:
-      - mongo 
+      - database 
