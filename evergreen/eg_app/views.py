@@ -2,9 +2,11 @@ from django.shortcuts import render
 
 import eg_app.util.validators as val
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest, HttpResponseRedirect
 
 from django.views.decorators.csrf import csrf_exempt
+
+from eg_app.util import authenticate as auth
 
 # Create your views here.
 
@@ -34,5 +36,40 @@ def validate(request):
 
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
 
+def register(request: HttpRequest):
+    root = '/'
 
+    if request.method == "POST":
+        email = request.POST.get("email", "")
+        password = request.POST.get("password", "")
+        passwordConf = request.POST.get("confirm-password", "")
 
+        if password != passwordConf:
+            # Make sure passwords match
+            return HttpResponseRedirect(root)
+        
+        if not (val.validate_email(email, True) and val.validate_password(password)):
+            # Make sure email & pwd are valid
+            return HttpResponseRedirect(root)
+
+        # Now confirmed valid, create account
+        auth.register(email, password)
+
+        return HttpResponseRedirect(root)
+
+def login(request: HttpRequest):
+    root = '/'
+
+    if request.method == "POST":
+        email = request.POST.get("email", "")
+        password = request.POST.get("password", "")
+        
+        # Try to log in
+        token = auth.login(email, password)
+
+        if token == "":
+            return HttpResponseRedirect(root)
+        else:
+            response = HttpResponseRedirect(root)
+            response["Auth-Token"] = token
+            return response
