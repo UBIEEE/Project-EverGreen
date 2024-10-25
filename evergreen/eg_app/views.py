@@ -1,10 +1,62 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from eg_app.models import Post, Comments
 
-# Create your views here.
-
-# handles request 
 def index(request):
     return render(request,'index.html')
 
+def updateFeed(request):
+    posts = Post.objects.all().order_by('timestamp')
+    comments = Comments.objects.all().order_by('timestamp')
+    return render(request,'index.html', {"posts": posts, "comments": comments})
 
+def uploadPost(request):
+    # user = request.user.email
+    user = 'guest@buffalo.edu'
+    image = request.FILES.get("image upload")
+    caption = request.POST["caption"]
 
+    post = Post.objects.create(user=user, image=image, caption=caption)
+    post.save()
+    return redirect("/")
+
+def deletePost(request, pk):
+    post = Post.objects.get(pk=pk)
+    
+    if post.user == request.user:
+        post.delete()
+    return redirect("/")
+
+def likePost(request, pk):
+    post = Post.objects.get(pk=pk)
+    
+    if not post.userLikes.contains(request.user):
+        post.likes += 1
+        post.userLikes.add(request.user)
+        post.save()
+    return redirect("/")
+
+def dislikePost(request, pk):
+    post = Post.objects.get(pk=pk)
+
+    if post.userLikes.contains(request.user):  
+        post.likes -= 1
+        post.userLikes.remove(request.user)
+        post.save()
+    return redirect("/")
+
+def addComment(request, postId):
+    post = Post.objects.get(id=postId)
+    # user = request.user.email
+    user = 'guest@buffalo.edu'
+    comment = request.POST["comment"]
+
+    postComment = Comments.objects.create(post=post, user=user, comment=comment)
+    postComment.save()
+    return redirect("/")
+
+def deleteComment(request, commentId):
+    comment = Comments.objects.get(commentId)
+    
+    if comment.user == request.user:
+        comment.delete()
+    return redirect("/")

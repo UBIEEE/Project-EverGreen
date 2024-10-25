@@ -1,7 +1,8 @@
-#can change python version if we want...just put 3.8 since my computer runs 3.9.13
-# TODO: change requirements.txt to poetry
 FROM python:3.10
 
+# Create testing enviroment
+# ENV USER_EMAIL=testUser@buffalo.edu
+# ENV USER_PASSWORD=password123!
 
 WORKDIR /root
 COPY pyproject.toml .

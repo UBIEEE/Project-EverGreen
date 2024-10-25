@@ -12,6 +12,21 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+
+# Create enviroment to test chat feed
+# from django.conf import settings
+# from django.contrib.auth.models import User
+# from django.contrib.auth import authenticate, login
+
+# if 'USER_EMAIL' in os.environ and 'USER_PASSWORD' in os.environ:
+#     User.objects.create_user(username=os.environ.get('USER_EMAIL',"testUser@buffalo.edu"),password=os.environ.get('USER_PASSWORD',"password123!"))
+# else:
+#     print("none available")
+
+# user = authenticate(username=os.environ.get('USER_USERNAME'), password=os.environ.get('USER_PASSWORD'))
+# login(request,user)
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -77,14 +92,14 @@ WSGI_APPLICATION = "evergreen.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-"""
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-"""
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
