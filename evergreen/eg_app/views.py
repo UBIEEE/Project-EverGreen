@@ -76,9 +76,9 @@ def login_view(request: HttpRequest):
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
-            print(f"logged in user {user}")
         else:
-            print(f"failed to auth user with email {email}")
+            # TODO: Should send visible feedback to user
+            pass
 
         return HttpResponseRedirect(root)
     
