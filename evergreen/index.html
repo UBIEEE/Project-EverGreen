@@ -18,7 +18,7 @@
     </div>
 </head>
 
-<!-- {% autoescape on %} -->
+{% autoescape on %}
 <body onload="start()">
     <header>
         <h1>Project Evergreen</h1>
@@ -89,7 +89,7 @@
                     <input type="submit" value="Logout">
                 </form>
             </div> 
-<!-- 
+
             <div class="feed">
                 <div id="feed-box">
                 </div>
@@ -116,6 +116,8 @@
 
                     <div class="likeButton"> 
                         <form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>
+                        {{post.likes}}
+                        <button id="like_button">Like</button>
                     </div>
 
                     <div class="dislikeButton"> 
@@ -152,9 +154,9 @@
                 {% endfor %}
             </div>
         </div>
-    </section> -->
+    </section>
 
     <script src="{% static 'js/functions.js' %}"></script>
 </body>
-<!-- {% endautoescape %} -->
+{% endautoescape %}
 </html>
