@@ -42,7 +42,7 @@ def register(request: HttpRequest):
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
-        passwordConf = request.POST.get("confirm-password", "")
+        passwordConf = request.POST.get("confirm_password", "")
 
         if password != passwordConf:
             # Make sure passwords match
@@ -53,7 +53,9 @@ def register(request: HttpRequest):
             return HttpResponseRedirect(root)
 
         # Now confirmed valid, create account
-        auth.register(email, password)
+        result, reason = auth.register(email, password)
+
+        # TODO: Should send visible feedback to user
 
         return HttpResponseRedirect(root)
 
