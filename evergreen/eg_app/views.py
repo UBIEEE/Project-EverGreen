@@ -2,11 +2,10 @@ from django.shortcuts import render
 
 import eg_app.util.validators as val
 
-from django.http import JsonResponse, HttpRequest, HttpResponseRedirect
-
+from django.http import JsonResponse, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-
-from eg_app.util import authenticate as auth
 
 # Create your views here.
 
@@ -35,6 +34,8 @@ def validate(request):
 
 
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
+    
+    return HttpResponseBadRequest()
 
 def register(request: HttpRequest):
     root = '/'
@@ -53,25 +54,37 @@ def register(request: HttpRequest):
             return HttpResponseRedirect(root)
 
         # Now confirmed valid, create account
-        result, reason = auth.register(email, password)
+        try:
+            User.objects.get(email=email)
+        except User.DoesNotExist:
+            newAcct = User.objects.create_user(email, email, password)
+            newAcct.save()
 
         # TODO: Should send visible feedback to user
 
         return HttpResponseRedirect(root)
+    
+    return HttpResponseBadRequest()
 
-def login(request: HttpRequest):
+def login_view(request: HttpRequest):
     root = '/'
 
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
         
-        # Try to log in
-        token = auth.login(email, password)
-
-        if token == "":
-            return HttpResponseRedirect(root)
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            print(f"logged in user {user}")
         else:
-            response = HttpResponseRedirect(root)
-            response["Auth-Token"] = token
-            return response
+            print(f"failed to auth user with email {email}")
+
+        return HttpResponseRedirect(root)
+    
+    return HttpResponseBadRequest()
+
+def logout_view(request: HttpRequest):
+    logout(request)
+    root = "/"
+    return HttpResponseRedirect(root)
