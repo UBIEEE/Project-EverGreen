@@ -19,25 +19,25 @@ def index(request):
     return render(request,'index.html')
 
 def getFileType(filePath):
-    return mimetypes.guess_type(filePath)[0]  
+    contentType = mimetypes.guess_type(filePath)[0] #first idx == the type
+    return contentType
 
-def fileHandler(request, fileName): # can handle img and text 
-    # sanitizedfileName = quote(fileName) # get a clean full file path 
-    # path = Path(settings.STATIC_ROOT) / sanitizedfileName
-
-    path = fileName
+def fileHandler(request, fileName): # can handle img and text
+    # get the absolute path
+    sanitizedFileName = quote(fileName)
+    path = Path(settings.STATIC_ROOT) / sanitizedFileName
 
     allowedType = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf','.ico'} # can add more, 
 
-    if not path.suffix.lower() in allowedType: # to deal with user uploads 
+    if not str(path.suffix.lower()) in allowedType: # to deal with user uploads
         return HttpResponseNotFound("404 - File type not allowed")
-    
-    # #deal with /../ attacks 
-    # rootPath = Path(settings.STATIC_ROOT).resolve() #.resolve get absolute path 
-    # if not path.resolve().is_relative_to(rootPath):
-    #     return HttpResponseNotFound("404 - Invalid file path")
-    
-    if path.exists() and path.is_file(): # make sure its not a directory 
+
+    #deal with /../ attacks
+    rootPath = Path(settings.STATIC_ROOT).resolve() #
+    if not path.resolve().is_relative_to(rootPath):
+        return HttpResponseNotFound(f"404 Not Found")
+
+    if path.exists() and path.is_file(): # make sure its not a directory
         contentType = getFileType(path)
         
         try:
@@ -48,7 +48,7 @@ def fileHandler(request, fileName): # can handle img and text
             response['X-Content-Type-Options'] = "nosniff"
             #response['Content-Length'] = str(len(content)) is need for very large file, django handles is not
 
-            print(response)
+            #print(response)
         
             return response
         
