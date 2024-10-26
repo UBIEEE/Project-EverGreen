@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 
+ROOT_PATH = "/"
+
 # Create your views here.
 
 # handles request 
@@ -38,37 +40,34 @@ def validate(request):
     return HttpResponseBadRequest()
 
 def register(request: HttpRequest):
-    root = '/'
-
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
         passwordConf = request.POST.get("confirm_password", "")
 
+        # Make sure passwords match
         if password != passwordConf:
-            # Make sure passwords match
-            return HttpResponseRedirect(root)
+            return HttpResponseRedirect(ROOT_PATH)
         
+        # Make sure email & pwd are valid
         if not (val.validate_email(email, True) and val.validate_password(password)):
-            # Make sure email & pwd are valid
-            return HttpResponseRedirect(root)
+            return HttpResponseRedirect(ROOT_PATH)
 
+        # Make sure email doesn't already exist
+        if len(User.objects.filter(email=email)) != 0:
+            return HttpResponseRedirect(ROOT_PATH)
+        
         # Now confirmed valid, create account
-        try:
-            User.objects.get(email=email)
-        except User.DoesNotExist:
-            newAcct = User.objects.create_user(email, email, password)
-            newAcct.save()
+        newAcct = User.objects.create_user(username=email, email=email, password=password)
+        newAcct.save()
 
         # TODO: Should send visible feedback to user
 
-        return HttpResponseRedirect(root)
+        return HttpResponseRedirect(ROOT_PATH)
     
     return HttpResponseBadRequest()
 
 def login_view(request: HttpRequest):
-    root = '/'
-
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
@@ -80,11 +79,10 @@ def login_view(request: HttpRequest):
             # TODO: Should send visible feedback to user
             pass
 
-        return HttpResponseRedirect(root)
+        return HttpResponseRedirect(ROOT_PATH)
     
     return HttpResponseBadRequest()
 
 def logout_view(request: HttpRequest):
     logout(request)
-    root = "/"
-    return HttpResponseRedirect(root)
+    return HttpResponseRedirect(ROOT_PATH)
