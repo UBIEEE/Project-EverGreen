@@ -1,7 +1,7 @@
 from typing import Set
 
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.conf import settings
 import mimetypes
 from pathlib import Path
@@ -21,46 +21,45 @@ def index(request):
     return render(request,'index.html')
 
 def getFileType(filePath):
-    contentType = mimetypes.guess_type(filePath)[0] #first idx == the type
+    contentType = mimetypes.guess_type(filePath) #returns tuple {type, encoding}
     return contentType
 
-def fileHandler(request, fileName): # can handle img and text
+def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can handle img and text
     # get the absolute path
     sanitizedFileName = quote(fileName)
     path = Path(settings.STATIC_ROOT) / sanitizedFileName
 
-    allowedType = Set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
+    allowedType: Set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
 
-    if not str(path.suffix.lower()) in allowedType: # to deal with user uploads
+    if not str(path.suffix.lower()) in allowedType:  # to deal with user uploads
         return HttpResponseNotFound("404 - File type not allowed")
 
-    #deal with /../ attacks
-    rootPath = Path(settings.STATIC_ROOT).resolve() #
+    # deal with /../ attacks
+    rootPath = Path(settings.STATIC_ROOT).resolve()
     if not path.resolve().is_relative_to(rootPath):
-        return HttpResponseNotFound(f"404 Not Found")
+        return HttpResponseNotFound("404 Not Found")
 
-    if path.exists() and path.is_file(): # make sure its not a directory
-        contentType = getFileType(path)
-        
+    if path.exists() and path.is_file(): # make sure it's not a directory
+        contentType, encoding = getFileType(str(path))
+
         try:
             with open(path, 'rb') as file:
                 content = file.read()
 
             response = HttpResponse(content, content_type=contentType)
             response['X-Content-Type-Options'] = "nosniff"
-            #response['Content-Length'] = str(len(content)) is need for very large file, django handles is not
+            response['Content-Encoding'] = encoding
+            # response['Content-Length'] = str(len(content))  # needed for very large files, Django handles it
 
-            #print(response)
-        
             return response
-        
-        except OSError as e: # catch most of em, like FileNotFoundError  
-            return HttpResponseNotFound(f"404 Not Found")
-            #return render(request, '404.html', status=404) when make 404 pages 
 
+        except OSError:  # catch most of them, like FileNotFoundError
+            return HttpResponseNotFound("404 Not Found")
+            # return render(request, '404.html', status=404) when making 404 pages
     else:
         return HttpResponseNotFound("404 Not Found")
-    
+
+
 def addCookies(response, cookies): # add all cookies from the give dic to the response
     for cookieName, cookieValue in cookies.items():
         response.set_cookie(cookieName, cookieValue)
