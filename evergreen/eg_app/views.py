@@ -1,3 +1,5 @@
+from typing import Set
+
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound
 from django.conf import settings
@@ -27,7 +29,7 @@ def fileHandler(request, fileName): # can handle img and text
     sanitizedFileName = quote(fileName)
     path = Path(settings.STATIC_ROOT) / sanitizedFileName
 
-    allowedType = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf','.ico'} # can add more, 
+    allowedType = Set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
 
     if not str(path.suffix.lower()) in allowedType: # to deal with user uploads
         return HttpResponseNotFound("404 - File type not allowed")
