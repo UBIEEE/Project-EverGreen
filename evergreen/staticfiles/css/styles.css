@@ -37,8 +37,98 @@ footer {
     width: 100%;
 }
 
+#plant-chat {
+    padding: 20px;
+}
+
+.logo {
+    position: absolute;
+    top: 25px;
+    left: 100px;
+}
+
 .login {
     width: 50%;
     background-color: #b9efbd; 
     padding: 10px;
+}
+
+.contents {
+    display: flex;
+    justify-content: space-around;
+    height: 78%;
+}
+
+.feed {
+    width: 70%;
+    background-color: #b9efbd;
+    padding: 20px;
+}
+
+#feed-box {
+    height: 100%;
+    overflow: scroll;
+}
+
+.post_form {
+    background-color: #b9efbd;
+    height: 15%; 
+}
+
+.feed_posts {
+    display: inline;
+    align-content: center;
+    padding: 5%
+}
+
+#email_username_post {
+    font-weight: bold;
+    margin-right: 5%;
+}
+
+#post_image {
+    align-content: center;
+    padding: 10%;
+    display: inline-block;
+}
+
+#post_caption {
+    height: 30px;
+    margin-right: 5%;
+    display: inline-block;
+}
+
+.like-button {
+    font-size: 14px;
+    margin-left: 5%;
+}
+
+.dislike-button {
+    font-size: 14px;
+    margin-left: 5%;
+}
+
+.comment_Post{
+    background-color: #93b98e;
+    height: 7%;
+    margin-right: 5%;
+}
+
+.deleteButton_Post {
+    display: block;
+    font-size: 24px;
+    margin-top: 5%;
+    margin-left: 5%;
+}
+
+.commentSection { 
+    background-color:#93b98e;
+    height: 20%;
+    overflow: scroll;
+}
+
+.deleteButton_Comment {
+    display: block;
+    font-size: 12px;
+    margin-left: 5%;
 }

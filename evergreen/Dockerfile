@@ -10,7 +10,6 @@ COPY pyproject.toml .
 RUN pip3 install poetry 
 RUN poetry config virtualenvs.create false --local
 
-
 RUN poetry install 
 COPY . .
 
@@ -21,8 +20,4 @@ RUN chmod +x /wait
 RUN ["/wait"]
 
 SHELL [ "poetry", "run" ]
-
-# RUN [ "python3","manage.py","makemigrations", "--no-input"]
-# RUN [ "python3","manage.py","migrate", "--no-input"]
-
 CMD [ "python3","manage.py","runserver","0.0.0.0:8080"]
