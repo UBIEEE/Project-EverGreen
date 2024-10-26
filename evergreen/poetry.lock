@@ -317,6 +317,16 @@ files = [
     {file = "pymongo-4.10.1-cp39-cp39-win32.whl", hash = "sha256:e0e961923a7b8a1c801c43552dcb8153e45afa41749d9efbd3a6d33f45489f7a"},
     {file = "pymongo-4.10.1-cp39-cp39-win_amd64.whl", hash = "sha256:dabe8bf1ad644e6b93f3acf90ff18536d94538ca4d27e583c6db49889e98e48f"},
     {file = "pymongo-4.10.1.tar.gz", hash = "sha256:a9de02be53b6bb98efe0b9eda84ffa1ec027fcb23a2de62c4f941d9a2f2f3330"},
+
+[[package]]
+name = "psycopg"
+version = "3.2.3"
+description = "PostgreSQL database adapter for Python"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "psycopg-3.2.3-py3-none-any.whl", hash = "sha256:644d3973fe26908c73d4be746074f6e5224b03c1101d302d9a53bf565ad64907"},
+    {file = "psycopg-3.2.3.tar.gz", hash = "sha256:a5764f67c27bec8bfac85764d23c534af2c27b893550377e37ce59c12aac47a2"},
 ]
 
 [package.dependencies]
@@ -460,3 +470,4 @@ brotli = ["brotli"]
 lock-version = "2.0"
 python-versions = "^3.10"
 content-hash = "881131b9fb221663227cb6cf97604994e5b2bce2bb3376bdd263293c5f6e3ff1"
+
