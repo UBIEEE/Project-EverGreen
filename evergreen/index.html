@@ -43,7 +43,7 @@
         <h2>Plant Chat</h2>
         
         <div class="contents">
-            <div class="authenticate-in">
+            <div class="authenticate-in" {{hidden1}}>
                 Registration:
                 <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
@@ -53,7 +53,6 @@
                     <br/>
                     <label>Password:&nbsp;
                         <input type="password" id="password" name="password">
-
                     </label>
 
                     <button type="button" onclick="validate()">Validate Registration</button>
@@ -79,8 +78,15 @@
                     <label>Password:&nbsp;
                         <input type="password" name="password">
                     </label>
-                    <input type="submit" value="Post">
+                    <button type="button" onclick="login()">Login</button>
                     <br/>
+                </form>
+            </div>
+
+            <div class="logout" {{hidden2}}>
+                <form action="/logout" method="post" enctype="application/x-www-form-urlencoded">
+                    Welcome {{post.user}}!
+                    <button type="button" onclick="logout()">Logout</button>
                 </form>
             </div>
 

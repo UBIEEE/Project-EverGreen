@@ -27,6 +27,8 @@ def validate(request):
 
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
 
+
+
 def updateFeed(request):
     posts = Post.objects.all().order_by('timestamp')
     comments = Comments.objects.all().order_by('timestamp')

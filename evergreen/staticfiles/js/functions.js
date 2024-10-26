@@ -8,13 +8,21 @@ function start() {
     updateFeed();
     setInterval(updateFeed, 1000);
 }
+
+function login() {
+    document.getElementsByClassName("logout").innerHTML.replace("{{hidden2}}","hidden")
+}
+
+function logout() {
+    document.getElementsByClassName("authenticate-in").innerHTML.replace("{{hidden1}}","hidden")
+}
  
 function updateFeed() { //updates both posts and comments
     const request = new XMLHttpRequest();
     request.open("GET", "updateFeed");
     request.send();
 }
-
+ 
 function updatePosts_Feed(serverPost) {
     
 }
