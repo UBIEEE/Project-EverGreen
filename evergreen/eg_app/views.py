@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_exempt
 def index(request):
     return render(request,'index.html')
 
-def getFileType(filePath):
+def getFileType(filePath) -> tuple[str|None, str|None]:
     contentType = mimetypes.guess_type(filePath) #returns tuple {type, encoding}
     return contentType
 
@@ -46,9 +46,17 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
             with open(path, 'rb') as file:
                 content = file.read()
 
-            response = HttpResponse(content, content_type=contentType)
+            if contentType is not None:
+                response = HttpResponse(content, content_type=contentType)
+            else:
+                response = HttpResponse(content)
+
+            if encoding is not None:
+                response['Content-Encoding'] = encoding
+            else:
+                response['Content-Encoding'] = ""
+
             response['X-Content-Type-Options'] = "nosniff"
-            response['Content-Encoding'] = encoding
             # response['Content-Length'] = str(len(content))  # needed for very large files, Django handles it
 
             return response
