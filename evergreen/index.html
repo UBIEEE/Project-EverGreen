@@ -82,16 +82,10 @@
                 </form>
             
                  Logout:
-                    <form action="/logout" method="post" enctype="application/x-www-form-urlencoded">
-                        <label>Username:
-                            <input type="text" name="username" disabled/>
-                        </label>
-                        <br/>
-                        <label>Password:&nbsp;
-                            <input type="password" name="password" disabled>
-                        </label>
-                        <input type="submit" value="Logout">
-                    </form>
+                <form action="/logout" method="post" enctype="application/x-www-form-urlencoded">
+                    {% csrf_token %}
+                    <input type="submit" value="Logout">
+                </form>
             </div>
 
             <script>
