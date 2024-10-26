@@ -149,7 +149,7 @@
                     </div>
 
                     <div class="likeButton"> 
-                        <form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>
+                        <form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></form>
                         {{post.likes}}
                         <button id="like_button">Like</button>
                     </div>
@@ -158,19 +158,19 @@
                         <form action="dislikePost" method="post" enctype="application/x-www-form-urlencoded">
                             {{post.likes}}
                             <button id="dislike_button">Un-Like</button>
-                        </label>
+                        </form>
                     </div>
 
                     <div class="comment_Post"> 
                         <form action="addComment" method="post" enctype="application/x-www-form-urlencoded">
-                            <input id="comment_button" type="text" name="comment">Comment</input>
+                            <input id="comment_button" type="text" name="comment">Comment</form>
                         </label>
                     </div>
 
                     <div class="deleteButton_Post"> 
                         <form action="deletePost" method="delete" enctype="application/x-www-form-urlencoded">
                             <button id="delete_button">X</button>
-                        </label>
+                        </form>
                     </div>
 
                     {% for postComment in comments %}
@@ -182,7 +182,7 @@
                         <div class="deleteButton_Comment"> 
                             <form action="deleteComment" method="delete" enctype="application/x-www-form-urlencoded">
                                 <button id="delete_comment">X</button>
-                            </label>
+                            </form>
                         </div>
                     {% endfor %}  
                 {% endfor %}
