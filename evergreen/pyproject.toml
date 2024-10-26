@@ -16,10 +16,11 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.10"
 bcrypt = "^4.2.0"
-pymongo = "^4.9.1"
 Django = "^5.1.1"
 whitenoise = "^6.7.0"
 email-validator = "^2.2.0"
+psycopg = {extras = ["binary"], version = "^3.2.3"}
+
 
 
 [build-system]
