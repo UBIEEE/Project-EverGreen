@@ -37,4 +37,10 @@ urlpatterns = [
     path('dislikePost',views.dislikePost,name="dislikePost"),
     path('addComment',views.addComment,name="addComment"),
     path('deleteComment',views.deleteComment,name="deleteComment"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # FOR PROD, or DEBUG=FALSE
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

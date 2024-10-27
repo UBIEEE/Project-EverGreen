@@ -66,7 +66,7 @@ def uploadPost(request):
         if image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
-            return JsonResponse({'status': 'success'})
+            return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
         else:
             return JsonResponse({'status': 'error', 'message': 'Missing image or caption'}, status=400)
     else:

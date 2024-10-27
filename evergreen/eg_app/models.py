@@ -9,13 +9,13 @@ class Post(models.Model):
     image = models.ImageField(upload_to="posts",blank=False,null=False)
     caption = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    userLikes = models.ManyToManyField(User,blank=True) 
+    userLikes = models.ManyToManyField(User,blank=True)
     likes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         # return f"{self.user.email}: {self.caption}"
         return f"{'guest@buffalo.edu'}: {self.caption}"
-   
+
 class Comments(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
@@ -25,4 +25,3 @@ class Comments(models.Model):
 
     def __str__(self):
         return f"{self.user.email}: {self.comment}"
-
