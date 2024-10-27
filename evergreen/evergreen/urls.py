@@ -27,7 +27,7 @@ urlpatterns = [
 
     path("admin/", admin.site.urls),
     path('',views.index,name='index'),
-    path('validate',views.validate,name='validate'), # type: ignore
+    path('validate',views.validate,name='validate'),
 
     path('updateFeed',views.updateFeed,name="updateFeed"),
     path('uploadPost',views.uploadPost,name="uploadPost"),
