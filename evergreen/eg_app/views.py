@@ -102,7 +102,7 @@ def validate(request):
     
     return HttpResponseBadRequest()
 
-def register(request: HttpRequest):
+def register(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
@@ -201,7 +201,7 @@ def login_view(request: HttpRequest):
     return HttpResponseBadRequest()
 
 @csrf_exempt
-def updateFeed(request):
+def updateFeed(request) -> JsonResponse:
 
     posts = Post.objects.all().order_by('-timestamp')
     posts_data = []
@@ -220,7 +220,7 @@ def updateFeed(request):
 
 #TODO: Make this actually work with authenicated users, if they are signed in remove guest email
 @csrf_exempt
-def uploadPost(request):
+def uploadPost(request) -> JsonResponse:
     if request.method == 'POST':
 
         # user = 'guest@buffalo.edu'
@@ -242,7 +242,7 @@ def uploadPost(request):
 
 
 @csrf_exempt
-def likePost(request, pk):
+def likePost(request, pk) -> JsonResponse:
     if request.method == 'POST':
         try:
             post = Post.objects.get(pk=pk)
