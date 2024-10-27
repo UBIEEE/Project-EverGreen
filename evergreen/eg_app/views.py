@@ -85,13 +85,27 @@ def deletePost(request, pk):
 
 @csrf_exempt
 def likePost(request, pk):
-    post = Post.objects.get(pk=pk)
+    if request.method == 'POST':
+        try:
+            post = Post.objects.get(pk=pk)
+            # Since you're using a guest user for now
+            post.likes += 1
+            post.save()
+            return JsonResponse({
+                'status': 'success',
+                'likes': post.likes
+            })
+        except Post.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Post not found'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
 
-    if not post.userLikes.contains(request.user):
-        post.likes += 1
-        post.userLikes.add(request.user)
-        post.save()
-    return redirect("/")
 
 @csrf_exempt
 def dislikePost(request, pk):

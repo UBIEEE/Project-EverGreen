@@ -33,13 +33,19 @@ function updatePosts_Feed(posts) {
   feedBox.innerHTML = posts
     .map(
       (post) => `
-    <div class="post">
-      <p>${post.user}</p>
-      <img src="${post.image.url}" style="max-width: 300px;">
-      <p>${post.caption}</p>
-      <p>${post.likes} likes</p>
-    </div>
-    `,
+          <div class="post">
+              <p>${post.user}</p>
+              <img src="${post.image.url}" style="max-width: 300px;">
+              <p>${post.caption}</p>
+              <p>${post.likes} likes</p>
+              <div class="likeButton">
+                  <form action="likePost/${post.id}" method="post" enctype="application/x-www-form-urlencoded">
+                      <button type="button" onclick="likePost('${post.id}')">${post.likes} Like</button>
+                  </form>
+              </div>
+
+          </div>
+          `,
     )
     .join("");
 }
@@ -94,5 +100,24 @@ function comment_HTML() {}
 // function dislikeButton_HTML() {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>'
 // }
+//
+function likePost(postId) {
+  const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+  const request = new XMLHttpRequest();
+  request.open("POST", `likePost/${postId}`);
+  request.setRequestHeader("X-CSRFToken", csrfToken);
+  request.setRequestHeader("Content-Type", "application/json");
+
+  request.onload = function () {
+    if (this.status === 200) {
+      updateFeed(); // Refresh the feed to show updated likes
+    } else {
+      console.error("Like failed");
+    }
+  };
+
+  request.send();
+}
 
 function initWS() {}
