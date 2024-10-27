@@ -17,8 +17,6 @@ New package dependencies for the project can be added using the `poetry add <pac
 
 ## Setting up the Docker Environment
 
-Before starting up the container, make sure to run the command `python manage.py makemigrations` if you have made any changes to the database models. This should be done inside of the `evergreen` directory with the poetry virtual environment activated. 
-
 In the root directory of the project, type `docker compose up --build --force-recreate` to spin up the containers. The poetry environment does not need to be activated for this. 
 
 The database migrations should be automatically applied by Docker when it spins up the containers. If you are receiving errors during this step, it is best to delete any old containers and volumes you have lying around to ensure that Docker creates the setup form a clean state. 
