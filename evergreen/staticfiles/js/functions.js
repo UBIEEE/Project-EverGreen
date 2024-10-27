@@ -81,22 +81,21 @@ function deletePost() {
   const request = new XMLHttpRequest();
   request.open("DELETE", "deletePost");
   request.send();
-=======
 
 
-function deleteComment(commentId) {
+  function deleteComment(commentId) {
     const request = new XMLHttpRequest();
     request.open("DELETE", "deleteComment");
     request.send();
-}
+  }
 
-function post_HTML() {
+  function post_HTML() {
 
-}
+  }
 
-function comment_HTML() {
+  function comment_HTML() {
 
-}
+  }
 
 // function likeButton_HTML() {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="dislikePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="dislike_button" onclick="dislikeButton_HTML()">Un-Like</button></label>'
@@ -106,20 +105,22 @@ function comment_HTML() {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>'
 // }
 
-function initWS() {
+  function initWS() {
 
 
-}
+  }
 
-function deleteComment(commentId) {
-  const request = new XMLHttpRequest();
-  request.open("DELETE", "deleteComment");
-  request.send();
-}
+  function deleteComment(commentId) {
+    const request = new XMLHttpRequest();
+    request.open("DELETE", "deleteComment");
+    request.send();
+  }
 
-function post_HTML() {}
+  function post_HTML() {
+  }
 
-function comment_HTML() {}
+  function comment_HTML() {
+  }
 
 // function likeButton_HTML() {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="dislikePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="dislike_button" onclick="dislikeButton_HTML()">Un-Like</button></label>'
@@ -129,23 +130,25 @@ function comment_HTML() {}
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>'
 // }
 //
-function likePost(postId) {
-  const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+  function likePost(postId) {
+    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-  const request = new XMLHttpRequest();
-  request.open("POST", `likePost/${postId}`);
-  request.setRequestHeader("X-CSRFToken", csrfToken);
-  request.setRequestHeader("Content-Type", "application/json");
+    const request = new XMLHttpRequest();
+    request.open("POST", `likePost/${postId}`);
+    request.setRequestHeader("X-CSRFToken", csrfToken);
+    request.setRequestHeader("Content-Type", "application/json");
 
-  request.onload = function () {
-    if (this.status === 200) {
-      updateFeed(); // Refresh the feed to show updated likes
-    } else {
-      console.error("Like failed");
-    }
-  };
+    request.onload = function () {
+      if (this.status === 200) {
+        updateFeed(); // Refresh the feed to show updated likes
+      } else {
+        console.error("Like failed");
+      }
+    };
 
-  request.send();
+    request.send();
+  }
+
+  function initWS() {
+  }
 }
-
-function initWS() {}
