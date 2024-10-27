@@ -20,7 +20,7 @@ from django.views.decorators.csrf import csrf_exempt
 def index(request):
     return render(request,'index.html')
 
-def getFileType(filePath) -> tuple[str|None, str|None]:
+def getFileType(filePath: str) -> tuple[str|None, str|None]:
     contentType = mimetypes.guess_type(filePath) #returns tuple {type, encoding}
     return contentType
 
@@ -51,7 +51,7 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
             else:
                 response = HttpResponse(content)
 
-            if encoding is not None:
+            if encoding:
                 response['Content-Encoding'] = encoding
             else:
                 response['Content-Encoding'] = ""
@@ -68,7 +68,8 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
         return HttpResponseNotFound("404 Not Found")
 
 
-def addCookies(response, cookies): # add all cookies from the give dic to the response
+def addCookies(response: HttpResponse, cookies: dict[str, str]):
+    """add all cookies from the give dic to the response"""
     for cookieName, cookieValue in cookies.items():
         response.set_cookie(cookieName, cookieValue)
     return response
