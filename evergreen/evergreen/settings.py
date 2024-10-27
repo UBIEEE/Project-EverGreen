@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-=mwfbc26f&ixkoi@58!3-_)e#)ega^i4(g*l6h7)405_x-_7nu
 # THIS HAS TO BE SET TO FALSE TO GET no-sniff headers!!!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','0.0.0.0','*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '*']
 
 
 # Application definition
@@ -82,9 +82,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB"),
-        "USER": os.getenv("POSTGRES_USER"), 
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"), 
-        "HOST": "database", # service name from docker-compose.yml
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": "database",  # service name from docker-compose.yml
         "PORT": 5432
     }
 }
@@ -133,5 +133,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'

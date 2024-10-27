@@ -17,20 +17,26 @@ ROOT_PATH = "/"
 
 # Create your views here.
 
-# handles request 
-def index(request):
-    return render(request,'index.html')
+# handles request
 
-def getFileType(filePath: str) -> tuple[str|None, str|None]:
-    contentType = mimetypes.guess_type(filePath) #returns tuple {type, encoding}
+
+def index(request):
+    return render(request, 'index.html')
+
+
+def getFileType(filePath: str) -> tuple[str | None, str | None]:
+    # returns tuple {type, encoding}
+    contentType = mimetypes.guess_type(filePath)
     return contentType
+
 
 def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can handle img and text
     # get the absolute path
     sanitizedFileName = quote(fileName)
     path = Path(settings.STATIC_ROOT) / sanitizedFileName
 
-    allowedType: set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
+    allowedType: set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg',
+                             '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
 
     if not str(path.suffix.lower()) in allowedType:  # to deal with user uploads
         return HttpResponseNotFound("404 - File type not allowed")
@@ -40,7 +46,7 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
     if not path.resolve().is_relative_to(rootPath):
         return HttpResponseNotFound("404 Not Found")
 
-    if path.exists() and path.is_file(): # make sure it's not a directory
+    if path.exists() and path.is_file():  # make sure it's not a directory
         contentType, encoding = getFileType(str(path))
 
         try:
@@ -75,15 +81,12 @@ def addCookies(response: HttpResponse, cookies: dict[str, str]):
     return response
 
 
-
 @csrf_exempt
 def validate(request):
     if request.method == "POST":
 
-
         password = request.POST.get("password")
         email = request.POST.get("email")
-
 
         valid_pass = True
         valid_email = True
@@ -94,10 +97,10 @@ def validate(request):
         if not val.validate_email(email):
             valid_email = False
 
+        return JsonResponse({"valid_pass": str(valid_pass), "valid_email": str(valid_email)})
 
-        return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
-    
     return HttpResponseBadRequest()
+
 
 def register(request: HttpRequest):
     if request.method == "POST":
@@ -108,7 +111,7 @@ def register(request: HttpRequest):
         # Make sure passwords match
         if password != passwordConf:
             return HttpResponseRedirect(ROOT_PATH)
-        
+
         # Make sure email & pwd are valid
         if not (val.validate_email(email, True) and val.validate_password(password)):
             return HttpResponseRedirect(ROOT_PATH)
@@ -116,22 +119,24 @@ def register(request: HttpRequest):
         # Make sure email doesn't already exist
         if len(User.objects.filter(email=email)) != 0:
             return HttpResponseRedirect(ROOT_PATH)
-        
+
         # Now confirmed valid, create account
-        newAcct = User.objects.create_user(username=email, email=email, password=password)
+        newAcct = User.objects.create_user(
+            username=email, email=email, password=password)
         newAcct.save()
 
         # TODO: Should send visible feedback to user
 
         return HttpResponseRedirect(ROOT_PATH)
-    
+
     return HttpResponseBadRequest()
+
 
 def login_view(request: HttpRequest):
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
-        
+
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
@@ -140,8 +145,9 @@ def login_view(request: HttpRequest):
             pass
 
         return HttpResponseRedirect(ROOT_PATH)
-    
+
     return HttpResponseBadRequest()
+
 
 def logout_view(request: HttpRequest):
     logout(request)
