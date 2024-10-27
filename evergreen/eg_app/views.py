@@ -10,6 +10,7 @@ import eg_app.util.validators as val
 
 from django.http import JsonResponse, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth.models import User
+# from eg_app.models import Email
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 
@@ -19,7 +20,10 @@ ROOT_PATH = "/"
 
 # handles request 
 def index(request):
-    return render(request,'index.html')
+    if request.user.is_authenticated:
+        return render(request,'index.html',{'hidden2': 'hidden', 'email': request.user.email})
+    else:
+        return render(request,'index.html',{'hidden1': 'hidden'})
 
 def getFileType(filePath: str) -> tuple[str|None, str|None]:
     contentType = mimetypes.guess_type(filePath) #returns tuple {type, encoding}
@@ -67,23 +71,17 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
     else:
         return HttpResponseNotFound("404 Not Found")
 
-
 def addCookies(response: HttpResponse, cookies: dict[str, str]):
     """add all cookies from the give dic to the response"""
     for cookieName, cookieValue in cookies.items():
         response.set_cookie(cookieName, cookieValue)
     return response
 
-
-
 @csrf_exempt
 def validate(request):
     if request.method == "POST":
-
-
         password = request.POST.get("password")
         email = request.POST.get("email")
-
 
         valid_pass = True
         valid_email = True
@@ -93,7 +91,6 @@ def validate(request):
 
         if not val.validate_email(email):
             valid_email = False
-
 
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
     
@@ -133,7 +130,7 @@ def login_view(request: HttpRequest):
         password = request.POST.get("password", "")
         
         user = authenticate(request, username=email, password=password)
-        if user is not None:
+        if user:
             login(request, user)
         else:
             # TODO: Should send visible feedback to user
@@ -143,6 +140,7 @@ def login_view(request: HttpRequest):
     
     return HttpResponseBadRequest()
 
+@csrf_exempt
 def logout_view(request: HttpRequest):
     logout(request)
     return HttpResponseRedirect(ROOT_PATH)
