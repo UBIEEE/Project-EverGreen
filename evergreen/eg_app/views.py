@@ -253,11 +253,13 @@ def likePost(request, pk):
                 'status': 'success',
                 'likes': post.likes
             })
+
         except Post.DoesNotExist:
             return JsonResponse({
                 'status': 'error',
                 'message': 'Post not found'
             }, status=404)
+
         except Exception as e:
             return JsonResponse({
                 'status': 'error',
