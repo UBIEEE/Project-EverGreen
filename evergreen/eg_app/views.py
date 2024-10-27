@@ -20,12 +20,10 @@ ROOT_PATH = "/"
 
 # handles request 
 def index(request):
-    if request.user.is_authenticated is None:
-        return render(request,'index.html',{'hidden1': 'hidden'})
-    else:
+    if request.user.is_authenticated:
         return render(request,'index.html',{'hidden2': 'hidden', 'email': request.user.email})
-
-    # return render(request,'index.html')
+    else:
+        return render(request,'index.html',{'hidden1': 'hidden'})
 
 def getFileType(filePath: str) -> tuple[str|None, str|None]:
     contentType = mimetypes.guess_type(filePath) #returns tuple {type, encoding}
@@ -73,21 +71,17 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
     else:
         return HttpResponseNotFound("404 Not Found")
 
-
 def addCookies(response: HttpResponse, cookies: dict[str, str]):
     """add all cookies from the give dic to the response"""
     for cookieName, cookieValue in cookies.items():
         response.set_cookie(cookieName, cookieValue)
     return response
 
-
-
 @csrf_exempt
 def validate(request):
     if request.method == "POST":
         password = request.POST.get("password")
         email = request.POST.get("email")
-
 
         valid_pass = True
         valid_email = True
@@ -147,6 +141,7 @@ def login_view(request: HttpRequest):
     
     return HttpResponseBadRequest()
 
+@csrf_exempt
 def logout_view(request: HttpRequest):    
     logout(request)
     return HttpResponseRedirect(ROOT_PATH)
