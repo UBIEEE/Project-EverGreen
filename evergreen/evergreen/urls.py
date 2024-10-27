@@ -26,9 +26,9 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('',views.index,name='index'),
-    
+
     path('validate',views.validate,name='validate'), # type: ignore
-    
+
     path('updateFeed',views.updateFeed,name="updateFeed"),
     path('uploadPost',views.uploadPost,name="uploadPost"),
     path('deletePost',views.deletePost,name="deletePost"),
@@ -36,4 +36,4 @@ urlpatterns = [
     path('dislikePost',views.dislikePost,name="dislikePost"),
     path('addComment',views.addComment,name="addComment"),
     path('deleteComment',views.deleteComment,name="deleteComment"),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
