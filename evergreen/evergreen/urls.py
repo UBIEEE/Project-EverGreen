@@ -23,7 +23,7 @@ from django.conf import settings
 
 #from evergreen import settings
 
-
+urlpatterns = [
     path('validate',views.validate,name='validate'), # type: ignore
 
     path('updateFeed',views.updateFeed,name="updateFeed"),
