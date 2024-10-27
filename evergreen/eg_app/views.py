@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 # handles request
+@csrf_exempt
 def index(request):
     return render(request,'index.html')
 
@@ -36,6 +37,7 @@ def validate(request):
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
 
 
+@csrf_exempt
 def updateFeed(request):
 
     posts = Post.objects.all().order_by('-timestamp')
@@ -52,17 +54,28 @@ def updateFeed(request):
         posts_data.append(post_dict)
 
     return JsonResponse({'posts': posts_data})
-
+@csrf_exempt
 def uploadPost(request):
-    # user = request.user.email
-    user = 'guest@buffalo.edu'
-    image = request.FILES.get("image upload")
-    caption = request.POST["caption"]
+    if request.method == 'POST':
 
-    post = Post.objects.create(user=user, image=image, caption=caption)
-    post.save()
-    return redirect("/")
+        # user = request.user.email
+        user = 'guest@buffalo.edu'
+        image = request.FILES.get('image_upload')  # Match THE NAME IN THE UPLOAD
+        caption = request.POST.get('caption')
 
+        if image and caption:
+            post = Post.objects.create(user=user, image=image, caption=caption)
+            post.save()
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Missing image or caption'}, status=400)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
+
+
+@csrf_exempt
 def deletePost(request, pk):
     post = Post.objects.get(pk=pk)
 
@@ -70,6 +83,7 @@ def deletePost(request, pk):
         post.delete()
     return redirect("/")
 
+@csrf_exempt
 def likePost(request, pk):
     post = Post.objects.get(pk=pk)
 
@@ -79,6 +93,7 @@ def likePost(request, pk):
         post.save()
     return redirect("/")
 
+@csrf_exempt
 def dislikePost(request, pk):
     post = Post.objects.get(pk=pk)
 
@@ -88,6 +103,7 @@ def dislikePost(request, pk):
         post.save()
     return redirect("/")
 
+@csrf_exempt
 def addComment(request, postId):
     post = Post.objects.get(id=postId)
     # user = request.user.email
@@ -98,6 +114,7 @@ def addComment(request, postId):
     postComment.save()
     return redirect("/")
 
+@csrf_exempt
 def deleteComment(request, commentId):
     comment = Comments.objects.get(commentId)
 

@@ -253,14 +253,14 @@
 
                 <div class="post_form"></div>
                     <hr>
-                    <form action="uploadPost" method="post" enctype="multipart/form-data"></form>
-                    {% csrf_token %}
+                    <form id="uploadForm" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                         Image:
-                        <input id="postImage" type="file" name="image upload">
+                        <input id="postImage" type="file" name="image_upload">
                         <br>
                         Caption:
                         <input id="postCaption" type="text" name="caption">
-                        <input type="submit" value="Upload">
+                        <button type="button" onclick="uploadPost()">Upload</button>
                     </form>
                 </div>
 

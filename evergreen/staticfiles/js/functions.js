@@ -25,7 +25,7 @@ function updateFeed() {
   request.send();
 }
 
-function updatePosts_Feed(serverPost) {
+function updatePosts_Feed(posts) {
   if (!posts) {
     return;
   }
@@ -45,17 +45,27 @@ function updatePosts_Feed(serverPost) {
 }
 
 function uploadPost() {
-  const postImage = document.getElementBy("postImage");
-  const img = postImage.value;
-  postImage.value = "";
+  const form = document.getElementById("uploadForm");
+  const formData = new FormData(form);
 
-  const postCaption = document.getElementById("postCaption");
-  const cap = postCaption.value;
-  postCaption.value = "";
+  // Add the frickinCSRF token
+  const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-  const postJSON = { image: img, caption: cap };
+  const request = new XMLHttpRequest();
   request.open("POST", "uploadPost");
-  request.send(JSON.stringify(postJSON));
+  request.setRequestHeader("X-CSRFToken", csrfToken);
+
+  request.onload = function () {
+    if (this.status === 200) {
+      console.log("Upload successful");
+      form.reset();
+      updateFeed();
+    } else {
+      console.error("Upload failed");
+    }
+  };
+
+  request.send(formData);
 }
 
 // WE DO NOT NEED THIS METHOD
