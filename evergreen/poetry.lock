@@ -111,10 +111,7 @@ wmi = ["wmi (>=1.5.1)"]
 name = "email-validator"
 version = "2.2.0"
 description = "A robust email address syntax and deliverability validation library."
-<<<<<<< HEAD
-=======
 
->>>>>>> dev
 optional = false
 python-versions = ">=3.8"
 files = [
@@ -141,7 +138,7 @@ files = [
 all = ["flake8 (>=7.1.1)", "mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2)"]
 
 [[package]]
-<<<<<<< HEAD
+
 name = "pillow"
 version = "9.5.0"
 description = "Python Imaging Library (Fork)"
@@ -221,8 +218,7 @@ docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
 
 [[package]]
-=======
->>>>>>> dev
+
 name = "psycopg"
 version = "3.2.3"
 description = "PostgreSQL database adapter for Python"
@@ -373,9 +369,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-<<<<<<< HEAD
 content-hash = "25caf5e4d3cfa6beaafcd6f849f5c05efc16947768bddbac77a2a879fd069ebd"
-=======
-content-hash = "0d5ab1c2359d1e0c7e1f59e2af53f56639f3a4067039ea797779d9f61a00f2c8"
-
->>>>>>> dev

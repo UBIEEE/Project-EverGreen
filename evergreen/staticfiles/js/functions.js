@@ -81,6 +81,34 @@ function deletePost() {
   const request = new XMLHttpRequest();
   request.open("DELETE", "deletePost");
   request.send();
+=======
+
+
+function deleteComment(commentId) {
+    const request = new XMLHttpRequest();
+    request.open("DELETE", "deleteComment");
+    request.send();
+}
+
+function post_HTML() {
+
+}
+
+function comment_HTML() {
+
+}
+
+// function likeButton_HTML() {
+//  document.getElementsByClassName("likeButton").innerHTML = '<form action="dislikePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="dislike_button" onclick="dislikeButton_HTML()">Un-Like</button></label>'
+// }
+
+// function dislikeButton_HTML() {
+//  document.getElementsByClassName("likeButton").innerHTML = '<form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>'
+// }
+
+function initWS() {
+
+
 }
 
 function deleteComment(commentId) {

@@ -10,6 +10,7 @@ class Post(models.Model):
     caption = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     userLikes = models.ManyToManyField(User,blank=True)
+
     likes = models.PositiveIntegerField(default=0)
 
     def __str__(self):

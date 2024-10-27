@@ -46,5 +46,5 @@ def validate_password(password: str) -> bool:
 
     :returns: `True` if the password passes requirements, `False` otherwise
     """
-
     return 12 <= len(password) and len(password) < 256
+
