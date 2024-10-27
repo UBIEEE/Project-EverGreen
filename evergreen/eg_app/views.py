@@ -1,5 +1,3 @@
-from typing import Set
-
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.conf import settings
