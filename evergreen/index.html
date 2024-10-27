@@ -4,6 +4,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta http-equiv="Cache-control" content="no-cache">
     
     <title>Project Evergreen</title>
@@ -95,7 +96,6 @@
             var validateUrl = "{% url 'validate' %}";
 
             async function validate() {
-
                 const password = document.getElementById("password").value;
                 const email = document.getElementById("email").value;
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -129,10 +129,73 @@
                 }
             }
             </script>
+      <div class="feed">
+                <div id="feed-box">
+                </div>
+
+                <div class="post_form">
+                    <hr>
+                    <form action="uploadPost" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                        Image:
+                        <input id="postImage" type="file" name="image upload">
+                        <br>
+                        Caption:
+                        <input id="postCaption" type="text" name="caption">
+                        <input type="submit" value="Upload">
+                    </form>
+                </div>
+
+                {% for post in posts %}
+                    <div class="feed_posts">
+                        <input id="email_username_post" type="text" name={{post.user.email}}>
+                        <input id="post_image" type="image" src="{{post.image}}">
+                        <input id="post_caption" type="text" name="{{post.caption}}">
+                    </div>
+
+                    <div class="likeButton"> 
+                        <form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>
+                        {{post.likes}}
+                        <button id="like_button">Like</button>
+                    </div>
+
+                    <div class="dislikeButton"> 
+                        <form action="dislikePost" method="post" enctype="application/x-www-form-urlencoded">
+                            {{post.likes}}
+                            <button id="dislike_button">Un-Like</button>
+                        </label>
+                    </div>
+
+                    <div class="comment_Post"> 
+                        <form action="addComment" method="post" enctype="application/x-www-form-urlencoded">
+                            <input id="comment_button" type="text" name="comment">Comment</input>
+                        </label>
+                    </div>
+
+                    <div class="deleteButton_Post"> 
+                        <form action="deletePost" method="delete" enctype="application/x-www-form-urlencoded">
+                            <button id="delete_button">X</button>
+                        </label>
+                    </div>
+
+                    {% for postComment in comments %}
+                        <div class="commentSection">
+                            <input id="email_username_comments" type="text" name={{postComment.user.email}}>
+                            <input id="comment" type="text" name="{{postComment.comment}}">
+                        </div>
+                        
+                        <div class="deleteButton_Comment"> 
+                            <form action="deleteComment" method="delete" enctype="application/x-www-form-urlencoded">
+                                <button id="delete_comment">X</button>
+                            </label>
+                        </div>
+                    {% endfor %}  
+                {% endfor %}
+            </div>
         </div>
     </section>
-    
+
     <script src="{% static 'js/functions.js' %}"></script>
 </body>
 {% endautoescape %}
-</html>
+</html> 
