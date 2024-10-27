@@ -6,7 +6,7 @@ from eg_app.models import Post, Comments
 
 # Create your views here.
 
-# handles request 
+# handles request
 def index(request):
     return render(request,'index.html')
 
@@ -28,9 +28,21 @@ def validate(request):
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
 
 def updateFeed(request):
-    posts = Post.objects.all().order_by('timestamp')
-    comments = Comments.objects.all().order_by('timestamp')
-    return render(request,'index.html', {"posts": posts, "comments": comments})
+
+    posts = Post.objects.all().order_by('-timestamp')
+    posts_data = []
+    for post in posts:
+        post_dict = {
+            'id': post.id,
+            'user': post.user,
+            'image': {'url': post.image.url if post.image else ''},
+            'caption': post.caption,
+            'likes': post.likes,
+            'comments': []
+        }
+        posts_data.append(post_dict)
+
+    return JsonResponse({'posts': posts_data})
 
 def uploadPost(request):
     # user = request.user.email
@@ -44,14 +56,14 @@ def uploadPost(request):
 
 def deletePost(request, pk):
     post = Post.objects.get(pk=pk)
-    
+
     if post.user == request.user:
         post.delete()
     return redirect("/")
 
 def likePost(request, pk):
     post = Post.objects.get(pk=pk)
-    
+
     if not post.userLikes.contains(request.user):
         post.likes += 1
         post.userLikes.add(request.user)
@@ -61,7 +73,7 @@ def likePost(request, pk):
 def dislikePost(request, pk):
     post = Post.objects.get(pk=pk)
 
-    if post.userLikes.contains(request.user):  
+    if post.userLikes.contains(request.user):
         post.likes -= 1
         post.userLikes.remove(request.user)
         post.save()
@@ -79,7 +91,7 @@ def addComment(request, postId):
 
 def deleteComment(request, commentId):
     comment = Comments.objects.get(commentId)
-    
+
     if comment.user == request.user:
         comment.delete()
     return redirect("/")
