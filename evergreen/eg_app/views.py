@@ -45,25 +45,24 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
         try:
             with open(path, 'rb') as file:
                 content = file.read()
-
-            if contentType is not None:
-                response = HttpResponse(content, content_type=contentType)
-            else:
-                response = HttpResponse(content)
-
-            if encoding:
-                response['Content-Encoding'] = encoding
-            else:
-                response['Content-Encoding'] = ""
-
-            response['X-Content-Type-Options'] = "nosniff"
-            # response['Content-Length'] = str(len(content))  # needed for very large files, Django handles it
-
-            return response
-
         except OSError:  # catch most of them, like FileNotFoundError
             return HttpResponseNotFound("404 Not Found")
             # return render(request, '404.html', status=404) when making 404 pages
+
+        if contentType:
+            response = HttpResponse(content, content_type=contentType)
+        else:
+            response = HttpResponse(content)
+
+        if encoding:
+            response['Content-Encoding'] = encoding
+        else:
+            response['Content-Encoding'] = ""
+
+        response['X-Content-Type-Options'] = "nosniff"
+        # response['Content-Length'] = str(len(content))  # needed for very large files, Django handles it
+
+        return response
     else:
         return HttpResponseNotFound("404 Not Found")
 
@@ -83,7 +82,6 @@ def validate(request):
 
         password = request.POST.get("password")
         email = request.POST.get("email")
-
 
 
         valid_pass = True
