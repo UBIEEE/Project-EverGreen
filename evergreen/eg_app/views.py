@@ -223,8 +223,9 @@ def updateFeed(request):
 def uploadPost(request):
     if request.method == 'POST':
 
-        # user = request.user.email
-        user = 'guest@buffalo.edu'
+        # user = 'guest@buffalo.edu'
+        user = request.user.email
+
         image = request.FILES.get('image_upload')  # Match THE NAME IN THE UPLOAD
         caption = request.POST.get('caption')
 
@@ -264,7 +265,7 @@ def likePost(request, pk):
             }, status=500)
 
 
-
+@csrf_exempt
 def logout_view(request: HttpRequest):
     logout(request)
     return HttpResponseRedirect(ROOT_PATH)
