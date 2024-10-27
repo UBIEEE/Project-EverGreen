@@ -130,9 +130,8 @@ def login_view(request: HttpRequest):
         password = request.POST.get("password", "")
         
         user = authenticate(request, username=email, password=password)
-        if user is not None:
+        if user:
             login(request, user)
-            # render(request,'eg_app/detail.html',{'email': email})
         else:
             # TODO: Should send visible feedback to user
             pass
