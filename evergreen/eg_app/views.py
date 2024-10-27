@@ -20,12 +20,12 @@ ROOT_PATH = "/"
 
 # handles request 
 def index(request):
-    # if request.user.is_authenticated is None:
-    #     return render(request,'index.html',{'hidden2': 'hidden'})
-    # else:
-    #     return render(request,'index.html',{'hidden1': 'hidden', 'email': request.user.email})
+    if request.user.is_authenticated is None:
+        return render(request,'index.html',{'hidden1': 'hidden'})
+    else:
+        return render(request,'index.html',{'hidden2': 'hidden', 'email': request.user.email})
 
-    return render(request,'index.html')
+    # return render(request,'index.html')
 
 def getFileType(filePath: str) -> tuple[str|None, str|None]:
     contentType = mimetypes.guess_type(filePath) #returns tuple {type, encoding}

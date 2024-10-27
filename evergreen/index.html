@@ -7,17 +7,18 @@
     <meta http-equiv="Cache-control" content="no-cache">
     
     <title>Project Evergreen</title>
-        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-        <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-
-     <div class="logo">
+    
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+     
+    <div class="logo">
         <img src="{% static 'images/plant.jpg' %}" alt="A logo pic of a plant" width = "100" height = "100">
     </div>
 
     <div class="logout" {{ hidden1 }}>
         <form action="/logout" method="post" enctype="application/x-www-form-urlencoded">
             Welcome {{ email }}!
-            <input type="button" name="Logout"></input>
+            <button type="button">Logout</button>
         </form>
     </div>
 </head>
@@ -50,7 +51,7 @@
         <h2>Plant Chat</h2>
             
         <div class="contents">        
-            <div class="authenticate-in">
+            <div class="authenticate-in" {{ hidden2 }}>
                 Registration:
                 <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
@@ -130,8 +131,8 @@
             </script>
         </div>
     </section>
-    {% endautoescape %}
-
+    
     <script src="{% static 'js/functions.js' %}"></script>
 </body>
+{% endautoescape %}
 </html>
