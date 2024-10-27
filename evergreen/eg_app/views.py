@@ -1,17 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.conf import settings
-import mimetypes
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, HttpResponseNotFound, JsonResponse
+from django.shortcuts import render
 from pathlib import Path
 from urllib.parse import quote
-
+import mimetypes
 
 import eg_app.util.validators as val
-
-from django.http import JsonResponse, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import csrf_exempt
 
 ROOT_PATH = "/"
 
@@ -57,8 +53,6 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
 
         if encoding:
             response['Content-Encoding'] = encoding
-        else:
-            response['Content-Encoding'] = ""
 
         response['X-Content-Type-Options'] = "nosniff"
         # response['Content-Length'] = str(len(content))  # needed for very large files, Django handles it
@@ -67,16 +61,12 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
     else:
         return HttpResponseNotFound("404 Not Found")
 
-
-def addCookies(response: HttpResponse, cookies: dict[str, str]):
+def addCookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
     """add all cookies from the give dic to the response"""
     for cookieName, cookieValue in cookies.items():
         response.set_cookie(cookieName, cookieValue)
     return response
 
-
-
-@csrf_exempt
 def validate(request):
     if request.method == "POST":
 
@@ -118,6 +108,7 @@ def register(request: HttpRequest):
             return HttpResponseRedirect(ROOT_PATH)
         
         # Now confirmed valid, create account
+        # (Django takes raw password, handles salting/hashing itself before storing)
         newAcct = User.objects.create_user(username=email, email=email, password=password)
         newAcct.save()
 
@@ -134,6 +125,7 @@ def login_view(request: HttpRequest):
         
         user = authenticate(request, username=email, password=password)
         if user is not None:
+            # Django handles all the storing and sending of auth tokens itself
             login(request, user)
         else:
             # TODO: Should send visible feedback to user
@@ -144,5 +136,6 @@ def login_view(request: HttpRequest):
     return HttpResponseBadRequest()
 
 def logout_view(request: HttpRequest):
+    # Django handles the invalidating and client-side removal of auth tokens itself
     logout(request)
     return HttpResponseRedirect(ROOT_PATH)
