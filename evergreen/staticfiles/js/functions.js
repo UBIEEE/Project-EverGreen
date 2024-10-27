@@ -25,7 +25,24 @@ function updateFeed() {
   request.send();
 }
 
-function updatePosts_Feed(serverPost) {}
+function updatePosts_Feed(serverPost) {
+  if (!posts) {
+    return;
+  }
+  const feedBox = document.getElementById("feed-box");
+  feedBox.innerHTML = posts
+    .map(
+      (post) => `
+    <div class="post">
+      <p>${post.user}</p>
+      <img src="${post.image.url}" style="max-width: 300px;">
+      <p>${post.caption}</p>
+      <p>${post.likes} likes</p>
+    </div>
+    `,
+    )
+    .join("");
+}
 
 function uploadPost() {
   const postImage = document.getElementBy("postImage");
@@ -41,7 +58,8 @@ function uploadPost() {
   request.send(JSON.stringify(postJSON));
 }
 
-function addPostToFeed() {}
+// WE DO NOT NEED THIS METHOD
+//function addPostToFeed() {}
 
 function deletePost() {
   const request = new XMLHttpRequest();
