@@ -37,9 +37,31 @@ footer {
     width: 100%;
 }
 
-.login {
+#plant-chat {
+    padding: 20px;
+}
+
+.logout {
+    position: absolute;
+    top: 25px;
+    right: 100px; 
+}
+
+.logo {
+    position: absolute;
+    top: 25px;
+    left: 100px;
+}
+
+.authenticate-in {
     width: 50%;
     background-color: #b9efbd; 
     padding: 10px;
+}
+
+.contents {
+    display: flex;
+    justify-content: space-around;
+    height: 78%;
 }
 

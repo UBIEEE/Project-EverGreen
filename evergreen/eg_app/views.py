@@ -4,6 +4,7 @@ import eg_app.util.validators as val
 
 from django.http import JsonResponse, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest
 from django.contrib.auth.models import User
+# from eg_app.models import Email
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 
@@ -13,17 +14,18 @@ ROOT_PATH = "/"
 
 # handles request 
 def index(request):
+    # if request.user.is_authenticated is None:
+    #     return render(request,'index.html',{'hidden2': 'hidden'})
+    # else:
+    #     return render(request,'index.html',{'hidden1': 'hidden', 'email': request.user.email})
+
     return render(request,'index.html')
 
 @csrf_exempt
 def validate(request):
     if request.method == "POST":
-
-
         password = request.POST.get("password")
         email = request.POST.get("email")
-
-
 
         valid_pass = True
         valid_email = True
@@ -33,7 +35,6 @@ def validate(request):
 
         if not val.validate_email(email):
             valid_email = False
-
 
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
     
@@ -75,6 +76,7 @@ def login_view(request: HttpRequest):
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
+            # render(request,'eg_app/detail.html',{'email': email})
         else:
             # TODO: Should send visible feedback to user
             pass
@@ -83,6 +85,6 @@ def login_view(request: HttpRequest):
     
     return HttpResponseBadRequest()
 
-def logout_view(request: HttpRequest):
+def logout_view(request: HttpRequest):    
     logout(request)
     return HttpResponseRedirect(ROOT_PATH)
