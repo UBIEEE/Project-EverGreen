@@ -201,7 +201,6 @@ def login_view(request: HttpRequest):
     return HttpResponseBadRequest()
 
 @csrf_exempt
-
 def updateFeed(request):
 
     posts = Post.objects.all().order_by('-timestamp')
