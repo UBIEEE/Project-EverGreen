@@ -210,7 +210,7 @@ def updateFeed(request):
             'id': post.id,
             'user': post.user,
             'image': {'url': post.image.url if post.image else ''},
-            'caption': post.caption,
+            'caption': post.caption + "\n",
             'likes': post.likes,
             'comments': []
         }
