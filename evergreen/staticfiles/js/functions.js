@@ -97,11 +97,6 @@ function deleteComment(commentId) {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>'
 // }
 
-function deleteComment(commentId) {
-  const request = new XMLHttpRequest();
-  request.open("DELETE", "deleteComment");
-  request.send();
-}
 
 // function likeButton_HTML() {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="dislikePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="dislike_button" onclick="dislikeButton_HTML()">Un-Like</button></label>'
