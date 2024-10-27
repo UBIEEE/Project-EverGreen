@@ -36,4 +36,7 @@ urlpatterns = [
     path('dislikePost',views.dislikePost,name="dislikePost"),
     path('addComment',views.addComment,name="addComment"),
     path('deleteComment',views.deleteComment,name="deleteComment"),
-]
+
+    path('register', views.register, name='register'),
+    path('login', views.login_view, name='login'),
+    path('logout', views.logout_view, name='logout')

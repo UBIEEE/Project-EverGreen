@@ -6,12 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta http-equiv="Cache-control" content="no-cache">
+    
     <title>Project Evergreen</title>
-     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-     <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-
-     <div class="logo">
+    
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+     
+    <div class="logo">
         <img src="{% static 'images/plant.jpg' %}" alt="A logo pic of a plant" width = "100" height = "100">
+    </div>
+
+    <div class="logout" {{ hidden1 }}>
+        <form action="/logout" method="post" enctype="application/x-www-form-urlencoded">
+            Welcome {{ email }}!
+            <input type="submit" value="Logout">
+        </form>
     </div>
 </head>
 
@@ -41,9 +50,9 @@
 
     <section id="plant-chat">
         <h2>Plant Chat</h2>
-        
-        <div class="contents">
-            <div class="authenticate-in">
+            
+        <div class="contents">        
+            <div class="authenticate-in" {{ hidden2 }}>
                 Registration:
                 <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
@@ -53,14 +62,13 @@
                     <br/>
                     <label>Password:&nbsp;
                         <input type="password" id="password" name="password">
-
                     </label>
 
                     <button type="button" onclick="validate()">Validate Registration</button>
 
                     <br/>
                     <label>Confirm Password:&nbsp;
-                        <input type="password" name="confirm_password">
+                        <input type="password" id="confirm_password" name="confirm_password">
                     </label>
                     <input type="submit" value="Post">
                     <br/>
@@ -100,8 +108,6 @@
                             },
                             body: `password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`
                         });
-
-
                 const result = await response.json();
 
                 const messageDiv = document.getElementById("passwordMessage");
@@ -123,8 +129,7 @@
                 }
             }
             </script>
-
-            <div class="feed">
+      <div class="feed">
                 <div id="feed-box">
                 </div>
 
