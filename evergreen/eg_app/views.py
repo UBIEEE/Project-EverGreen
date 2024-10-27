@@ -141,6 +141,6 @@ def login_view(request: HttpRequest):
     return HttpResponseBadRequest()
 
 @csrf_exempt
-def logout_view(request: HttpRequest):    
+def logout_view(request: HttpRequest):
     logout(request)
     return HttpResponseRedirect(ROOT_PATH)

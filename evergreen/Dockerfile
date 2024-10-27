@@ -9,13 +9,11 @@ RUN pip3 install poetry
 RUN poetry config virtualenvs.create false --local
 RUN poetry install 
 COPY . .
-RUN ls -la /
 
 EXPOSE 8080
 
 SHELL [ "poetry", "run" ]
-
 RUN [ "python3","manage.py","makemigrations" ]
 
-# ENTRYPOINT [ "./docker-entrypoint.sh" ]
+ENTRYPOINT [ "./docker-entrypoint.sh" ]
 CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8080" ]
