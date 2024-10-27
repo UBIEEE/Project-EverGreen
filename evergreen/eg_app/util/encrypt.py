@@ -1,5 +1,11 @@
 import bcrypt
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> dev
 def encrypt(plaintext):
 
     # encode plaintext string to bytes

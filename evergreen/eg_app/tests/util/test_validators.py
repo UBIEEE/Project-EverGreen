@@ -53,4 +53,9 @@ class TestValidatePassword(TestCase):
         self.assertTrue(validate_password("all the symbols `~!@#$%^&*())-=_+[]{}\\|;',./:\"<>?"))
         self.assertTrue(validate_password("a" * 12))
         self.assertTrue(validate_password("1" * 12))
+<<<<<<< HEAD
         self.assertTrue(validate_password("A" * 255))
+=======
+        self.assertTrue(validate_password("A" * 255))
+
+>>>>>>> dev

@@ -4,6 +4,12 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from eg_app.models import Post, Comments
 
+import eg_app.util.validators as val
+
+from django.http import JsonResponse
+
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 
 # handles request
@@ -13,6 +19,7 @@ def index(request):
 @csrf_exempt
 def validate(request):
     if request.method == "POST":
+
         password = request.POST.get("password")
         email = request.POST.get("email")
 
@@ -25,7 +32,9 @@ def validate(request):
         if not val.validate_email(email):
             valid_email = False
 
+
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
+
 
 def updateFeed(request):
 
