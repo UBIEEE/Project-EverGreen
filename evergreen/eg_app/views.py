@@ -29,7 +29,7 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
     sanitizedFileName = quote(fileName)
     path = Path(settings.STATIC_ROOT) / sanitizedFileName
 
-    allowedType: Set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
+    allowedType: set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
 
     if not str(path.suffix.lower()) in allowedType:  # to deal with user uploads
         return HttpResponseNotFound("404 - File type not allowed")
