@@ -13,6 +13,7 @@ class Post(models.Model):
 
     likes = models.PositiveIntegerField(default=0)
 
+    # TODO: change to user.email
     def __str__(self):
         # return f"{self.user.email}: {self.caption}"
         return f"{'guest@buffalo.edu'}: {self.caption}"

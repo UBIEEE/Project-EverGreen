@@ -217,6 +217,8 @@ def updateFeed(request):
         posts_data.append(post_dict)
 
     return JsonResponse({'posts': posts_data})
+
+#TODO: Make this actually work with authenicated users, if they are signed in remove guest email
 @csrf_exempt
 def uploadPost(request):
     if request.method == 'POST':
