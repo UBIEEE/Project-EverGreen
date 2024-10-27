@@ -26,8 +26,9 @@ from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('',views.index,name='index'),
-    path('validate',views.validate,name='validate'), # type: ignore
-
-
+    path('',views.index, name='index'),
+    path('validate',views.validate, name='validate'),
+    path('register', views.register, name='register'),
+    path('login', views.login_view, name='login'),
+    path('logout', views.logout_view, name='logout')
 ]
