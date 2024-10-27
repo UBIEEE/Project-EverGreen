@@ -63,11 +63,9 @@ function uploadPost() {
 
   request.onload = function () {
     if (this.status === 200) {
-      console.log("Upload successful");
+
       form.reset();
       updateFeed();
-    } else {
-      console.error("Upload failed");
     }
   };
 
