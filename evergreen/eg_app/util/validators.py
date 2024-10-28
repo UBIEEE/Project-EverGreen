@@ -14,7 +14,7 @@ def validate_email(email: str, check_deliverability=False) -> bool:
     :param check_deliverability: Whether or not to perform a DNS query to see  \
     if the domain can receive mail. Recommended to use `True` on registration, \
     `False` on regular login. See https://pypi.org/project/email-validator/
-    
+
     :returns: `True` if the email address passes requirements, `False` otherwise
     """
 
@@ -32,7 +32,7 @@ def validate_email(email: str, check_deliverability=False) -> bool:
       # If the domain (after the @) is exactly (optional subdomain).buffalo.edu
 
       return l_len and l_match and d_match
-      
+
     except ev.EmailNotValidError as e:
       return False
 
@@ -43,8 +43,8 @@ def validate_password(password: str) -> bool:
     - Length between 12 and 255 chars (inclusive)
 
     :param password: The password from the user to validate
-    
+
     :returns: `True` if the password passes requirements, `False` otherwise
     """
-
     return 12 <= len(password) and len(password) < 256
+

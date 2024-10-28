@@ -13,7 +13,6 @@ COPY . .
 EXPOSE 8080
 
 SHELL [ "poetry", "run" ]
-
 RUN [ "python3","manage.py","makemigrations" ]
 
 ENTRYPOINT [ "./docker-entrypoint.sh" ]
