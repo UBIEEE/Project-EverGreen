@@ -4,8 +4,10 @@ import uuid
 
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    #user = models.TextField(blank=False)
+
+    #user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.TextField(blank=False)
+
     image = models.ImageField(upload_to="posts",blank=False,null=False)
     caption = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
