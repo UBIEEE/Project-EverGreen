@@ -1,23 +1,18 @@
-from django.shortcuts import render, redirect
-
-import eg_app.util.validators as val
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from eg_app.models import Post, Comments
-
-from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.conf import settings
-import mimetypes
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.http import HttpResponse, HttpResponseNotFound, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from pathlib import Path
 from urllib.parse import quote
-
-
-from django.http import JsonResponse, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import csrf_exempt
 import html
+import mimetypes
+
+from eg_app.models import Post, Comments
+import eg_app.util.validators as val
+
+
 ROOT_PATH = "/"
 
 # Create your views here.
@@ -216,7 +211,6 @@ def updateFeed(request) -> JsonResponse:
 
     return JsonResponse({'posts': posts_data})
 
-#TODO: Make this actually work with authenicated users, if they are signed in remove guest email
 @csrf_exempt
 def uploadPost(request) -> JsonResponse:
     if request.method == 'POST':
@@ -229,12 +223,12 @@ def uploadPost(request) -> JsonResponse:
 
         caption = html.escape(caption)
 
-        if  image and caption:
-            post = Post.objects.create(user=user, image=image, caption=caption, list_of_users_who_liked=[])
+        if image and caption:
+            post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
             return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
         elif caption:
-            post = Post.objects.create(user=user, caption=caption, list_of_users_who_liked=[])
+            post = Post.objects.create(user=user, caption=caption)
             post.save()
             return JsonResponse({'status': 'success','post_id': post.id})
         else:
@@ -245,25 +239,18 @@ def uploadPost(request) -> JsonResponse:
 
 @csrf_exempt
 def likePost(request, pk) -> JsonResponse:
-
-
-    user_who_is_liking = request.user;
-
-
-    #request.POST.user
-    #print(username)
+    user_who_is_liking = request.user
 
     if request.method == 'POST':
         try:
             post = Post.objects.get(pk=pk)
 
-
-            # Since you're using a guest user for now
-
-
-            if str(user_who_is_liking.username) != "AnonymousUser":
+            if str(user_who_is_liking.username) != "AnonymousUser" and not post.userLikes.contains(user_who_is_liking):
                 post.likes +=1
-
+                post.userLikes.add(user_who_is_liking)
+            elif str(user_who_is_liking.username) != "AnonymousUser":
+                post.likes -= 1
+                post.userLikes.remove(user_who_is_liking)
             post.save()
             return JsonResponse({
                 'status': 'success',
