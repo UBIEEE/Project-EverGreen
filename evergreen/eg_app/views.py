@@ -212,10 +212,14 @@ def uploadPost(request) -> JsonResponse:
         image = request.FILES.get('image_upload')  # Match THE NAME IN THE UPLOAD
         caption = request.POST.get('caption')
 
-        if image and caption:
+        if  image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
             return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
+        elif caption:
+            post = Post.objects.create(user=user, caption=caption)
+            post.save()
+            return JsonResponse({'status': 'success','post_id': post.id})
         else:
             return JsonResponse({'status': 'error', 'message': 'Missing image or caption'}, status=400)
 
