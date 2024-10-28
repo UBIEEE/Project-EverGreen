@@ -17,7 +17,7 @@ from django.http import JsonResponse, HttpRequest, HttpResponseRedirect, HttpRes
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-
+import html
 ROOT_PATH = "/"
 
 # Create your views here.
@@ -108,6 +108,11 @@ def register(request: HttpRequest) -> HttpResponse:
         password = request.POST.get("password", "")
         passwordConf = request.POST.get("confirm_password", "")
 
+
+        email = html.escape(email)
+        password = html.escape(password)
+        passwordConf = html.escape(passwordConf)
+
         # Make sure passwords match
         if password != passwordConf:
             return HttpResponseRedirect(ROOT_PATH)
@@ -156,6 +161,8 @@ def addComment(request, postId):
     user = 'guest@buffalo.edu'
     comment = request.POST["comment"]
 
+    comment = html.escape(comment)
+
     postComment = Comments.objects.create(post=post, user=user, comment=comment)
     postComment.save()
     return redirect("/")
@@ -169,9 +176,17 @@ def deleteComment(request, commentId):
 
 def login_view(request: HttpRequest):
     if request.method == "POST":
+
+
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
-        
+
+
+        email = html.escape(email)
+
+        password = html.escape(password)
+
+
         user = authenticate(request, username=email, password=password)
         if user:
             login(request, user)
@@ -212,6 +227,8 @@ def uploadPost(request) -> JsonResponse:
         image = request.FILES.get('image_upload')  # Match THE NAME IN THE UPLOAD
         caption = request.POST.get('caption')
 
+        caption = html.escape(caption)
+
         if  image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
@@ -228,11 +245,18 @@ def uploadPost(request) -> JsonResponse:
 
 @csrf_exempt
 def likePost(request, pk) -> JsonResponse:
+
+    username = request.user;
+    print(username)
     if request.method == 'POST':
         try:
             post = Post.objects.get(pk=pk)
             # Since you're using a guest user for now
-            post.likes += 1
+
+            if str(username) != "AnonymousUser":
+
+
+                post.likes += 1
             post.save()
             return JsonResponse({
                 'status': 'success',
