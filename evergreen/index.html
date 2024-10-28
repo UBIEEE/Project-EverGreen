@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta http-equiv="Cache-control" content="no-cache">
-    
+
+
+
     <title>Project Evergreen</title>
-    
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-     
-    <div class="logo">
+     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+     <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
+     <div class="logo">
         <img src="{% static 'images/plant.jpg' %}" alt="A logo pic of a plant" width = "100" height = "100">
     </div>
 
@@ -47,50 +48,100 @@
             <p>Join our Discord: <a href="https://discord.com/invite/QMHjt65z7a">https://discord.com/invite/QMHjt65z7a</a></p>
         </section>
     </main>
+    <div class="authenticate-in">
+            Registration:
+            <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
+                {% csrf_token %}
+                <label>UB Email:
+                    <input type="email" id="email" name="email"/>
+                </label>
+                <br/>
+                <label>Password:&nbsp;
+                    <input type="password" id="password" name="password">
+
+                </label>
+
+                <button type="button" onclick="validate()">Validate Registration</button>
+
+                <br/>
+                <label>Confirm Password:&nbsp;
+                    <input type="password" id="confirm_password" name="confirm_password">
+                </label>
+                <input type="submit" value="Post">
+                <br/>
+                <br/>
+            </form>
+
+            <div id="passwordMessage"></div>
+
+
+
+            Login:
+            <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+                {% csrf_token %}
+                <label>UB Email:
+                    <input type="email" name="email"/>
+                </label>
+                <br/>
+                <label>Password:&nbsp;
+                    <input type="password" name="password">
+                </label>
+                <input type="submit" value="Post">
+                <br/>
+            </form>
+        </div>
+
+    <script>
+    var validateUrl = "{% url 'validate' %}";
+
+    async function validate() {
+
+
+        const password = document.getElementById("password").value;
+        const email = document.getElementById("email").value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+         const response = await fetch("{% url 'validate' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": csrfToken,
+
+                    },
+
+                    body: `password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`
+                });
+
+
+        const result = await response.json();
+
+
+    const messageDiv = document.getElementById("passwordMessage");
+    let out = [];
+
+    if (String(result.valid_pass) === "False") {
+        out.push("PASSWORDS MUST BE 12 OR GREATER IN LENGTH");
+    }
+    if (String(result.valid_email) === "False") {
+        out.push("ONLY VALID UB EMAILS ACCEPTED");
+    }
+
+    if (out.length === 0) {
+        messageDiv.style.color = "green";
+        messageDiv.innerHTML = "VALID EMAIL AND PASS";
+    } else {
+        messageDiv.style.color = "red";
+        messageDiv.innerHTML = out.join("<br>");
+    }
+}
+</script>
+
 
     <section id="plant-chat">
         <h2>Plant Chat</h2>
-            
-        <div class="contents">        
-            <div class="authenticate-in" {{ hidden2 }}>
-                Registration:
-                <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
-                    {% csrf_token %}
-                    <label>UB Email:
-                        <input type="email" id="email" name="email"/>
-                    </label>
-                    <br/>
-                    <label>Password:&nbsp;
-                        <input type="password" id="password" name="password">
-                    </label>
 
-                    <button type="button" onclick="validate()">Validate Registration</button>
+        <div class="contents">
 
-                    <br/>
-                    <label>Confirm Password:&nbsp;
-                        <input type="password" id="confirm_password" name="confirm_password">
-                    </label>
-                    <input type="submit" value="Post">
-                    <br/>
-                    <br/>
-                </form>
-
-                <div id="passwordMessage"></div>
-
-                Login:
-                <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
-                    {% csrf_token %}
-                    <label>UB Email:
-                        <input type="email" name="email"/>
-                    </label>
-                    <br/>
-                    <label>Password:&nbsp;
-                        <input type="password" name="password">
-                    </label>
-                    <input type="submit" value="Post">
-                    <br/>
-                </form>
-            </div>
 
             <script>
             var validateUrl = "{% url 'validate' %}";
@@ -108,6 +159,8 @@
                             },
                             body: `password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`
                         });
+
+
                 const result = await response.json();
 
                 const messageDiv = document.getElementById("passwordMessage");
@@ -129,67 +182,81 @@
                 }
             }
             </script>
-      <div class="feed">
-                <div id="feed-box">
+
+            <div class="feed">
+                <div id="feed-box"></div>
                 </div>
 
-                <div class="post_form">
+                <div class="post_form"></div>
                     <hr>
-                    <form action="uploadPost" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
+                    <form id="uploadForm" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                         Image:
-                        <input id="postImage" type="file" name="image upload">
+                        <input id="postImage" type="file" name="image_upload">
                         <br>
                         Caption:
                         <input id="postCaption" type="text" name="caption">
-                        <input type="submit" value="Upload">
+                        <button type="button" onclick="uploadPost()">Upload</button>
                     </form>
                 </div>
 
                 {% for post in posts %}
                     <div class="feed_posts">
-                        <input id="email_username_post" type="text" name={{post.user.email}}>
-                        <input id="post_image" type="image" src="{{post.image}}">
-                        <input id="post_caption" type="text" name="{{post.caption}}">
-                    </div>
-
-                    <div class="likeButton"> 
-                        <form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>
-                        {{post.likes}}
-                        <button id="like_button">Like</button>
-                    </div>
-
-                    <div class="dislikeButton"> 
-                        <form action="dislikePost" method="post" enctype="application/x-www-form-urlencoded">
-                            {{post.likes}}
-                            <button id="dislike_button">Un-Like</button>
-                        </label>
-                    </div>
-
-                    <div class="comment_Post"> 
-                        <form action="addComment" method="post" enctype="application/x-www-form-urlencoded">
-                            <input id="comment_button" type="text" name="comment">Comment</input>
-                        </label>
-                    </div>
-
-                    <div class="deleteButton_Post"> 
-                        <form action="deletePost" method="delete" enctype="application/x-www-form-urlencoded">
-                            <button id="delete_button">X</button>
-                        </label>
-                    </div>
-
-                    {% for postComment in comments %}
-                        <div class="commentSection">
-                            <input id="email_username_comments" type="text" name={{postComment.user.email}}>
-                            <input id="comment" type="text" name="{{postComment.comment}}">
+                        <div class="post-header">
+                            <span>{{ post.user }}</span>
                         </div>
-                        
-                        <div class="deleteButton_Comment"> 
-                            <form action="deleteComment" method="delete" enctype="application/x-www-form-urlencoded">
-                                <button id="delete_comment">X</button>
-                            </label>
+                        <div class="post-content">
+                            <img src="{{ post.image.url }}" alt="Post image">
+                            <p>{{ post.caption }}</p>
                         </div>
-                    {% endfor %}  
+
+                        <div class="post-interactions">
+                            <div class="likeButton">
+                                <form action="likePost/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
+                                    {% csrf_token %}
+                                    <button type="button" onclick="likePost('{{ post.id }}')">
+                                        Like ({{ post.likes }})
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="dislikeButton">
+                                <form action="dislikePost/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
+                                    {% csrf_token %}
+                                    <button type="button" onclick="dislikePost('{{ post.id }}')">
+                                        Unlike
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="comment_Post">
+                                <form action="addComment/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
+                                    {% csrf_token %}
+                                    <input type="text" name="comment" placeholder="Add a comment...">
+                                    <button type="button" onclick="addComment('{{ post.id }}')">Comment</button>
+                                </form>
+                            </div>
+
+                            <div class="deleteButton_Post">
+                                <form action="deletePost/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
+                                    {% csrf_token %}
+                                    <button type="button" onclick="deletePost('{{ post.id }}')">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="comments-section">
+                            {% for comment in post.comments %}
+                                <div class="comment">
+                                    <span class="comment-user">{{ comment.user }}</span>
+                                    <span class="comment-text">{{ comment.comment }}</span>
+                                    {% if comment.user == request.user %}
+                                        <button type="button" onclick="deleteComment('{{ comment.id }}')">×</button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
         </div>
@@ -197,5 +264,6 @@
 
     <script src="{% static 'js/functions.js' %}"></script>
 </body>
+
 {% endautoescape %}
-</html> 
+</html>

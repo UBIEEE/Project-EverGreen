@@ -1,26 +1,24 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from eg_app.models import Post, Comments
-
-from django.http import HttpResponse, HttpResponseNotFound, HttpRequest
 from django.conf import settings
-import mimetypes
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.http import HttpResponse, HttpResponseNotFound, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from pathlib import Path
 from urllib.parse import quote
+import html
+import mimetypes
 
+from eg_app.models import Post, Comments
 import eg_app.util.validators as val
 
-from django.http import JsonResponse, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.csrf import csrf_exempt
 
 ROOT_PATH = "/"
 
 # Create your views here.
 
-# handles request 
+# handles request
+@csrf_exempt
 def index(request):
     if request.user.is_authenticated:
         return render(request,'index.html',{'hidden2': 'hidden', 'email': request.user.email})
@@ -82,6 +80,7 @@ def addCookies(response: HttpResponse, cookies: dict[str, str]):
 @csrf_exempt
 def validate(request):
     if request.method == "POST":
+
         password = request.POST.get("password")
         email = request.POST.get("email")
 
@@ -95,19 +94,24 @@ def validate(request):
             valid_email = False
 
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
-    
+
     return HttpResponseBadRequest()
 
-def register(request: HttpRequest):
+def register(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
         passwordConf = request.POST.get("confirm_password", "")
 
+
+        email = html.escape(email)
+        password = html.escape(password)
+        passwordConf = html.escape(passwordConf)
+
         # Make sure passwords match
         if password != passwordConf:
             return HttpResponseRedirect(ROOT_PATH)
-        
+
         # Make sure email & pwd are valid
         if not (val.validate_email(email, True) and val.validate_password(password)):
             return HttpResponseRedirect(ROOT_PATH)
@@ -115,7 +119,7 @@ def register(request: HttpRequest):
         # Make sure email doesn't already exist
         if len(User.objects.filter(email=email)) != 0:
             return HttpResponseRedirect(ROOT_PATH)
-        
+
         # Now confirmed valid, create account
         newAcct = User.objects.create_user(username=email, email=email, password=password)
         newAcct.save()
@@ -123,61 +127,24 @@ def register(request: HttpRequest):
         # TODO: Should send visible feedback to user
 
         return HttpResponseRedirect(ROOT_PATH)
-    
+
     return HttpResponseBadRequest()
 
-@csrf_exempt
-def validate(request):
-    if request.method == "POST":
-        password = request.POST.get("password")
-        email = request.POST.get("email")
 
-        valid_pass = True
-        valid_email = True
 
-        if not val.validate_password(password):
-            valid_pass = False
-
-        if not val.validate_email(email):
-            valid_email = False
-
-        return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
-
-def updateFeed(request):
-    posts = Post.objects.all().order_by('timestamp')
-    comments = Comments.objects.all().order_by('timestamp')
-    return render(request,'index.html', {"posts": posts, "comments": comments})
-
-def uploadPost(request):
-    # user = request.user.email
-    user = 'guest@buffalo.edu'
-    image = request.FILES.get("image upload")
-    caption = request.POST["caption"]
-
-    post = Post.objects.create(user=user, image=image, caption=caption)
-    post.save()
-    return redirect("/")
 
 def deletePost(request, pk):
     post = Post.objects.get(pk=pk)
-    
+
     if post.user == request.user:
         post.delete()
     return redirect("/")
 
-def likePost(request, pk):
-    post = Post.objects.get(pk=pk)
-    
-    if not post.userLikes.contains(request.user):
-        post.likes += 1
-        post.userLikes.add(request.user)
-        post.save()
-    return redirect("/")
 
 def dislikePost(request, pk):
     post = Post.objects.get(pk=pk)
 
-    if post.userLikes.contains(request.user):  
+    if post.userLikes.contains(request.user):
         post.likes -= 1
         post.userLikes.remove(request.user)
         post.save()
@@ -189,22 +156,32 @@ def addComment(request, postId):
     user = 'guest@buffalo.edu'
     comment = request.POST["comment"]
 
+    comment = html.escape(comment)
+
     postComment = Comments.objects.create(post=post, user=user, comment=comment)
     postComment.save()
     return redirect("/")
 
 def deleteComment(request, commentId):
     comment = Comments.objects.get(commentId)
-    
+
     if comment.user == request.user:
         comment.delete()
     return redirect("/")
 
 def login_view(request: HttpRequest):
     if request.method == "POST":
+
+
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
-        
+
+
+        email = html.escape(email)
+
+        password = html.escape(password)
+
+
         user = authenticate(request, username=email, password=password)
         if user:
             login(request, user)
@@ -213,8 +190,86 @@ def login_view(request: HttpRequest):
             pass
 
         return HttpResponseRedirect(ROOT_PATH)
-    
+
     return HttpResponseBadRequest()
+
+@csrf_exempt
+def updateFeed(request) -> JsonResponse:
+
+    posts = Post.objects.all().order_by('-timestamp')
+    posts_data = []
+    for post in posts:
+        post_dict = {
+            'id': post.id,
+            'user': post.user,
+            'image': {'url': post.image.url if post.image else ''},
+            'caption': post.caption + "\n",
+            'likes': post.likes,
+            'comments': []
+        }
+        posts_data.append(post_dict)
+
+    return JsonResponse({'posts': posts_data})
+
+@csrf_exempt
+def uploadPost(request) -> JsonResponse:
+    if request.method == 'POST':
+
+        # user = 'guest@buffalo.edu'
+        user = request.user.email
+
+        image = request.FILES.get('image_upload')  # Match THE NAME IN THE UPLOAD
+        caption = request.POST.get('caption')
+
+        caption = html.escape(caption)
+
+        if image and caption:
+            post = Post.objects.create(user=user, image=image, caption=caption)
+            post.save()
+            return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
+        elif caption:
+            post = Post.objects.create(user=user, caption=caption)
+            post.save()
+            return JsonResponse({'status': 'success','post_id': post.id})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Missing image or caption'}, status=400)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
+@csrf_exempt
+def likePost(request, pk) -> JsonResponse:
+    user_who_is_liking = request.user
+
+    if request.method == 'POST':
+        try:
+            post = Post.objects.get(pk=pk)
+
+            if str(user_who_is_liking.username) != "AnonymousUser" and not post.userLikes.contains(user_who_is_liking):
+                post.likes +=1
+                post.userLikes.add(user_who_is_liking)
+            elif str(user_who_is_liking.username) != "AnonymousUser":
+                post.likes -= 1
+                post.userLikes.remove(user_who_is_liking)
+            post.save()
+            return JsonResponse({
+                'status': 'success',
+                'likes': post.likes
+            })
+
+        except Post.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Post not found'
+            }, status=404)
+
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
 
 @csrf_exempt
 def logout_view(request: HttpRequest):
