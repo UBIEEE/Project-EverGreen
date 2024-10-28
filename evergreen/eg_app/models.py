@@ -18,7 +18,7 @@ class Post(models.Model):
 
     #list_of_users_who_liked = ArrayField(User,models.CharField(max_length=30))
 
-    #userLikes = models.ManyToManyField(User.username,blank=True)
+    userLikes = models.ManyToManyField(User,blank=True)
 
     likes = models.PositiveIntegerField(default=0)
 
