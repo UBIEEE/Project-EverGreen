@@ -130,23 +130,6 @@ def register(request: HttpRequest) -> HttpResponse:
     
     return HttpResponseBadRequest()
 
-@csrf_exempt
-def validate(request):
-    if request.method == "POST":
-        password = request.POST.get("password")
-        email = request.POST.get("email")
-
-        valid_pass = True
-        valid_email = True
-
-        if not val.validate_password(password):
-            valid_pass = False
-
-        if not val.validate_email(email):
-            valid_email = False
-
-        return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
-
 
 
 
@@ -235,10 +218,8 @@ def uploadPost(request) -> JsonResponse:
             return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
         else:
             return JsonResponse({'status': 'error', 'message': 'Missing image or caption'}, status=400)
-    else:
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
-
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 
 @csrf_exempt
@@ -265,6 +246,7 @@ def likePost(request, pk) -> JsonResponse:
                 'status': 'error',
                 'message': str(e)
             }, status=500)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
 
 @csrf_exempt
