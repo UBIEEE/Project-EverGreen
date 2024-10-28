@@ -11,6 +11,9 @@ class Post(models.Model):
     image = models.ImageField(upload_to="posts",blank=True,null=True)
     caption = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    #list_of_users_who_liked = models.JSONField(default=list)
+
     userLikes = models.ManyToManyField(User,blank=True)
 
     likes = models.PositiveIntegerField(default=0)

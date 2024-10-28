@@ -109,8 +109,10 @@ function likePost(postId) {
 
   const request = new XMLHttpRequest();
   request.open("POST", `likePost/${postId}`);
+
   request.setRequestHeader("X-CSRFToken", csrfToken);
   request.setRequestHeader("Content-Type", "application/json");
+
 
   request.onload = function () {
     if (this.status === 200) {

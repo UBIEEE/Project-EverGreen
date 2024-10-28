@@ -99,7 +99,7 @@ def validate(request):
             valid_email = False
 
         return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
-    
+
     return HttpResponseBadRequest()
 
 def register(request: HttpRequest) -> HttpResponse:
@@ -116,7 +116,7 @@ def register(request: HttpRequest) -> HttpResponse:
         # Make sure passwords match
         if password != passwordConf:
             return HttpResponseRedirect(ROOT_PATH)
-        
+
         # Make sure email & pwd are valid
         if not (val.validate_email(email, True) and val.validate_password(password)):
             return HttpResponseRedirect(ROOT_PATH)
@@ -124,7 +124,7 @@ def register(request: HttpRequest) -> HttpResponse:
         # Make sure email doesn't already exist
         if len(User.objects.filter(email=email)) != 0:
             return HttpResponseRedirect(ROOT_PATH)
-        
+
         # Now confirmed valid, create account
         newAcct = User.objects.create_user(username=email, email=email, password=password)
         newAcct.save()
@@ -132,7 +132,7 @@ def register(request: HttpRequest) -> HttpResponse:
         # TODO: Should send visible feedback to user
 
         return HttpResponseRedirect(ROOT_PATH)
-    
+
     return HttpResponseBadRequest()
 
 
@@ -140,7 +140,7 @@ def register(request: HttpRequest) -> HttpResponse:
 
 def deletePost(request, pk):
     post = Post.objects.get(pk=pk)
-    
+
     if post.user == request.user:
         post.delete()
     return redirect("/")
@@ -149,7 +149,7 @@ def deletePost(request, pk):
 def dislikePost(request, pk):
     post = Post.objects.get(pk=pk)
 
-    if post.userLikes.contains(request.user):  
+    if post.userLikes.contains(request.user):
         post.likes -= 1
         post.userLikes.remove(request.user)
         post.save()
@@ -169,7 +169,7 @@ def addComment(request, postId):
 
 def deleteComment(request, commentId):
     comment = Comments.objects.get(commentId)
-    
+
     if comment.user == request.user:
         comment.delete()
     return redirect("/")
@@ -195,7 +195,7 @@ def login_view(request: HttpRequest):
             pass
 
         return HttpResponseRedirect(ROOT_PATH)
-    
+
     return HttpResponseBadRequest()
 
 @csrf_exempt
@@ -230,11 +230,11 @@ def uploadPost(request) -> JsonResponse:
         caption = html.escape(caption)
 
         if  image and caption:
-            post = Post.objects.create(user=user, image=image, caption=caption)
+            post = Post.objects.create(user=user, image=image, caption=caption, list_of_users_who_liked=[])
             post.save()
             return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
         elif caption:
-            post = Post.objects.create(user=user, caption=caption)
+            post = Post.objects.create(user=user, caption=caption, list_of_users_who_liked=[])
             post.save()
             return JsonResponse({'status': 'success','post_id': post.id})
         else:
@@ -246,15 +246,26 @@ def uploadPost(request) -> JsonResponse:
 @csrf_exempt
 def likePost(request, pk) -> JsonResponse:
 
-    username = request.user;
-    print(username)
+
+    user_who_is_liking = request.user;
+
+
+    #request.POST.user
+    #print(username)
+
     if request.method == 'POST':
         try:
             post = Post.objects.get(pk=pk)
+
+            for name in post.userLikes:
+                print(name)
             # Since you're using a guest user for now
 
-            if str(username) != "AnonymousUser":
-                post.likes = 1
+
+            if str(user_who_is_liking.username) != "AnonymousUser" and not post.list_of_users_who_liked.contains(user_who_is_liking):
+                post.likes +=1
+                post.list_of_users_who_liked.add(user_who_is_liking.username)
+            print(post.list_of_users_who_liked)
             post.save()
             return JsonResponse({
                 'status': 'success',
