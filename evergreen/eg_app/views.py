@@ -254,9 +254,7 @@ def likePost(request, pk) -> JsonResponse:
             # Since you're using a guest user for now
 
             if str(username) != "AnonymousUser":
-
-
-                post.likes += 1
+                post.likes = 1
             post.save()
             return JsonResponse({
                 'status': 'success',
