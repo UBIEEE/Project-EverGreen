@@ -1,5 +1,7 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 import uuid
 
 class Post(models.Model):
@@ -12,9 +14,11 @@ class Post(models.Model):
     caption = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    #list_of_users_who_liked = models.JSONField(default=list)
 
-    userLikes = models.ManyToManyField(User,blank=True)
+
+    #list_of_users_who_liked = ArrayField(User,models.CharField(max_length=30))
+
+    #userLikes = models.ManyToManyField(User.username,blank=True)
 
     likes = models.PositiveIntegerField(default=0)
 

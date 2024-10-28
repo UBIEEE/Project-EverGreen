@@ -257,15 +257,13 @@ def likePost(request, pk) -> JsonResponse:
         try:
             post = Post.objects.get(pk=pk)
 
-            for name in post.userLikes:
-                print(name)
+
             # Since you're using a guest user for now
 
 
-            if str(user_who_is_liking.username) != "AnonymousUser" and not post.list_of_users_who_liked.contains(user_who_is_liking):
+            if str(user_who_is_liking.username) != "AnonymousUser":
                 post.likes +=1
-                post.list_of_users_who_liked.add(user_who_is_liking.username)
-            print(post.list_of_users_who_liked)
+
             post.save()
             return JsonResponse({
                 'status': 'success',
