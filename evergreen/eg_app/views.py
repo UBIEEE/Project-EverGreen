@@ -12,7 +12,6 @@ import mimetypes
 from eg_app.models import Post, Comments
 import eg_app.util.validators as val
 
-
 ROOT_PATH = "/"
 
 # Create your views here.
@@ -67,8 +66,6 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
 
         if encoding:
             response['Content-Encoding'] = encoding
-        else:
-            response['Content-Encoding'] = ""
 
         response['X-Content-Type-Options'] = "nosniff"
         # response['Content-Length'] = str(len(content))  # needed for very large files, Django handles it
@@ -78,7 +75,7 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
         return HttpResponseNotFound("404 Not Found")
 
 
-def addCookies(response: HttpResponse, cookies: dict[str, str]):
+def addCookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
     """add all cookies from the give dic to the response"""
     for cookieName, cookieValue in cookies.items():
         response.set_cookie(cookieName, cookieValue)
@@ -129,8 +126,8 @@ def register(request: HttpRequest) -> HttpResponse:
             return HttpResponseRedirect(ROOT_PATH)
 
         # Now confirmed valid, create account
-        newAcct = User.objects.create_user(
-            username=email, email=email, password=password)
+        # (Django takes raw password, handles salting/hashing itself before storing)
+        newAcct = User.objects.create_user(username=email, email=email, password=password)
         newAcct.save()
 
         # TODO: Should send visible feedback to user
@@ -192,6 +189,7 @@ def login_view(request: HttpRequest):
 
         user = authenticate(request, username=email, password=password)
         if user:
+            # Django handles all the storing and sending of auth tokens itself
             login(request, user)
         else:
             # TODO: Should send visible feedback to user
@@ -284,5 +282,6 @@ def likePost(request, pk) -> JsonResponse:
 
 @csrf_exempt
 def logout_view(request: HttpRequest):
+    # Django handles the invalidating and client-side removal of auth tokens itself
     logout(request)
     return HttpResponseRedirect(ROOT_PATH)
