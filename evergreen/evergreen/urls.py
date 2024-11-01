@@ -21,14 +21,30 @@ from eg_app import views
 from django.conf.urls.static import static
 from django.conf import settings
 
-
 # from evergreen import settings
 
 urlpatterns = [
+
     path("admin/", admin.site.urls),
     path('', views.index, name='index'),
     path('validate', views.validate, name='validate'),
+
+    path('updateFeed', views.updateFeed, name="updateFeed"),
+    path('uploadPost', views.uploadPost, name="uploadPost"),
+    path('deletePost', views.deletePost, name="deletePost"),
+    path('likePost/<uuid:pk>', views.likePost, name="likePost"),
+    # path('dislikePost',views.dislikePost,name="dislikePost"),
+    path('addComment', views.addComment, name="addComment"),
+    path('deleteComment', views.deleteComment, name="deleteComment"),
     path('register', views.register, name='register'),
     path('login', views.login_view, name='login'),
     path('logout', views.logout_view, name='logout')
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
+else:
+    # FOR PROD, or DEBUG=FALSE
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

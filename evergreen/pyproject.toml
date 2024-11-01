@@ -3,11 +3,11 @@ name = "project-evergreen"
 version = "0.1.0"
 description = "Project for CSE312 in Fall 2024."
 authors = [
-    "Eric Butcher <ericbutc@buffalo.edu>", 
-    "Alex McHugh <apmchugh@buffalo.edu>", 
-    "Sumanyu Janaparedy <sumanyuj@buffalo.edu>", 
-    "Rances Colon <rancesco@buffalo.edu>", 
-    "Gianna Germain <ggermain@buffalo.edu>"
+    "Eric Butcher <ericbutc@buffalo.edu>",
+    "Alex McHugh <apmchugh@buffalo.edu>",
+    "Sumanyu Janaparedy <sumanyuj@buffalo.edu>",
+    "Rances Colon <rancesco@buffalo.edu>",
+    "Gianna Germain <ggermain@buffalo.edu>",
 ]
 readme = "README.md"
 package-mode = false
@@ -19,8 +19,10 @@ bcrypt = "^4.2.0"
 Django = "^5.1.1"
 whitenoise = "^6.7.0"
 email-validator = "^2.2.0"
-psycopg = {extras = ["binary"], version = "^3.2.3"}
+psycopg = { extras = ["binary"], version = "^3.2.3" }
 
+Pillow = "^9.2.0"
+django-bootstrap = "^0.2.4"
 
 
 [build-system]
