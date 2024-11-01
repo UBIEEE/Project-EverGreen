@@ -10,10 +10,10 @@ class Post(models.Model):
     #user = models.ForeignKey(User, on_delete=models.CASCADE)
     user = models.TextField(blank=False)
 
-    image = models.ImageField(upload_to="posts",blank=True,null=True)
+    image = models.ImageField(upload_to="image_upload",blank=True,null=True)
     caption = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-
+ 
 
 
     #list_of_users_who_liked = ArrayField(User,models.CharField(max_length=30))

@@ -9,7 +9,9 @@ from urllib.parse import quote
 import html
 import mimetypes
 
-from eg_app.models import Post, Comments
+import PIL
+
+from eg_app.models import Post, Comments 
 import eg_app.util.validators as val
 
 ROOT_PATH = "/"
