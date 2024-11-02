@@ -9,7 +9,7 @@ from urllib.parse import quote
 import html
 import mimetypes
 
-import PIL
+# import PIL
 
 from eg_app.models import Post, Comments 
 import eg_app.util.validators as val
@@ -227,6 +227,9 @@ def uploadPost(request) -> JsonResponse:
         if image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
+
+            storeFile(image)
+
             return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
         elif caption:
             post = Post.objects.create(user=user, caption=caption)
@@ -271,6 +274,14 @@ def likePost(request, pk) -> JsonResponse:
             }, status=500)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
+def storeFile(image):
+    dir = open("public/image/uploads/image" + image, "wb")
+    dir.write(image)
+
+def uploadImage(request, fn):
+    print("uploading")
+
+    return HttpResponse('<img src= /media/image_upload/' + fn + '>')
 
 @csrf_exempt
 def logout_view(request: HttpRequest):

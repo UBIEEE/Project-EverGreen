@@ -38,7 +38,9 @@ urlpatterns = [
     path('deleteComment',views.deleteComment,name="deleteComment"),
     path('register', views.register, name='register'),
     path('login', views.login_view, name='login'),
-    path('logout', views.logout_view, name='logout')
+    path('logout', views.logout_view, name='logout'),
+
+    path('media/image_upload/<str:fn>',views.uploadImage,name='media_upload')
 ]
 
 if settings.DEBUG:
