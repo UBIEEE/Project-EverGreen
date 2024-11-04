@@ -30,19 +30,19 @@ jobs:
 
     - name: Sort imports with isort
       run: |
-        isort . 
+        poetry run isort . 
 
     - name: Format with autopep8
       run: |
-        autopep8 . 
+        poetry run autopep8 . 
 
     - name: Lint with flake8
       run: |
-        flake8 .
+        poetry run flake8 .
 
     - name: Find problems from mypy
       run: |
-        mypy .
+        poetry run mypy .
 
 
 

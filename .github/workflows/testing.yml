@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.7
+    - name: Set up Python 3.12
       uses: actions/setup-python@v2
       with:
         python-version: 3.12
@@ -23,8 +23,7 @@ jobs:
         pip install poetry
         cd evergreen
         poetry install
-        poetry shell
 
     - name: Django Testing
       run: |
-        python3 manage.py test
+        poetry run manage.py test
