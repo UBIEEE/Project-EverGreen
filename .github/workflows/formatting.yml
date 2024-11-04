@@ -10,6 +10,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    defaults: 
+        run:
+            working-directory: ./evergreen
 
     steps:
     - uses: actions/checkout@v2
@@ -25,24 +28,19 @@ jobs:
     # pip install mypy
       run: |
         python -m pip install --upgrade pip
-        cd evergreen
         poetry install
 
     - name: Sort imports with isort
-      run: |
-        poetry run isort . 
+      run: poetry run isort . 
 
     - name: Format with autopep8
-      run: |
-        poetry run autopep8 . 
+      run: poetry run autopep8 . 
 
     - name: Lint with flake8
-      run: |
-        poetry run flake8 .
+      run: poetry run flake8 .
 
     - name: Find problems from mypy
-      run: |
-        poetry run mypy .
+      run: poetry run mypy .
 
 
 
