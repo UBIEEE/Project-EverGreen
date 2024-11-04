@@ -1,0 +1,30 @@
+name: Django Testing
+
+on:
+    push:
+        branches: [ "main", "dev" ]
+    pull_request:
+        branches: [ "main", "dev" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.12
+    - name: Install environment
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        cd evergreen
+        poetry install
+        poetry shell
+
+    - name: Django Testing
+      run: |
+        python3 manage.py test
