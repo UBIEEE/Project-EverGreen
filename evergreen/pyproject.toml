@@ -23,6 +23,10 @@ psycopg = { extras = ["binary"], version = "^3.2.3" }
 
 Pillow = "^9.2.0"
 django-bootstrap = "^0.2.4"
+flake8 = "^7.1.1"
+autopep8 = "^2.3.1"
+isort = "^5.13.2"
+mypy = "^1.13.0"
 
 
 [build-system]
