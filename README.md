@@ -22,6 +22,6 @@ In the root directory of the project, type `docker compose up --build --force-re
 The database migrations should be automatically applied by Docker when it spins up the containers. If you are receiving errors during this step, it is best to delete any old containers and volumes you have lying around to ensure that Docker creates the setup form a clean state. 
 
 > [!TIP]
-> We have noticed that the containers do not attach properly if a user is running docker through the `mnt/c/` directory when using WSL. Please have the project placed directly in your host filesystem and spin up the containers directly from your host OS. 
+> We have noticed that the containers do not attach properly if a user is running docker through the `mnt/c/` directory when using [WSL](https://learn.microsoft.com/en-us/windows/wsl/). Please have the project placed directly in your host filesystem and spin up the containers directly from your host OS. 
 
 You can use the command `docker compose exec django python manage.py createsuperuser` to make your admin user from a separate terminal. You can then go to the `/admin` panel and login with those credentials that you used to create the super user. 
