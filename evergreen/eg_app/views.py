@@ -17,23 +17,29 @@ ROOT_PATH = "/"
 # Create your views here.
 
 # handles request
+
+
 @csrf_exempt
 def index(request):
     if request.user.is_authenticated:
-        return render(request,'index.html',{'hidden2': 'hidden', 'email': request.user.email})
+        return render(request, 'index.html', {'hidden2': 'hidden', 'email': request.user.email})
     else:
-        return render(request,'index.html',{'hidden1': 'hidden'})
+        return render(request, 'index.html', {'hidden1': 'hidden'})
 
-def getFileType(filePath: str) -> tuple[str|None, str|None]:
-    contentType = mimetypes.guess_type(filePath) #returns tuple {type, encoding}
+
+def getFileType(filePath: str) -> tuple[str | None, str | None]:
+    # returns tuple {type, encoding}
+    contentType = mimetypes.guess_type(filePath)
     return contentType
+
 
 def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can handle img and text
     # get the absolute path
     sanitizedFileName = quote(fileName)
     path = Path(settings.STATIC_ROOT) / sanitizedFileName
 
-    allowedType: set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg', '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
+    allowedType: set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg',
+                             '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
 
     if not str(path.suffix.lower()) in allowedType:  # to deal with user uploads
         return HttpResponseNotFound("404 - File type not allowed")
@@ -43,7 +49,7 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
     if not path.resolve().is_relative_to(rootPath):
         return HttpResponseNotFound("404 Not Found")
 
-    if path.exists() and path.is_file(): # make sure it's not a directory
+    if path.exists() and path.is_file():  # make sure it's not a directory
         contentType, encoding = getFileType(str(path))
 
         try:
@@ -68,11 +74,13 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
     else:
         return HttpResponseNotFound("404 Not Found")
 
+
 def addCookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
     """add all cookies from the give dic to the response"""
     for cookieName, cookieValue in cookies.items():
         response.set_cookie(cookieName, cookieValue)
     return response
+
 
 @csrf_exempt
 def validate(request):
@@ -90,16 +98,16 @@ def validate(request):
         if not val.validate_email(email):
             valid_email = False
 
-        return JsonResponse({"valid_pass":str(valid_pass),"valid_email":str(valid_email)})
+        return JsonResponse({"valid_pass": str(valid_pass), "valid_email": str(valid_email)})
 
     return HttpResponseBadRequest()
+
 
 def register(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
         passwordConf = request.POST.get("confirm_password", "")
-
 
         email = html.escape(email)
         password = html.escape(password)
@@ -129,8 +137,6 @@ def register(request: HttpRequest) -> HttpResponse:
     return HttpResponseBadRequest()
 
 
-
-
 def deletePost(request, pk):
     post = Post.objects.get(pk=pk)
 
@@ -148,6 +154,7 @@ def dislikePost(request, pk):
         post.save()
     return redirect("/")
 
+
 def addComment(request, postId):
     post = Post.objects.get(id=postId)
     # user = request.user.email
@@ -156,9 +163,11 @@ def addComment(request, postId):
 
     comment = html.escape(comment)
 
-    postComment = Comments.objects.create(post=post, user=user, comment=comment)
+    postComment = Comments.objects.create(
+        post=post, user=user, comment=comment)
     postComment.save()
     return redirect("/")
+
 
 def deleteComment(request, commentId):
     comment = Comments.objects.get(commentId)
@@ -167,18 +176,16 @@ def deleteComment(request, commentId):
         comment.delete()
     return redirect("/")
 
+
 def login_view(request: HttpRequest):
     if request.method == "POST":
-
 
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
 
-
         email = html.escape(email)
 
         password = html.escape(password)
-
 
         user = authenticate(request, username=email, password=password)
         if user:
@@ -191,6 +198,7 @@ def login_view(request: HttpRequest):
         return HttpResponseRedirect(ROOT_PATH)
 
     return HttpResponseBadRequest()
+
 
 @csrf_exempt
 def updateFeed(request) -> JsonResponse:
@@ -210,6 +218,7 @@ def updateFeed(request) -> JsonResponse:
 
     return JsonResponse({'posts': posts_data})
 
+
 @csrf_exempt
 def uploadPost(request) -> JsonResponse:
     if request.method == 'POST':
@@ -217,7 +226,8 @@ def uploadPost(request) -> JsonResponse:
         # user = 'guest@buffalo.edu'
         user = request.user.email
 
-        image = request.FILES.get('image_upload')  # Match THE NAME IN THE UPLOAD
+        # Match THE NAME IN THE UPLOAD
+        image = request.FILES.get('image_upload')
         caption = request.POST.get('caption')
 
         caption = html.escape(caption)
@@ -225,11 +235,11 @@ def uploadPost(request) -> JsonResponse:
         if image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
-            return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
+            return JsonResponse({'status': 'success', 'image_url': post.image.url, 'post_id': post.id})
         elif caption:
             post = Post.objects.create(user=user, caption=caption)
             post.save()
-            return JsonResponse({'status': 'success','post_id': post.id})
+            return JsonResponse({'status': 'success', 'post_id': post.id})
         else:
             return JsonResponse({'status': 'error', 'message': 'Missing image or caption'}, status=400)
 
@@ -245,7 +255,7 @@ def likePost(request, pk) -> JsonResponse:
             post = Post.objects.get(pk=pk)
 
             if str(user_who_is_liking.username) != "AnonymousUser" and not post.userLikes.contains(user_who_is_liking):
-                post.likes +=1
+                post.likes += 1
                 post.userLikes.add(user_who_is_liking)
             elif str(user_who_is_liking.username) != "AnonymousUser":
                 post.likes -= 1
