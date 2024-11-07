@@ -210,7 +210,14 @@ def updateFeed(request) -> JsonResponse:
         }
         posts_data.append(post_dict)
 
+        # if post.image:
+        #     fileUpload(post.image.url)
+
     return JsonResponse({'posts': posts_data})
+
+@csrf_exempt
+def fileUpload(image):
+    return HttpResponse(open(image))
 
 @csrf_exempt
 def uploadPost(request) -> JsonResponse:
