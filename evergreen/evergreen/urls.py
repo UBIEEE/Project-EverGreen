@@ -39,7 +39,7 @@ urlpatterns = [
     path('register', views.register, name='register'),
     path('login', views.login_view, name='login'),
     path('logout', views.logout_view, name='logout'),
-    path('media/image/<uuid:pk>', views.fileUpload, name='fileUpload')                                   
+    path('media/image/<uuid:pk>', views.fileUpload, name='fileUpload')                                 
 ]
 
 if settings.DEBUG:
