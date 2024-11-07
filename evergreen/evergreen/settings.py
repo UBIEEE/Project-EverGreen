@@ -28,8 +28,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '*']
 
+ASGI_APPLICATION = 'evergreen.asgi.application'
 
-# Application definition
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -39,7 +40,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "eg_app",
+    "channels",
 ]
+
+# for websocket
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

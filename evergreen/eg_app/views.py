@@ -9,6 +9,10 @@ from urllib.parse import quote
 import html
 import mimetypes
 
+# for websockets
+from channels.generic.websocket import WebsocketConsumer
+
+
 from eg_app.models import Post, Comments
 import eg_app.util.validators as val
 
@@ -25,6 +29,10 @@ def index(request):
         return render(request, 'index.html', {'hidden2': 'hidden', 'email': request.user.email})
     else:
         return render(request, 'index.html', {'hidden1': 'hidden'})
+
+
+
+
 
 
 def getFileType(filePath: str) -> tuple[str | None, str | None]:
