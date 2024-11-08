@@ -8,6 +8,7 @@ from pathlib import Path
 from urllib.parse import quote
 import html
 import mimetypes
+import traceback
 
 from eg_app.models import Post, Comments
 import eg_app.util.validators as val
@@ -272,10 +273,11 @@ def likePost(request, pk) -> JsonResponse:
                 'message': 'Post not found'
             }, status=404)
 
-        except Exception as e:
+        except Exception:
+            print(traceback.format_exc())
             return JsonResponse({
                 'status': 'error',
-                'message': str(e)
+                'message': 'An internal error occurred'
             }, status=500)
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
 
