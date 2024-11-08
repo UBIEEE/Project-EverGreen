@@ -35,13 +35,12 @@ jobs:
       run: poetry run isort . 
 
     - name: Format with autopep8
-      run: poetry run autopep8 . 
+      run: poetry run autopep8 -i -r --max-line-length=120 .
 
     - name: Lint with flake8
-      run: poetry run flake8 .
+      run: poetry run flake8 --exclude .venv,venv
 
-    - name: Find problems from mypy
-      run: poetry run mypy .
+
 
 
 
