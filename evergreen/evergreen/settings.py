@@ -28,6 +28,7 @@ SECRET_KEY = "django-insecure-=mwfbc26f&ixkoi@58!3-_)e#)ega^i4(g*l6h7)405_x-_7nu
 DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '*']
 
 
 # Application definition
@@ -89,17 +90,16 @@ DATABASES = {
 
         "HOST": "database",  # service name from docker-compose.yml
         "PORT": 5432,
-        'TEST': {'NAME': 'test_db', 'ENGINE': 'django.db.backends.sqlite3'}
     }
 }
 
 if 'manage.py' in sys.argv and 'test' in sys.argv and (sys.argv.index('test') == (sys.argv.index('manage.py') + 1)):
     DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "sqlitedb",
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": "sqlitedb",
+        }
     }
-}
 
 
 # Password validation
