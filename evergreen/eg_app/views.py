@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
+from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from pathlib import Path
@@ -216,8 +217,14 @@ def updateFeed(request) -> JsonResponse:
     return JsonResponse({'posts': posts_data})
 
 @csrf_exempt
-def fileUpload(pk):
-    return HttpResponse(open(pk))
+def fileUpload(request):
+    if request.method == "POST" and request.FILES["image_upload"]:
+        image = request.FILES["image_upload"]
+        fileStorage = FileSystemStorage()
+        storedFile = fileStorage.save(image.name, image)
+        url = fileStorage.url(storedFile)
+        return render(request, "index.html", {"image_url": url})
+    return render(request, "index.html")
 
 @csrf_exempt
 def uploadPost(request) -> JsonResponse:
@@ -235,7 +242,7 @@ def uploadPost(request) -> JsonResponse:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
 
-            storeFile(image)
+            fileUpload(request)
 
             return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
         elif caption:

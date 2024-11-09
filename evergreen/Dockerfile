@@ -1,4 +1,5 @@
 FROM python:3.10
+FROM nginx:1.25
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -8,6 +9,9 @@ COPY pyproject.toml .
 RUN pip3 install poetry 
 RUN poetry config virtualenvs.create false --local
 RUN poetry install 
+
+RUN rm /etc/nginx/conf.d/default.conf
+
 COPY . .
 
 EXPOSE 8080

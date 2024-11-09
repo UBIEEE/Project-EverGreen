@@ -14,3 +14,12 @@ services:
     env_file: ".env"
     depends_on:
       - database 
+
+  nginx:
+    build: ./nginx
+    expose:
+      - 8080
+    env_file:
+      - .env
+    depends_on:
+      - postgress
