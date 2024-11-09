@@ -116,8 +116,8 @@ footer {
 .like-button {
     font-size: 14px;
     margin-left: 5%;
-}
-
+} 
+ 
 .dislike-button {
     font-size: 14px;
     margin-left: 5%;
@@ -132,7 +132,6 @@ footer {
 }
 
 .deleteButton_Post {
-    display: block;
     font-size: 24px;
     margin-top: 5%;
     margin-left: 5%;

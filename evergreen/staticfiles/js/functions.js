@@ -72,12 +72,27 @@ function uploadPost() {
   request.send(formData);
 }
 
-// WE DO NOT NEED THIS METHOD
-//function addPostToFeed() {}
 
-function deletePost() {
+
+
+function deletePost(postId) {
+  const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
   const request = new XMLHttpRequest();
-  request.open("DELETE", "deletePost");
+  request.open("DELETE", `deletePost/${postId}`);
+
+  request.setRequestHeader("X-CSRFToken", csrfToken);
+  request.setRequestHeader("Content-Type", "application/json");
+
+
+  request.onload = function () {
+    if (this.status === 200) {
+      updateFeed(); 
+    } else {
+      console.error("Delete failed");
+    }
+  };
+
   request.send();
 }
 

@@ -218,8 +218,7 @@
                                         Like ({{ post.likes }})
                                     </button>
                                 </form>
-                            </div>
-
+                            </div>    
                             <div class="dislikeButton">
                                 <form action="dislikePost/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
                                     {% csrf_token %}

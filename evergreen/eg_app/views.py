@@ -215,9 +215,9 @@ def updateFeed(request) -> JsonResponse:
 
     return JsonResponse({'posts': posts_data})
 
-@csrf_exempt
-def fileUpload(pk):
-    return HttpResponse(open(pk))
+# @csrf_exempt
+# def fileUpload(pk):
+#     return HttpResponse(open(pk))
 
 @csrf_exempt
 def uploadPost(request) -> JsonResponse:
