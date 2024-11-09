@@ -40,6 +40,9 @@ jobs:
     - name: Lint with flake8
       run: poetry run flake8 --exclude .venv,venv
 
+    - name: Check with mypy
+      run: poetry run mypy . --disable-error-code import-untyped 
+
 
 
 
