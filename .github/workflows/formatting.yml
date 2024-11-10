@@ -38,7 +38,7 @@ jobs:
       run: poetry run autopep8 -i -r --max-line-length=79 .
 
     - name: Lint with flake8
-      run: poetry run flake8 --exclude .venv,venv
+      run: poetry run flake8 --exclude .venv,venv,.git
 
     - name: Check with mypy
       run: poetry run mypy . --disable-error-code import-untyped 
