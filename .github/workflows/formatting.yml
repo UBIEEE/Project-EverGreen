@@ -34,7 +34,7 @@ jobs:
     - name: Sort imports with isort
       run: poetry run isort . 
 
-    - name: Format with autopep8
+    - name: Format with black
       run: poetry run black .
 
       # configured in .flake8

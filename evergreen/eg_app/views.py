@@ -1,17 +1,25 @@
-from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseNotFound, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
-from pathlib import Path
-from urllib.parse import quote
 import html
 import mimetypes
 import traceback
+from pathlib import Path
+from urllib.parse import quote
 
-from eg_app.models import Post, Comments
+from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+    JsonResponse,
+)
+from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
+
 import eg_app.util.validators as val
+from eg_app.models import Comments, Post
 
 ROOT_PATH = "/"
 
@@ -23,9 +31,11 @@ ROOT_PATH = "/"
 @csrf_exempt
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'index.html', {'hidden2': 'hidden', 'email': request.user.email})
+        return render(
+            request, "index.html", {"hidden2": "hidden", "email": request.user.email}
+        )
     else:
-        return render(request, 'index.html', {'hidden1': 'hidden'})
+        return render(request, "index.html", {"hidden1": "hidden"})
 
 
 def getFileType(filePath: str) -> tuple[str | None, str | None]:
@@ -34,13 +44,28 @@ def getFileType(filePath: str) -> tuple[str | None, str | None]:
     return contentType
 
 
-def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can handle img and text
+def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:
+    # can handle img and text
+
     # get the absolute path
     sanitizedFileName = quote(fileName)
     path = Path(settings.STATIC_ROOT) / sanitizedFileName
 
-    allowedType: set[str] = {'.css', '.html', '.js', '.png', '.jpg', '.jpeg',
-                             '.gif', '.mp3', '.mp4', '.xml', '.json', '.pdf', '.ico'}  # can add more
+    allowedType: set[str] = {
+        ".css",
+        ".html",
+        ".js",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".gif",
+        ".mp3",
+        ".mp4",
+        ".xml",
+        ".json",
+        ".pdf",
+        ".ico",
+    }  # can add more
 
     if not str(path.suffix.lower()) in allowedType:  # to deal with user uploads
         return HttpResponseNotFound("404 - File type not allowed")
@@ -54,7 +79,7 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
         contentType, encoding = getFileType(str(path))
 
         try:
-            with open(path, 'rb') as file:
+            with open(path, "rb") as file:
                 content = file.read()
         except OSError:  # catch most of them, like FileNotFoundError
             return HttpResponseNotFound("404 Not Found")
@@ -66,10 +91,11 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:  # can han
             response = HttpResponse(content)
 
         if encoding:
-            response['Content-Encoding'] = encoding
+            response["Content-Encoding"] = encoding
 
-        response['X-Content-Type-Options'] = "nosniff"
-        # response['Content-Length'] = str(len(content))  # needed for very large files, Django handles it
+        response["X-Content-Type-Options"] = "nosniff"
+        # response['Content-Length'] = str(len(content))  # needed for very large
+        # files, Django handles it
 
         return response
     else:
@@ -99,7 +125,9 @@ def validate(request):
         if not val.validate_email(email):
             valid_email = False
 
-        return JsonResponse({"valid_pass": str(valid_pass), "valid_email": str(valid_email)})
+        return JsonResponse(
+            {"valid_pass": str(valid_pass), "valid_email": str(valid_email)}
+        )
 
     return HttpResponseBadRequest()
 
@@ -128,7 +156,9 @@ def register(request: HttpRequest) -> HttpResponse:
 
         # Now confirmed valid, create account
         # (Django takes raw password, handles salting/hashing itself before storing)
-        newAcct = User.objects.create_user(username=email, email=email, password=password)
+        newAcct = User.objects.create_user(
+            username=email, email=email, password=password
+        )
         newAcct.save()
 
         # TODO: Should send visible feedback to user
@@ -159,13 +189,12 @@ def dislikePost(request, pk):
 def addComment(request, postId):
     post = Post.objects.get(id=postId)
     # user = request.user.email
-    user = 'guest@buffalo.edu'
+    user = "guest@buffalo.edu"
     comment = request.POST["comment"]
 
     comment = html.escape(comment)
 
-    postComment = Comments.objects.create(
-        post=post, user=user, comment=comment)
+    postComment = Comments.objects.create(post=post, user=user, comment=comment)
     postComment.save()
     return redirect("/")
 
@@ -204,82 +233,87 @@ def login_view(request: HttpRequest):
 @csrf_exempt
 def updateFeed(request) -> JsonResponse:
 
-    posts = Post.objects.all().order_by('-timestamp')
+    posts = Post.objects.all().order_by("-timestamp")
     posts_data = []
     for post in posts:
         post_dict = {
-            'id': post.id,
-            'user': post.user,
-            'image': {'url': post.image.url if post.image else ''},
-            'caption': post.caption + "\n",
-            'likes': post.likes,
-            'comments': []
+            "id": post.id,
+            "user": post.user,
+            "image": {"url": post.image.url if post.image else ""},
+            "caption": post.caption + "\n",
+            "likes": post.likes,
+            "comments": [],
         }
         posts_data.append(post_dict)
 
-    return JsonResponse({'posts': posts_data})
+    return JsonResponse({"posts": posts_data})
 
 
 @csrf_exempt
 def uploadPost(request) -> JsonResponse:
-    if request.method == 'POST':
+    if request.method == "POST":
 
         # user = 'guest@buffalo.edu'
         user = request.user.email
 
         # Match THE NAME IN THE UPLOAD
-        image = request.FILES.get('image_upload')
-        caption = request.POST.get('caption')
+        image = request.FILES.get("image_upload")
+        caption = request.POST.get("caption")
 
         caption = html.escape(caption)
 
         if image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
-            return JsonResponse({'status': 'success', 'image_url': post.image.url, 'post_id': post.id})
+            return JsonResponse(
+                {"status": "success", "image_url": post.image.url, "post_id": post.id}
+            )
         elif caption:
             post = Post.objects.create(user=user, caption=caption)
             post.save()
-            return JsonResponse({'status': 'success', 'post_id': post.id})
+            return JsonResponse({"status": "success", "post_id": post.id})
         else:
-            return JsonResponse({'status': 'error', 'message': 'Missing image or caption'}, status=400)
+            return JsonResponse(
+                {"status": "error", "message": "Missing image or caption"}, status=400
+            )
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+    return JsonResponse(
+        {"status": "error", "message": "Invalid request method"}, status=405
+    )
 
 
 @csrf_exempt
 def likePost(request, pk) -> JsonResponse:
     user_who_is_liking = request.user
 
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
             post = Post.objects.get(pk=pk)
 
-            if str(user_who_is_liking.username) != "AnonymousUser" and not post.userLikes.contains(user_who_is_liking):
+            if str(
+                user_who_is_liking.username
+            ) != "AnonymousUser" and not post.userLikes.contains(user_who_is_liking):
                 post.likes += 1
                 post.userLikes.add(user_who_is_liking)
             elif str(user_who_is_liking.username) != "AnonymousUser":
                 post.likes -= 1
                 post.userLikes.remove(user_who_is_liking)
             post.save()
-            return JsonResponse({
-                'status': 'success',
-                'likes': post.likes
-            })
+            return JsonResponse({"status": "success", "likes": post.likes})
 
         except Post.DoesNotExist:
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Post not found'
-            }, status=404)
+            return JsonResponse(
+                {"status": "error", "message": "Post not found"}, status=404
+            )
 
         except Exception:
             print(traceback.format_exc())
-            return JsonResponse({
-                'status': 'error',
-                'message': 'An internal error occurred'
-            }, status=500)
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+            return JsonResponse(
+                {"status": "error", "message": "An internal error occurred"}, status=500
+            )
+    return JsonResponse(
+        {"status": "error", "message": "Invalid request method"}, status=405
+    )
 
 
 @csrf_exempt

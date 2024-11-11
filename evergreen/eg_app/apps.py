@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+
 # used to configure and provide meta data
 
 
