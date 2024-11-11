@@ -3,6 +3,7 @@ from eg_app.util.validators import validate_email, validate_password
 
 # c-spell:disable - Don't spellcheck the emails
 
+
 class TestValidateEmail(TestCase):
 
     def test_not_buffalo_email(self):
@@ -50,7 +51,8 @@ class TestValidatePassword(TestCase):
         self.assertTrue(validate_password("123456789012"))
         self.assertTrue(validate_password("NotANumberToBeSeen"))
         self.assertTrue(validate_password("notevenlowercase"))
-        self.assertTrue(validate_password("all the symbols `~!@#$%^&*())-=_+[]{}\\|;',./:\"<>?"))
+        self.assertTrue(validate_password(
+            "all the symbols `~!@#$%^&*())-=_+[]{}\\|;',./:\"<>?"))
         self.assertTrue(validate_password("a" * 12))
         self.assertTrue(validate_password("1" * 12))
         self.assertTrue(validate_password("A" * 255))

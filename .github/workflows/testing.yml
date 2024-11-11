@@ -28,4 +28,4 @@ jobs:
 
     - name: Django Testing
       run: |
-        poetry run python manage.py test eg_app/test/*
+        poetry run python manage.py test 
