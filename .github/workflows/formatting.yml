@@ -23,7 +23,7 @@ jobs:
     - name: Install environment
     # poetry environment should include:
     # pip install flake8
-    # pip install autopep8
+    # pip install black
     # pip install isort
     # pip install mypy
       run: |
@@ -35,14 +35,14 @@ jobs:
       run: poetry run isort . 
 
     - name: Format with autopep8
-      run: poetry run autopep8 -i -r --max-line-length=88 .
+      run: poetry run black .
 
+      # configured in .flake8
     - name: Lint with flake8
-      run: poetry run flake8 --exclude .venv,venv,.git --max-line-length 88
+      run: poetry run flake8 
 
     - name: Check with mypy
-      run: poetry run mypy . --disable-error-code import-untyped 
-
+      run: poetry run mypy . 
 
 
 
