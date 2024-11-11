@@ -32,10 +32,10 @@ jobs:
         poetry install
 
     - name: Sort imports with isort
-      run: poetry run isort . 
+      run: poetry run isort -c . 
 
     - name: Format with black
-      run: poetry run black .
+      run: poetry run black --check .
 
       # configured in .flake8
     - name: Lint with flake8
