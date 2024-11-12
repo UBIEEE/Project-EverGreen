@@ -14,3 +14,4 @@ type_checking:
 
 test:
 	poetry run python manage.py test
+	
