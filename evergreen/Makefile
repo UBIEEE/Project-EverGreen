@@ -1,4 +1,4 @@
-all: sorting blackening flaking type_checking
+format: sorting blackening flaking type_checking
 
 sorting: 
 	poetry run isort .
@@ -11,3 +11,6 @@ flaking:
 
 type_checking:
 	poetry run mypy .
+
+test:
+	poetry run python manage.py test
