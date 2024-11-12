@@ -10,8 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-from pathlib import Path
 import os
+import sys
+from pathlib import Path
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +28,7 @@ SECRET_KEY = "django-insecure-=mwfbc26f&ixkoi@58!3-_)e#)ega^i4(g*l6h7)405_x-_7nu
 # THIS HAS TO BE SET TO FALSE TO GET no-sniff headers!!!
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '0.0.0.0', '*']
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "*"]
 
 
 # Application definition
@@ -50,7 +52,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-
 ]
 
 ROOT_URLCONF = "evergreen.urls"
@@ -82,14 +83,24 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB"),
-
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-
         "HOST": "database",  # service name from docker-compose.yml
-        "PORT": 5432
+        "PORT": 5432,
     }
 }
+
+if (
+    "manage.py" in sys.argv
+    and "test" in sys.argv
+    and (sys.argv.index("test") == (sys.argv.index("manage.py") + 1))
+):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": "sqlite_db",
+        }
+    }
 
 
 # Password validation
@@ -97,7 +108,7 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa: E501
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -135,10 +146,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 SERVE_MEDIA_FILES = True
