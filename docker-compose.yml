@@ -9,6 +9,9 @@ services:
 
   django:
     build: ./evergreen
+    # volumes:
+    #   - static_volume: ./evergreen/staticfiles
+    #   - media_volume: ./media/image_upload
     ports:
       - '8080:8080'
     env_file: ".env"
@@ -16,10 +19,32 @@ services:
       - database 
 
   nginx:
-    build: ./nginx
-    expose:
-      - 8080
-    env_file:
-      - .env
-    depends_on:
-      - postgress
+    build: ./evergreen/nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    
+
+##################################
+# volumes:
+#   - static_volume:
+#   - media_volume:
+
+
+# original code
+
+# image: nginx
+# # build: ./evergreen
+# volumes:
+#   - static_volume: ./evergreen/staticfiles
+#   - media_volume: ./media/image_upload
+# mount:
+#   - type: bind
+#     source: ./evergreen/nginx.conf
+#     target: /etc/nginx/nginx.conf
+#     volume: my_nginx
+# ports:
+#   - '8080:8080'
+# env_file: ".env"
+# depends_on:
+#   - django
