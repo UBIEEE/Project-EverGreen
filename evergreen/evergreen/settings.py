@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "eg_app",
+    "channels",
 ]
+
+ASGI_APPLICATION = "evergreen.asgi.application"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -71,6 +74,13 @@ TEMPLATES = [
         },
     },
 ]
+
+CHANNEL_LAYERS = {
+    
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"  # ONLY DEV 
+    }
+}
 
 WSGI_APPLICATION = "evergreen.wsgi.application"
 
