@@ -12,6 +12,8 @@ services:
     ports:
       - '8080:8080'
     env_file: ".env"
+    volumes:
+    - ./media:/root/media
     depends_on:
       - database 
 
@@ -22,4 +24,4 @@ services:
       - '443:443'
     volumes:
       - ./evergreen/staticfiles:/static
-      - ./evergreen/media/image_upload:/media
+      - ./media:/media
