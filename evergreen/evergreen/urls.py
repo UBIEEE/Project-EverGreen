@@ -22,7 +22,6 @@ from django.urls import path
 
 from eg_app import views
 
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),
