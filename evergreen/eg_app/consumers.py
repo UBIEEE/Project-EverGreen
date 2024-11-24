@@ -1,7 +1,7 @@
 import json
 
 # from asgiref.sync import async_to_sync
-# from channels.db import database_sync_to_async
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 # from channels.layers import get_channel_layer
@@ -18,32 +18,24 @@ class FeedConsumer(AsyncWebsocketConsumer):
     async def connect(self):
 
         print("WebSocket connection attempt received!")
-     
+
         # Add to group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
         print("(GOOD) WebSocket connection accepted successfully!")
 
-    
     # disconnects connection handler
     async def disconnect(self, close_code):
-     
 
-        await self.channel_layer.group_discard(
-            self.room_group_name, self.channel_name
-        )
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         print(f"(BAD) WebSocket disconnected with code: {close_code}")
-
-       
 
     # updated to all clients
     async def feed_update(self, event):
-    
+
         # sending a lovey message to websocket
         await self.send(text_data=json.dumps(event["data"]))
         print("Feed update sent successfully!")
-
-
 
     # handle recieving like events!
     async def receive(self, text_data):
@@ -83,9 +75,9 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_like(self, post_id, user):
-
+        Post = apps.get_model("eg_app", "Post")
         try:
-            Post = apps.get_model("eg_app", "Post")
+
             post = Post.objects.get(pk=post_id)
 
             if str(user.username) != "AnonymousUser":
