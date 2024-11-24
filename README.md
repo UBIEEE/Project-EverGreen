@@ -5,6 +5,7 @@ Project Evergreen is a group project for the class [CSE312: Web Applications](ht
 
 ## Managing the Local Environment
 
+### Poetry
 The development environment is being managed using [Poetry](https://python-poetry.org/). Please make sure that you have Poetry installed:
 ```shell
 pip install poetry
@@ -14,6 +15,13 @@ The virtual environment can be created locally by using the `poetry install` com
 
 New package dependencies for the project can be added using the `poetry add <package-name-from-pip>` command.
 
+### Nginx for Localhost
+To set up nginx configuration, a self signed certificate is needed. To set this up, in the terminal run:
+`openssl req -x509 -newkey rsa:4096 -keyout private.key -out cert.pem -days 365 -sha256 -nodes`
+
+Only the "Country Name" field is necessary, in which you should should type "us" then press enter. All other fields may be ignored by entering "."
+
+Make sure the files are placed in the nginx file directory.
 
 ## Setting up the Docker Environment
 
