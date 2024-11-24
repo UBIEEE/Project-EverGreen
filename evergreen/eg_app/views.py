@@ -270,21 +270,22 @@ def uploadPost(request) -> JsonResponse:
 
             # USES web sockets to braodcast to ALL CLIENTS
             channel_layer = get_channel_layer()
+            posts = Post.objects.all().order_by('-timestamp')
+            posts_data = [{
+                "id": str(p.id),
+                "user": p.user,
+                "image": {"url": p.image.url if p.image else ""},
+                "caption": p.caption + "\n",
+                "likes": p.likes,
+                "comments": [],
+            } for p in posts]
+
             async_to_sync(channel_layer.group_send)(
                 "feed",
                 {
                     "type": "feed_update",
                     "data": {
-                        "posts": [
-                            {
-                                "id": str(post.id),
-                                "user": post.user,
-                                "image": {"url": post.image.url if post.image else ""},
-                                "caption": post.caption + "\n",
-                                "likes": post.likes,
-                                "comments": [],
-                            }
-                        ]
+                        "posts": posts_data
                     },
                 },
             )
@@ -300,23 +301,24 @@ def uploadPost(request) -> JsonResponse:
             post = Post.objects.create(user=user, caption=caption)
             post.save()
 
-            # Broadcast text-only post update
+            # Broadcast TEXT ONLY post update
             channel_layer = get_channel_layer()
+            posts = Post.objects.all().order_by('-timestamp')
+            posts_data = [{
+                "id": str(p.id),
+                "user": p.user,
+                "image": {"url": p.image.url if p.image else ""},
+                "caption": p.caption + "\n",
+                "likes": p.likes,
+                "comments": [],
+            } for p in posts]
+
             async_to_sync(channel_layer.group_send)(
                 "feed",
                 {
                     "type": "feed_update",
                     "data": {
-                        "posts": [
-                            {
-                                "id": str(post.id),
-                                "user": post.user,
-                                "image": {"url": ""},
-                                "caption": post.caption + "\n",
-                                "likes": post.likes,
-                                "comments": [],
-                            }
-                        ]
+                        "posts": posts_data
                     },
                 },
             )

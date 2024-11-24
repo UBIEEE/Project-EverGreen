@@ -34,7 +34,10 @@ class FeedConsumer(AsyncWebsocketConsumer):
     async def feed_update(self, event):
 
         # sending a lovey message to websocket
-        await self.send(text_data=json.dumps(event["data"]))
+        await self.send(text_data=json.dumps({
+                "type": "feed_update",
+                "posts": event["data"]["posts"]
+            }))
         print("Feed update sent successfully!")
 
     # handle receiving like events!

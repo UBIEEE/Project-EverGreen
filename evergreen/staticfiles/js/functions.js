@@ -114,7 +114,7 @@ function uploadPost() {
   request.onload = function () {
     if (this.status === 200) {
       form.reset();
-      updateFeed();
+      //updateFeed();
     }
   };
 
