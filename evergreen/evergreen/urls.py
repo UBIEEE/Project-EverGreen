@@ -32,7 +32,6 @@ urlpatterns = [
     path("uploadPost", views.uploadPost, name="uploadPost"),
     path("deletePost", views.deletePost, name="deletePost"),
     path("likePost/<uuid:pk>", views.likePost, name="likePost"),
-    # path('dislikePost',views.dislikePost,name="dislikePost"),
     path("addComment", views.addComment, name="addComment"),
     path("deleteComment", views.deleteComment, name="deleteComment"),
     path("register", views.register, name="register"),

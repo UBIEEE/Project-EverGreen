@@ -253,7 +253,6 @@ def updateFeed(request) -> JsonResponse:
 def uploadPost(request) -> JsonResponse:
     if request.method == "POST":
 
-        # user = 'guest@buffalo.edu'
         user = request.user.email
 
         # Match THE NAME IN THE UPLOAD
@@ -265,6 +264,7 @@ def uploadPost(request) -> JsonResponse:
         if image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
+
             return JsonResponse(
                 {"status": "success", "image_url": post.image.url, "post_id": post.id}
             )
