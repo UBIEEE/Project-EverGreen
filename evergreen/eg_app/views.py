@@ -256,7 +256,6 @@ def updateFeed(request) -> JsonResponse:
 def uploadPost(request) -> JsonResponse:
     if request.method == "POST":
 
-        # user = 'guest@buffalo.edu'
         user = request.user.email
 
         # Match THE NAME IN THE UPLOAD

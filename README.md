@@ -17,9 +17,11 @@ New package dependencies for the project can be added using the `poetry add <pac
 
 ### Nginx for Localhost
 To set up nginx configuration, a self signed certificate is needed. To set this up, in the terminal run:
-`openssl req -x509 -newkey rsa:4096 -keyout private.key -out cert.pem -days 365 -sha256 -nodes`
+```shell
+openssl req -x509 -newkey rsa:4096 -keyout private.key -out cert.pem -days 365 -sha256 -nodes
+```
 
-Only the "Country Name" field is necessary, in which you should should type "us" then press enter. All other fields may be ignored by entering "."
+Only the "Country Name" field is necessary, in which you should should type "us" then press enter. All other fields may be ignored by typing "." and pressing enter.
 
 Make sure the files are placed in the nginx file directory.
 

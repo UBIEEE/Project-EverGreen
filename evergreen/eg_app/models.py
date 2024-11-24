@@ -7,14 +7,11 @@ from django.db import models
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
 
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     user = models.TextField(blank=False)
 
     image = models.ImageField(upload_to="image_upload", blank=True, null=True)
     caption = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-
-    # list_of_users_who_liked = ArrayField(User,models.CharField(max_length=30))
 
     userLikes = models.ManyToManyField(User, blank=True)
 
