@@ -18,37 +18,32 @@ class FeedConsumer(AsyncWebsocketConsumer):
     async def connect(self):
 
         print("WebSocket connection attempt received!")
-        try:
-            # Add to group
-            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-            await self.accept()
-            print("(GOOD) WebSocket connection accepted successfully!")
+     
+        # Add to group
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.accept()
+        print("(GOOD) WebSocket connection accepted successfully!")
 
-        except Exception as e:
-            print(f"Error in connect!!!")
-            raise
-
+    
     # disconnects connection handler
     async def disconnect(self, close_code):
-        try:
+     
 
-            await self.channel_layer.group_discard(
-                self.room_group_name, self.channel_name
-            )
-            print(f"(BAD) WebSocket disconnected with code: {close_code}")
+        await self.channel_layer.group_discard(
+            self.room_group_name, self.channel_name
+        )
+        print(f"(BAD) WebSocket disconnected with code: {close_code}")
 
-        except Exception as e:
-            print(f"BAD DISCONNECT")
+       
 
     # updated to all clients
     async def feed_update(self, event):
-        try:
-            # sending a lovey message to websocket
-            await self.send(text_data=json.dumps(event["data"]))
-            print("Feed update sent successfully!")
+    
+        # sending a lovey message to websocket
+        await self.send(text_data=json.dumps(event["data"]))
+        print("Feed update sent successfully!")
 
-        except Exception as e:
-            print(f"BAD feed_update")
+
 
     # handle recieving like events!
     async def receive(self, text_data):
