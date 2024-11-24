@@ -1,5 +1,6 @@
 import html
 import mimetypes
+import string
 import traceback
 from pathlib import Path
 from urllib.parse import quote
@@ -332,6 +333,25 @@ def uploadPost(request) -> JsonResponse:
     return JsonResponse(
         {"status": "error", "message": "Invalid request method"}, status=405
     )
+
+
+def validateAge(age: string, ageLength: string) -> bool:
+    validAge = False
+    validAgeLength = False
+    validLengths = {"Years","Weeks","Months","Days"}
+
+    age =  html.escape(age)
+    ageLength =  html.escape(ageLength)
+
+    if(age.isnumeric()):
+        validAge = True
+    if(ageLength in validLengths):
+        validAgeLength = True
+
+    return validAge & validAgeLength
+
+
+
 
 
 @csrf_exempt
