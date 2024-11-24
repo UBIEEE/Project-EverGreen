@@ -1,4 +1,3 @@
-//const ws = false;
 let ws = null;
 feedPost = {};
 
