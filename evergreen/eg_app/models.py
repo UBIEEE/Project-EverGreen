@@ -1,13 +1,13 @@
-from django.contrib.postgres.fields import ArrayField
-from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.postgres.fields import ArrayField
 import uuid
+
+from django.contrib.auth.models import User
+from django.db import models
+
 
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
 
-    #user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     user = models.TextField(blank=False)
 
     image = models.ImageField(upload_to="image_upload",blank=True,null=True)
@@ -24,6 +24,7 @@ class Post(models.Model):
 
     def __str__(self):
         return f"{self.user}: {self.caption}"
+
 
 class Comments(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

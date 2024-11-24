@@ -15,16 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from eg_app import views
-from django.conf.urls.static import static
-from django.conf import settings
 
-#from evergreen import settings
+from eg_app import views
+
+# from evergreen import settings
 
 urlpatterns = [
-
     path("admin/", admin.site.urls),
     path('',views.index,name='index'),
     path('validate',views.validate,name='validate'),
@@ -39,7 +39,7 @@ urlpatterns = [
     path('register', views.register, name='register'),
     path('login', views.login_view, name='login'),
     path('logout', views.logout_view, name='logout'),
-    path('media/image/<uuid:pk>', views.fileUpload, name='fileUpload')                                 
+    # path('media/image/<uuid:pk>', views.fileUpload, name='fileUpload')                                 
 ]
 
 if settings.DEBUG:
@@ -47,4 +47,3 @@ if settings.DEBUG:
 else:
     # FOR PROD, or DEBUG=FALSE
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
