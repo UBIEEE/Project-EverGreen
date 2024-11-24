@@ -73,7 +73,7 @@ TEMPLATES = [
         },
     },
 ]
-CORS_ALLOW_ALL_ORIGINS = True  # Only for DEV!!
+# CORS_ALLOW_ALL_ORIGINS = True  # Only for DEV!!
 CORS_ALLOW_CREDENTIALS = True
 CHANNEL_LAYERS = {
     "default": {
