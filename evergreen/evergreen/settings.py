@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-=mwfbc26f&ixkoi@58!3-_)e#)ega^i4(g*l6h7)405_x-_7nu
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # THIS HAS TO BE SET TO FALSE TO GET no-sniff headers!!!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "*", "https://localhost"]
 CSRF_TRUSTED_ORIGINS = ['https://localhost']
