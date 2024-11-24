@@ -212,10 +212,11 @@
 
                         <div class="post-interactions">
                             <div class="likeButton">
-                                <form action="likePost/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
                                     {% csrf_token %}
-                                    <button type="button" onclick="likePost('{{ post.id }}')">
-                                        Like ({{ post.likes }})
+                                    <button type="button"
+                                        onclick="likePost('{{ post.id }}')"
+                                        data-post-id="{{ post.id }}">
+                                    ({{ post.likes }}) Like
                                     </button>
                                 </form>
                             </div>

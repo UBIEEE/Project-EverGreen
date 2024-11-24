@@ -3,7 +3,6 @@ let ws = null;
 feedPost = {};
 
 function initWS() {
-
   // is this https?
   const isSecureConnection = window.location.protocol === "https:";
 
@@ -11,13 +10,13 @@ function initWS() {
   let wsProtocol = "ws";
 
   if (isSecureConnection) {
-      wsProtocol = "wss:";  // encrypted baby!!
+    wsProtocol = "wss:"; // encrypted baby!!
   } else {
-      wsProtocol = "ws:";   
+    wsProtocol = "ws:";
   }
-  
+
   const host = window.location.host;
-  const wsPath = `${wsProtocol}//${host}/ws/feed/`; 
+  const wsPath = `${wsProtocol}//${host}/ws/feed/`;
 
   console.log("Attempting WebSocket connection to:", wsPath);
 
@@ -30,7 +29,14 @@ function initWS() {
   ws.onmessage = function (event) {
     console.log("Received message:", event.data);
     const data = JSON.parse(event.data);
-    updatePosts_Feed(data.posts);
+
+    if (data.type === "like_update") {
+      // this updates likes (number of them)
+      updateLikeCount(data.post_id, data.likes);
+    } else if (data.type === "feed_update") {
+      // broadcast
+      updatePosts_Feed(data.posts);
+    }
   };
 
   ws.onclose = function () {
@@ -76,19 +82,20 @@ function updatePosts_Feed(posts) {
   feedBox.innerHTML = posts
     .map(
       (post) => `
-          <div class="post">
-              <p>${post.user}</p>
-              <img src="${post.image.url}" style="max-width: 300px;">
-              <p>${post.caption}</p>
-              <p>${post.likes} likes</p>
-              <div class="likeButton">
-                  <form action="likePost/${post.id}" method="post" enctype="application/x-www-form-urlencoded">
-                      <button type="button" onclick="likePost('${post.id}')">${post.likes} Like</button>
-                  </form>
-              </div>
-
-          </div>
-          `,
+            <div class="post">
+                <p>${post.user}</p>
+                <img src="${post.image.url}" style="max-width: 300px;">
+                <p>${post.caption}</p>
+                <p>${post.likes} likes</p>
+                <div class="likeButton">
+                    <button type="button"
+                            onclick="likePost('${post.id}')"
+                            data-post-id="${post.id}">
+                        ${post.likes} Like
+                    </button>
+                </div>
+            </div>
+        `,
     )
     .join("");
 }
@@ -145,24 +152,24 @@ function deleteComment(commentId) {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>'
 // }
 //
+
+function updateLikeCount(postId, likes) {
+  const likeButton = document.querySelector(`button[data-post-id="${postId}"]`);
+  if (likeButton) {
+    likeButton.textContent = `${likes} Like`;
+  }
+}
 function likePost(postId) {
-  const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
-  const request = new XMLHttpRequest();
-  request.open("POST", `likePost/${postId}`);
-
-  request.setRequestHeader("X-CSRFToken", csrfToken);
-  request.setRequestHeader("Content-Type", "application/json");
-
-  request.onload = function () {
-    if (this.status === 200) {
-      updateFeed(); // Refresh the feed to show updated likes
-    } else {
-      console.error("Like failed");
-    }
-  };
-
-  request.send();
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(
+      JSON.stringify({
+        type: "like",
+        post_id: postId,
+      }),
+    );
+  } else {
+    console.error("WebSocket is not connected");
+  }
 }
 
 window.addEventListener("unload", function () {
