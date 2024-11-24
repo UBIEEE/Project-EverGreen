@@ -270,23 +270,24 @@ def uploadPost(request) -> JsonResponse:
 
             # USES web sockets to braodcast to ALL CLIENTS
             channel_layer = get_channel_layer()
-            posts = Post.objects.all().order_by('-timestamp')
-            posts_data = [{
-                "id": str(p.id),
-                "user": p.user,
-                "image": {"url": p.image.url if p.image else ""},
-                "caption": p.caption + "\n",
-                "likes": p.likes,
-                "comments": [],
-            } for p in posts]
+            posts = Post.objects.all().order_by("-timestamp")
+            posts_data = [
+                {
+                    "id": str(p.id),
+                    "user": p.user,
+                    "image": {"url": p.image.url if p.image else ""},
+                    "caption": p.caption + "\n",
+                    "likes": p.likes,
+                    "comments": [],
+                }
+                for p in posts
+            ]
 
             async_to_sync(channel_layer.group_send)(
                 "feed",
                 {
                     "type": "feed_update",
-                    "data": {
-                        "posts": posts_data
-                    },
+                    "data": {"posts": posts_data},
                 },
             )
 
@@ -303,23 +304,24 @@ def uploadPost(request) -> JsonResponse:
 
             # Broadcast TEXT ONLY post update
             channel_layer = get_channel_layer()
-            posts = Post.objects.all().order_by('-timestamp')
-            posts_data = [{
-                "id": str(p.id),
-                "user": p.user,
-                "image": {"url": p.image.url if p.image else ""},
-                "caption": p.caption + "\n",
-                "likes": p.likes,
-                "comments": [],
-            } for p in posts]
+            posts = Post.objects.all().order_by("-timestamp")
+            posts_data = [
+                {
+                    "id": str(p.id),
+                    "user": p.user,
+                    "image": {"url": p.image.url if p.image else ""},
+                    "caption": p.caption + "\n",
+                    "likes": p.likes,
+                    "comments": [],
+                }
+                for p in posts
+            ]
 
             async_to_sync(channel_layer.group_send)(
                 "feed",
                 {
                     "type": "feed_update",
-                    "data": {
-                        "posts": posts_data
-                    },
+                    "data": {"posts": posts_data},
                 },
             )
 
