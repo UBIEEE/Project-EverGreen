@@ -8,12 +8,10 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseNotFound, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
-from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from pathlib import Path
 from urllib.parse import quote
-import html
 import mimetypes
 
 # import PIL
@@ -247,20 +245,7 @@ def updateFeed(request) -> JsonResponse:
         }
         posts_data.append(post_dict)
 
-        # if post.image:
-        #     fileUpload(post.image.url)
-
     return JsonResponse({'posts': posts_data})
-
-# @csrf_exempt
-# def fileUpload(request):
-#     if request.method == "POST" and request.FILES["image_upload"]:
-#         image = request.FILES["image_upload"]
-#         fileStorage = FileSystemStorage()
-#         storedFile = fileStorage.save(image.name, image)
-#         url = fileStorage.url(storedFile)
-#         return render(request, "index.html", {"image_url": url})
-#     return render(request, "index.html")
 
 @csrf_exempt
 def uploadPost(request) -> JsonResponse:
@@ -278,8 +263,6 @@ def uploadPost(request) -> JsonResponse:
         if image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
-
-            # fileUpload(request)
 
             return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
         elif caption:
@@ -328,15 +311,6 @@ def likePost(request, pk) -> JsonResponse:
     return JsonResponse(
         {"status": "error", "message": "Invalid request method"}, status=405
     )
-
-# def storeFile(image):
-#     dir = open("public/image/uploads/image" + image, "wb")
-#     dir.write(image)
-
-# def uploadImage(request, fn):
-#     print("uploading")
-
-#     return HttpResponse('<img src= /media/image_upload/' + fn + '>')
 
 @csrf_exempt
 def logout_view(request: HttpRequest):
