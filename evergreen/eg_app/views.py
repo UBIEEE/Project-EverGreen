@@ -7,18 +7,22 @@ from urllib.parse import quote
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseNotFound, HttpRequest, HttpResponseRedirect, HttpResponseBadRequest, JsonResponse
-from django.shortcuts import render, redirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseBadRequest,
+    HttpResponseNotFound,
+    HttpResponseRedirect,
+    JsonResponse,
+)
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
-from pathlib import Path
-from urllib.parse import quote
-import mimetypes
+
+import eg_app.util.validators as val
+from eg_app.models import Comments, Post
 
 # import PIL
 
-from eg_app.models import Post, Comments 
-import eg_app.util.validators as val
-from eg_app.models import Comments, Post
 
 ROOT_PATH = "/"
 
@@ -245,7 +249,8 @@ def updateFeed(request) -> JsonResponse:
         }
         posts_data.append(post_dict)
 
-    return JsonResponse({'posts': posts_data})
+    return JsonResponse({"posts": posts_data})
+
 
 @csrf_exempt
 def uploadPost(request) -> JsonResponse:
@@ -264,7 +269,9 @@ def uploadPost(request) -> JsonResponse:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
 
-            return JsonResponse({'status': 'success','image_url':post.image.url,'post_id': post.id})
+            return JsonResponse(
+                {"status": "success", "image_url": post.image.url, "post_id": post.id}
+            )
         elif caption:
             post = Post.objects.create(user=user, caption=caption)
             post.save()
@@ -311,6 +318,7 @@ def likePost(request, pk) -> JsonResponse:
     return JsonResponse(
         {"status": "error", "message": "Invalid request method"}, status=405
     )
+
 
 @csrf_exempt
 def logout_view(request: HttpRequest):
