@@ -22,3 +22,4 @@ services:
       - '443:443'
     volumes:
       - ./evergreen/staticfiles:/static
+      - ./evergreen/media/image_upload:/media
