@@ -18,14 +18,10 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import include, path, re_path
+
 from eg_app import views
 from eg_app.consumers import FeedConsumer
-
-
-
-
-from eg_app import views
 
 # from evergreen import settings
 
@@ -36,15 +32,15 @@ urlpatterns = [
     path("updateFeed", views.updateFeed, name="updateFeed"),
     path("uploadPost", views.uploadPost, name="uploadPost"),
     path("deletePost", views.deletePost, name="deletePost"),
-    #path("likePost/<uuid:pk>", views.likePost, name="likePost"),
+    # path("likePost/<uuid:pk>", views.likePost, name="likePost"),
     # path('dislikePost',views.dislikePost,name="dislikePost"),
     path("addComment", views.addComment, name="addComment"),
     path("deleteComment", views.deleteComment, name="deleteComment"),
     path("register", views.register, name="register"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
-    #path("ws/", include("eg_app.routing")),
-    #re_path(r'^ws/feed/$', FeedConsumer.as_asgi()),
+    # path("ws/", include("eg_app.routing")),
+    # re_path(r'^ws/feed/$', FeedConsumer.as_asgi()),
 ]
 
 if settings.DEBUG:

@@ -27,6 +27,7 @@ mypy = "^1.13.0"
 pillow = "^11.0.0"
 black = "^24.10.0"
 channels = "^4.2.0"
+daphne = "^4.1.2"
 
 
 [build-system]
