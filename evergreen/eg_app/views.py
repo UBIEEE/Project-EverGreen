@@ -7,6 +7,8 @@ from urllib.parse import quote
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from django.http import (
     HttpRequest,
     HttpResponse,
@@ -265,13 +267,58 @@ def uploadPost(request) -> JsonResponse:
         if image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
-            return JsonResponse(
-                {"status": "success", "image_url": post.image.url, "post_id": post.id}
+            
+            # USES web sockets to braodcast to ALL CLIENTS
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "feed",
+                {
+                    "type": "feed_update",
+                    "data": {
+                        "posts": [{
+                            "id": str(post.id),
+                            "user": post.user,
+                            "image": {"url": post.image.url if post.image else ""},
+                            "caption": post.caption + "\n",
+                            "likes": post.likes,
+                            "comments": [],
+                        }]
+                    }
+                }
             )
+            
+            return JsonResponse({
+                "status": "success", 
+                "image_url": post.image.url, 
+                "post_id": str(post.id)  # Convert UUID to string
+            })
         elif caption:
             post = Post.objects.create(user=user, caption=caption)
             post.save()
-            return JsonResponse({"status": "success", "post_id": post.id})
+            
+            # Broadcast text-only post update
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "feed",
+                {
+                    "type": "feed_update",
+                    "data": {
+                        "posts": [{
+                            "id": str(post.id),
+                            "user": post.user,
+                            "image": {"url": ""},
+                            "caption": post.caption + "\n",
+                            "likes": post.likes,
+                            "comments": [],
+                        }]
+                    }
+                }
+            )
+            
+            return JsonResponse({
+                "status": "success", 
+                "post_id": str(post.id)  # Convert UUID to string
+            })
         else:
             return JsonResponse(
                 {"status": "error", "message": "Missing image or caption"}, status=400

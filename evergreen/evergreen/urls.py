@@ -18,7 +18,12 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, re_path
+from eg_app import views
+from eg_app.consumers import FeedConsumer
+
+
+
 
 from eg_app import views
 
@@ -38,6 +43,8 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
+    #path("ws/", include("eg_app.routing")),
+    #re_path(r'^ws/feed/$', FeedConsumer.as_asgi()),
 ]
 
 if settings.DEBUG:

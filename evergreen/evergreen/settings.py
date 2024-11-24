@@ -40,11 +40,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "eg_app",
     "channels",
+    "eg_app",
+    
 ]
 
-ASGI_APPLICATION = "evergreen.asgi.application"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -74,11 +74,14 @@ TEMPLATES = [
         },
     },
 ]
-
+CORS_ALLOW_ALL_ORIGINS = True  # Only for DEV!!
+CORS_ALLOW_CREDENTIALS = True
 CHANNEL_LAYERS = {
-    
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"  # ONLY DEV 
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "CONFIG": {
+            "capacity": 1500,  # MAX MESSAGES
+        },
     }
 }
 
@@ -142,6 +145,7 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+ASGI_APPLICATION = "evergreen.asgi.application"
 
 
 # Static files (CSS, JavaScript, Images)
