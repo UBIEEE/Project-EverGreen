@@ -9,9 +9,6 @@ services:
 
   django:
     build: ./evergreen
-    # volumes:
-      # - static_volume: /staticfiles/
-      # - media_volume: /media/image_upload/
     ports:
       - '8080:8080'
     env_file: ".env"
@@ -23,13 +20,5 @@ services:
     ports:
       - '80:80'
       - '443:443'
-    # volumes:
-      # - nginx_volume: /nginx/
-      # - static_volume: /staticfiles/
-      # - media_volume: /media/image_upload/
-
-# volumes:
-#   - static_volume:
-#   - media_volume:
-
-
+    volumes:
+      - ./evergreen/staticfiles:/static
