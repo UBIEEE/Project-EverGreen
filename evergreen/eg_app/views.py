@@ -21,9 +21,6 @@ from django.views.decorators.csrf import csrf_exempt
 import eg_app.util.validators as val
 from eg_app.models import Comments, Post
 
-# import PIL
-
-
 ROOT_PATH = "/"
 
 # Create your views here.
