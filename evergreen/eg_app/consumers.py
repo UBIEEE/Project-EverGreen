@@ -111,5 +111,5 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 return True, post.likes
             return False, post.likes
 
-    except Post.DoesNotExist:
+        except Post.DoesNotExist:
             return False, 0
