@@ -1,5 +1,47 @@
-const ws = false;
+//const ws = false;
+let ws = null;
 feedPost = {};
+
+function initWS() {
+
+  // is this https?
+  const isSecureConnection = window.location.protocol === "https:";
+
+  // choose between ws & wss
+  let wsProtocol = "ws";
+
+  if (isSecureConnection) {
+      wsProtocol = "wss:";  // encrypted baby!!
+  } else {
+      wsProtocol = "ws:";   
+  }
+  
+  const host = window.location.host;
+  const wsPath = `${wsProtocol}//${host}/ws/feed/`; 
+
+  console.log("Attempting WebSocket connection to:", wsPath);
+
+  ws = new WebSocket(wsPath);
+
+  ws.onopen = function () {
+    console.log("WebSocket connection established!");
+  };
+
+  ws.onmessage = function (event) {
+    console.log("Received message:", event.data);
+    const data = JSON.parse(event.data);
+    updatePosts_Feed(data.posts);
+  };
+
+  ws.onclose = function () {
+    console.log("WebSocket CLOSED, attempting to RECONNECT!!!!...");
+    setTimeout(initWS, 1000); // reconnecting after 1 sec, 1000 ms
+  };
+
+  ws.onerror = function (error) {
+    console.error("WebSocket Error:", error);
+  };
+}
 
 function start() {
   document.getElementById("about").innerHTML +=
@@ -8,7 +50,8 @@ function start() {
     "<br/> This probably all gonna be replaced anyway idk";
 
   updateFeed();
-  setInterval(updateFeed, 1000);
+  initWS();
+  //setInterval(updateFeed, 1000);
 }
 
 function updateFeed() {
@@ -63,7 +106,6 @@ function uploadPost() {
 
   request.onload = function () {
     if (this.status === 200) {
-
       form.reset();
       updateFeed();
     }
@@ -95,7 +137,6 @@ function deleteComment(commentId) {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="likePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="like_button" onclick="likeButton_HTML()">Like</button></label>'
 // }
 
-
 // function likeButton_HTML() {
 //  document.getElementsByClassName("likeButton").innerHTML = '<form action="dislikePost" method="post" enctype="application/x-www-form-urlencoded">{{post.likes}}<button id="dislike_button" onclick="dislikeButton_HTML()">Un-Like</button></label>'
 // }
@@ -113,7 +154,6 @@ function likePost(postId) {
   request.setRequestHeader("X-CSRFToken", csrfToken);
   request.setRequestHeader("Content-Type", "application/json");
 
-
   request.onload = function () {
     if (this.status === 200) {
       updateFeed(); // Refresh the feed to show updated likes
@@ -125,4 +165,8 @@ function likePost(postId) {
   request.send();
 }
 
-function initWS() {}
+window.addEventListener("unload", function () {
+  if (ws) {
+    ws.close();
+  }
+});
