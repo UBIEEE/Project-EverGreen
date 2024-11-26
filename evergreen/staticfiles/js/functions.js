@@ -85,7 +85,9 @@ function updatePosts_Feed(posts) {
                 <p>${post.user}</p>
                 <img src="${post.image.url}" style="max-width: 300px;">
                 <p>${post.caption}</p>
-                <p>${post.likes} likes</p>
+
+                
+
                 <div class="likeButton">
                     <button type="button"
                             onclick="likePost('${post.id}')"
