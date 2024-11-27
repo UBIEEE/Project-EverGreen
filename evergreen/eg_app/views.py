@@ -267,7 +267,6 @@ def uploadPost(request) -> JsonResponse:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
 
-
             # USES web sockets to braodcast to ALL CLIENTS
             channel_layer = get_channel_layer()
             posts = Post.objects.all().order_by("-timestamp")
@@ -291,7 +290,6 @@ def uploadPost(request) -> JsonResponse:
                 },
             )
 
-
             return JsonResponse(
                 {
                     "status": "success",
@@ -299,6 +297,7 @@ def uploadPost(request) -> JsonResponse:
                     "post_id": str(post.id),  # Convert UUID to string
                 }
             )
+
         elif caption:
             post = Post.objects.create(user=user, caption=caption)
             post.save()
@@ -329,6 +328,7 @@ def uploadPost(request) -> JsonResponse:
             return JsonResponse(
                 {"status": "success", "post_id": str(post.id)}  # Convert UUID to string
             )
+
         else:
             return JsonResponse(
                 {"status": "error", "message": "Missing image or caption"}, status=400
