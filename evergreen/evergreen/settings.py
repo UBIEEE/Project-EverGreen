@@ -28,7 +28,8 @@ SECRET_KEY = "django-insecure-=mwfbc26f&ixkoi@58!3-_)e#)ega^i4(g*l6h7)405_x-_7nu
 # THIS HAS TO BE SET TO FALSE TO GET no-sniff headers!!!
 DEBUG = False
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "*"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "*", "https://localhost"]
+CSRF_TRUSTED_ORIGINS = ["https://localhost"]
 
 
 # Application definition
@@ -53,7 +54,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "evergreen.urls"

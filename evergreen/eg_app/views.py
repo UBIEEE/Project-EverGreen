@@ -255,7 +255,6 @@ def updateFeed(request) -> JsonResponse:
 def uploadPost(request) -> JsonResponse:
     if request.method == "POST":
 
-        # user = 'guest@buffalo.edu'
         user = request.user.email
 
         # Match THE NAME IN THE UPLOAD
@@ -267,6 +266,7 @@ def uploadPost(request) -> JsonResponse:
         if image and caption:
             post = Post.objects.create(user=user, image=image, caption=caption)
             post.save()
+
 
             # USES web sockets to braodcast to ALL CLIENTS
             channel_layer = get_channel_layer()
@@ -290,6 +290,7 @@ def uploadPost(request) -> JsonResponse:
                     "data": {"posts": posts_data},
                 },
             )
+
 
             return JsonResponse(
                 {

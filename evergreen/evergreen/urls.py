@@ -29,6 +29,7 @@ urlpatterns = [
     path("updateFeed", views.updateFeed, name="updateFeed"),
     path("uploadPost", views.uploadPost, name="uploadPost"),
     path("deletePost", views.deletePost, name="deletePost"),
+    path("likePost/<uuid:pk>", views.likePost, name="likePost"),
     path("addComment", views.addComment, name="addComment"),
     path("deleteComment", views.deleteComment, name="deleteComment"),
     path("register", views.register, name="register"),
