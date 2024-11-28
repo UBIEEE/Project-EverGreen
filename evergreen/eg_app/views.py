@@ -237,6 +237,7 @@ def updateFeed(request) -> JsonResponse:
 
     posts = Post.objects.all().order_by("-timestamp")
     posts_data = []
+    current_user = request.user
     for post in posts:
         post_dict = {
             "id": post.id,
@@ -244,6 +245,8 @@ def updateFeed(request) -> JsonResponse:
             "image": {"url": post.image.url if post.image else ""},
             "caption": post.caption + "\n",
             "likes": post.likes,
+            "likers_display": post.get_likers_display(),
+            "has_liked": current_user.is_authenticated and post.userLikes.filter(id=current_user.id).exists(),
             "comments": [],
         }
         posts_data.append(post_dict)
@@ -251,92 +254,6 @@ def updateFeed(request) -> JsonResponse:
     return JsonResponse({"posts": posts_data})
 
 
-@csrf_exempt
-def uploadPost(request) -> JsonResponse:
-    if request.method == "POST":
-
-        user = request.user.email
-
-        # Match THE NAME IN THE UPLOAD
-        image = request.FILES.get("image_upload")
-        caption = request.POST.get("caption")
-
-        caption = html.escape(caption)
-
-        if image and caption:
-            post = Post.objects.create(user=user, image=image, caption=caption)
-            post.save()
-
-            # USES web sockets to braodcast to ALL CLIENTS
-            channel_layer = get_channel_layer()
-            posts = Post.objects.all().order_by("-timestamp")
-            posts_data = [
-                {
-                    "id": str(p.id),
-                    "user": p.user,
-                    "image": {"url": p.image.url if p.image else ""},
-                    "caption": p.caption + "\n",
-                    "likes": p.likes,
-                    "comments": [],
-                }
-                for p in posts
-            ]
-
-            async_to_sync(channel_layer.group_send)(
-                "feed",
-                {
-                    "type": "feed_update",
-                    "data": {"posts": posts_data},
-                },
-            )
-
-            return JsonResponse(
-                {
-                    "status": "success",
-                    "image_url": post.image.url,
-                    "post_id": str(post.id),  # Convert UUID to string
-                }
-            )
-
-        elif caption:
-            post = Post.objects.create(user=user, caption=caption)
-            post.save()
-
-            # Broadcast TEXT ONLY post update
-            channel_layer = get_channel_layer()
-            posts = Post.objects.all().order_by("-timestamp")
-            posts_data = [
-                {
-                    "id": str(p.id),
-                    "user": p.user,
-                    "image": {"url": p.image.url if p.image else ""},
-                    "caption": p.caption + "\n",
-                    "likes": p.likes,
-                    "comments": [],
-                }
-                for p in posts
-            ]
-
-            async_to_sync(channel_layer.group_send)(
-                "feed",
-                {
-                    "type": "feed_update",
-                    "data": {"posts": posts_data},
-                },
-            )
-
-            return JsonResponse(
-                {"status": "success", "post_id": str(post.id)}  # Convert UUID to string
-            )
-
-        else:
-            return JsonResponse(
-                {"status": "error", "message": "Missing image or caption"}, status=400
-            )
-
-    return JsonResponse(
-        {"status": "error", "message": "Invalid request method"}, status=405
-    )
 
 
 @csrf_exempt
