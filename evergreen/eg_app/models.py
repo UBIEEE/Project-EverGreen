@@ -20,10 +20,7 @@ class Post(models.Model):
 
         likers = self.userLikes.all()
 
-
-
         number_of_likes = likers.count()
-
 
         if number_of_likes == 0:
             return "No likes yet"
@@ -38,11 +35,9 @@ class Post(models.Model):
             names_string = ", ".join(usernames)
             return "Liked by: " + names_string
 
-
         else:
             # get first 3 USERS
             first_three_users = likers[:3]
-
 
             usernames = []
             for user in first_three_users:
@@ -53,7 +48,9 @@ class Post(models.Model):
 
             # concat!!!
             names_string = ", ".join(usernames)
-            return "Liked by: " + names_string + " and " + str(remaining_likes) + " others"
+            return (
+                "Liked by: " + names_string + " and " + str(remaining_likes) + " others"
+            )
 
 
 class Comments(models.Model):

@@ -4,8 +4,6 @@ import traceback
 from pathlib import Path
 from urllib.parse import quote
 
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -246,14 +244,13 @@ def updateFeed(request) -> JsonResponse:
             "caption": post.caption + "\n",
             "likes": post.likes,
             "likers_display": post.get_likers_display(),
-            "has_liked": current_user.is_authenticated and post.userLikes.filter(id=current_user.id).exists(),
+            "has_liked": current_user.is_authenticated
+            and post.userLikes.filter(id=current_user.id).exists(),
             "comments": [],
         }
         posts_data.append(post_dict)
 
     return JsonResponse({"posts": posts_data})
-
-
 
 
 @csrf_exempt
