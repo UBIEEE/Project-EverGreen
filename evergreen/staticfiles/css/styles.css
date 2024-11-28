@@ -41,22 +41,18 @@ footer {
     padding: 20px;
 }
 
-
 .logout {
     position: absolute;
     top: 100px;
-    right: 100px; 
+    right: 100px;
     color: white;
 }
-
 
 .logo {
     position: absolute;
     top: 25px;
     left: 100px;
 }
-
-
 
 .authenticate-in {
     width: 50%;
@@ -84,8 +80,7 @@ footer {
 .post_form {
     background-color: #b9efbd;
 
-    height: 15%; 
-
+    height: 15%;
 }
 
 .feed_posts {
@@ -93,7 +88,6 @@ footer {
     align-content: center;
 
     padding: 5%;
-
 }
 
 #email_username_post {
@@ -118,14 +112,49 @@ footer {
     margin-left: 5%;
 }
 
+.likeButton button {
+    padding: 8px 16px;
+    border: 1px solid #4caf50;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+    color: #4caf50;
+    transition: all 0.3s ease;
+}
+
+.likeButton button.liked {
+    background-color: #4caf50;
+    color: white;
+}
+
+.likers-display {
+    font-size: 0.9em;
+    color: #666;
+    margin: 5px 0;
+}
+
+.upload-status {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.upload-status.success {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.upload-status.error {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
 .dislike-button {
     font-size: 14px;
     margin-left: 5%;
 }
 
-
 .comment_Post {
-
     background-color: #93b98e;
     height: 7%;
     margin-right: 5%;
@@ -138,10 +167,8 @@ footer {
     margin-left: 5%;
 }
 
-
-
-.commentSection { 
-    background-color:#93b98e;
+.commentSection {
+    background-color: #93b98e;
     height: 20%;
     overflow: scroll;
 }

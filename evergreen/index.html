@@ -192,10 +192,10 @@
                     <form id="uploadForm" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         Image:
-                        <input id="postImage" type="file" name="image_upload">
+                        <input id="postImage" type="file" name="image_upload" onsubmit="event.preventDefault()";>
                         <br>
                         Caption:
-                        <input id="postCaption" type="text" name="caption">
+                        <input id="postCaption" type="text" name="caption" onkeypress="handleEnterKey(event)">
                         <button type="button" onclick="uploadPost()">Upload</button>
                     </form>
                 </div>
