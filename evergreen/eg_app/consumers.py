@@ -143,7 +143,8 @@ class FeedConsumer(AsyncWebsocketConsumer):
         try:
             user = self.scope["user"]
             if str(user.username) == "AnonymousUser":
-                raise Exception("Must be logged in to post")
+                print("MUST BE LOGGED IN")
+                return None
 
             post_data = {"user": user.email, "caption": data.get("caption", "")}
 
