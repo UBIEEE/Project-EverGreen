@@ -6,7 +6,7 @@ function initWS() {
   const isSecureConnection = window.location.protocol === "https:";
 
   // choose between ws & wss
-  let wsProtocol = "ws";
+  let wsProtocol;
 
   if (isSecureConnection) {
     wsProtocol = "wss:"; // encrypted baby!!
