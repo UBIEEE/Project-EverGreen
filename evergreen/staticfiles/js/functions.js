@@ -40,9 +40,7 @@ function initWS() {
     } else if (data.type === "feed_update") {
       // broadcast
       updatePosts_Feed(data.posts);
-    } else if (data.type === "upload_response") {
-      console.log(data.status);
-    }
+ 
   };
 
   ws.onclose = function () {
