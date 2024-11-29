@@ -149,7 +149,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
             post_data = {"user": user.email, "caption": data.get("caption", "")}
 
             # Handle image if present
-            if "image" in data and data["image"]:
+            if data.get("image"):
                 # Remove the data URL prefix
                 format, imgstr = data["image"].split(";base64,")
                 ext = format.split("/")[-1]
