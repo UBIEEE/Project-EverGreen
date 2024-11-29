@@ -40,6 +40,8 @@ function initWS() {
     } else if (data.type === "feed_update") {
       // broadcast
       updatePosts_Feed(data.posts);
+
+    }
  
   };
 
