@@ -1,6 +1,9 @@
 import base64
 import json
 import uuid
+from imghdr import what
+from io import BytesIO
+
 
 # from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
@@ -148,17 +151,26 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
             post_data = {"user": user.email, "caption": data.get("caption", "")}
 
-            # Handle image if present
-            if data.get("image"):
+            # Handle image if it is present *no tautology* and if not that string (the data:application one) it has a image! (else just a caption)
+            if data.get("image") and data.get("image") != "data:application/octet-stream;base64,":
+               
                 # Remove the data URL prefix
                 format, imgstr = data["image"].split(";base64,")
-                ext = format.split("/")[-1]
+                image_bytes = base64.b64decode(imgstr)
+               
+                # check the magic bytes!
+                image_type = what(None,h=image_bytes)
+
+                if image_type not in ["jpeg","jpg","png","gif"]:
+                    return None
+                
+
 
                 # Generate unique filename
-                filename = f"{uuid.uuid4()}.{ext}"
+                filename = f"{uuid.uuid4()}.{image_type}"
 
                 # Convert base64 to file
-                image_data = ContentFile(base64.b64decode(imgstr), name=filename)
+                image_data = ContentFile(image_bytes, name=filename)
                 post_data["image"] = image_data
 
             post = Post.objects.create(**post_data)
