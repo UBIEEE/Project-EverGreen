@@ -133,21 +133,6 @@ footer {
     margin: 5px 0;
 }
 
-.upload-status {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 4px;
-}
-
-.upload-status.success {
-    background-color: #dff0d8;
-    color: #3c763d;
-}
-
-.upload-status.error {
-    background-color: #f2dede;
-    color: #a94442;
-}
 
 .dislike-button {
     font-size: 14px;
