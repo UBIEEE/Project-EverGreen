@@ -33,7 +33,7 @@ class Post(models.Model):
 
             # join the usernames w/ commas
             names_string = ", ".join(usernames)
-            return f"Liked by: {names_string}" #f-string!
+            return f"Liked by: {names_string}"  # f-string!
 
         else:
             # get first 3 USERS
@@ -48,9 +48,7 @@ class Post(models.Model):
 
             # concat!!!
             names_string = ", ".join(usernames)
-            return (
-                f"Liked by: {names_string} and {remaining_likes} others" # f-string are cool, I guess.
-            )
+            return f"Liked by: {names_string} and {remaining_likes} others"
 
 
 class Comments(models.Model):
