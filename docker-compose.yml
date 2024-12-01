@@ -1,27 +1,28 @@
 services:
   database:
     image: postgres:17
-    restart: always #unless-stopped # change to always when in production
+    restart: always
     shm_size: 128mb
-    ports:
-      - "5432:5432"
     env_file: ".env"
 
   django:
     build: ./evergreen
-    ports:
-      - '8080:8080'
+    restart: always
     env_file: ".env"
     volumes:
     - ./media:/root/media
     depends_on:
-      - database 
+      - database
 
   nginx:
     build: ./nginx
+    restart: always
     ports:
       - '80:80'
       - '443:443'
+      - '8080:8080'
     volumes:
       - ./evergreen/staticfiles:/static
       - ./media:/media
+    depends_on:
+      - django
