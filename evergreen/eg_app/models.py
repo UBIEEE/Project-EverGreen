@@ -27,7 +27,7 @@ class Post(models.Model):
 
         elif number_of_likes <= 3:
 
-            usernames = []
+            usernames: list[str] = []
             for user in likers:
                 usernames.append(user.username)
 
