@@ -150,13 +150,28 @@ function updateLikeCount(postId, likes, likersDisplay, hasLiked) {
 }
 
 function uploadPost() {
+
+
+  const MAX_CHAR_LENGTH = 280;
+
+  const MAX_IMAGE_BYTES = 8000000
+
   const form = document.getElementById("uploadForm");
   const formData = new FormData(form);
   const caption = formData.get("caption");
+  const image = formData.get("image_upload")
 
   if (!caption || caption.trim() === "") {
     console.error("Caption is required");
     return;
+  }
+
+  if (image && image.size > MAX_IMAGE_BYTES){
+    alert("IMAGE size must be less than 8 MB!")
+  }  
+
+  if (caption.length > MAX_CHAR_LENGTH){
+    alert('Message too long, Bee movie scripts included')
   }
 
   // make into obj

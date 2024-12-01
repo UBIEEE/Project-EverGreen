@@ -147,6 +147,12 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 print("MUST BE LOGGED IN")
                 return None
 
+            caption = data.get("caption", "")
+            MAX_CHAR_LENGTH = 280
+
+            if len(caption) > MAX_CHAR_LENGTH:
+                return None
+
             post_data = {"user": user.email, "caption": data.get("caption", "")}
 
             # Handle image if it is present *no tautology*
@@ -158,6 +164,11 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 # Remove the data URL prefix
                 format, imgstr = data["image"].split(";base64,")
                 image_bytes = base64.b64decode(imgstr)
+
+                MAX_IMAGE_SIZE = 8000000
+
+                if len(image_bytes) > MAX_IMAGE_SIZE:
+                    return None
 
                 # check the magic bytes!
                 image_type = what(None, h=image_bytes)
