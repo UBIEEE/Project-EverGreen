@@ -33,6 +33,7 @@
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
             <a href="#plant-chat">Plant Chat</a>
+            
         </nav>
     </header>
 
@@ -139,6 +140,17 @@
 
     <section id="plant-chat">
         <h2>Plant Chat</h2>
+        <h3>RULES FOR PEACEFUL HUMAN-PLANT ENGAGEMENT</h3>
+        <ul>
+            <li>Must be logged in to post</li>
+            <li>Only png, jpg, and gif formats supported</li>
+            <li>Must post a caption along with an image</li>
+            <li>All content must be less than 8 MB</li>
+            <li>All plant "glow-up" photos must include a banana for scale</li>
+        </ul>
+
+
+
 
         <div class="contents">
 
@@ -192,10 +204,10 @@
                     <form id="uploadForm" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         Image:
-                        <input id="postImage" type="file" name="image_upload">
+                        <input id="postImage" type="file" name="image_upload" onsubmit="event.preventDefault()";>
                         <br>
                         Caption:
-                        <input id="postCaption" type="text" name="caption">
+                        <input id="postCaption" type="text" name="caption" onkeypress="handleEnterKey(event)">
                         <button type="button" onclick="uploadPost()">Upload</button>
                     </form>
                 </div>
@@ -212,10 +224,11 @@
 
                         <div class="post-interactions">
                             <div class="likeButton">
-                                <form action="likePost/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
                                     {% csrf_token %}
-                                    <button type="button" onclick="likePost('{{ post.id }}')">
-                                        Like ({{ post.likes }})
+                                    <button type="button"
+                                        onclick="likePost('{{ post.id }}')"
+                                        data-post-id="{{ post.id }}">
+                                    ({{ post.likes }}) like
                                     </button>
                                 </form>
                             </div>

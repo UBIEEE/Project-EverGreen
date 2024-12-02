@@ -16,6 +16,40 @@ class Post(models.Model):
     def __str__(self):
         return f"{self.user}: {self.caption}"
 
+    def get_likers_display(self):
+
+        likers = self.userLikes.all()
+
+        number_of_likes = likers.count()
+
+        if number_of_likes == 0:
+            return "No likes yet"
+
+        elif number_of_likes <= 3:
+
+            usernames: list[str] = []
+            for user in likers:
+                usernames.append(user.username)
+
+            # join the usernames w/ commas
+            names_string = ", ".join(usernames)
+            return f"Liked by: {names_string}"  # f-string!
+
+        else:
+            # get first 3 USERS
+            first_three_users = likers[:3]
+
+            usernames = []
+            for user in first_three_users:
+                usernames.append(user.username)
+
+            # get how many people liked it other THAN THE 3
+            remaining_likes = number_of_likes - 3
+
+            # concat!!!
+            names_string = ", ".join(usernames)
+            return f"Liked by: {names_string} and {remaining_likes} others"
+
 
 class Comments(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
