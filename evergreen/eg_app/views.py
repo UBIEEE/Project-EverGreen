@@ -132,6 +132,7 @@ def validate(request):
     return HttpResponseBadRequest()
 
 
+@csrf_exempt
 def register(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         email = request.POST.get("email", "")
@@ -207,6 +208,7 @@ def deleteComment(request, commentId):
     return redirect("/")
 
 
+@csrf_exempt
 def login_view(request: HttpRequest):
     if request.method == "POST":
 
