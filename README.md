@@ -8,8 +8,8 @@ The project can be found at: https://projectevergreen.live/
 
 ## Managing the Local Environment
 
-## Env
-On a fresh clone of the repository, make sure that when testing locally to rename the .env.example to .env before running docker compose
+### Env
+On a fresh clone of the repository, make sure that when testing locally to rename the .env.example to .env before running docker-compose. This is for security of the repository.
 
 ### Poetry
 The development environment is being managed using [Poetry](https://python-poetry.org/). Please make sure that you have Poetry installed:
