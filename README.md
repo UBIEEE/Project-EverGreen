@@ -2,6 +2,7 @@
 
 Project Evergreen is a group project for the class [CSE312: Web Applications](https://cse312.com/) at the University at Buffalo in the Fall 2024 semester. This project is intended to become the web application for the UB IEEE student chapter automated greenhouse project. You can find out more information on [our Discord](https://discord.com/invite/QMHjt65z7a). 
 
+The project can be found at: https://projectevergreen.live/
 
 ## Managing the Local Environment
 
@@ -35,3 +36,7 @@ The database migrations should be automatically applied by Docker when it spins 
 > We have noticed that the containers do not attach properly if a user is running docker through the `mnt/c/` directory when using [WSL](https://learn.microsoft.com/en-us/windows/wsl/). Please have the project placed directly in your host filesystem and spin up the containers directly from your host OS. 
 
 You can use the command `docker compose exec django python manage.py createsuperuser` to make your admin user from a separate terminal. You can then go to the `/admin` panel and login with those credentials that you used to create the super user. 
+
+# Redirects
+
+Please note that requests to port 8080 are redirected to port 80 or 443 as static files are hosted through nginx. Port 80 is used in instances where self signed certifcates are not present, and 443 is used when one is.
