@@ -22,14 +22,11 @@ from django.urls import path
 
 from eg_app import views
 
-# from evergreen import settings
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.index, name="index"),
     path("validate", views.validate, name="validate"),
     path("updateFeed", views.updateFeed, name="updateFeed"),
-    path("uploadPost", views.uploadPost, name="uploadPost"),
     path("deletePost", views.deletePost, name="deletePost"),
     path("likePost/<uuid:pk>", views.likePost, name="likePost"),
     path("addComment", views.addComment, name="addComment"),
