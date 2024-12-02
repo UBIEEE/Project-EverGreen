@@ -16,7 +16,6 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import redirect, render
-from django.views.decorators.csrf import csrf_exempt
 
 import eg_app.util.validators as val
 from eg_app.models import Comments, Post
@@ -28,7 +27,6 @@ ROOT_PATH = "/"
 # handles request
 
 
-@csrf_exempt
 def index(request):
     if request.user.is_authenticated:
         return render(
@@ -109,7 +107,6 @@ def addCookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
     return response
 
 
-@csrf_exempt
 def validate(request):
     if request.method == "POST":
 
@@ -230,7 +227,6 @@ def login_view(request: HttpRequest):
     return HttpResponseBadRequest()
 
 
-@csrf_exempt
 def updateFeed(request) -> JsonResponse:
 
     posts = Post.objects.all().order_by("-timestamp")
@@ -253,7 +249,6 @@ def updateFeed(request) -> JsonResponse:
     return JsonResponse({"posts": posts_data})
 
 
-@csrf_exempt
 def likePost(request, pk) -> JsonResponse:
     user_who_is_liking = request.user
 
@@ -287,7 +282,6 @@ def likePost(request, pk) -> JsonResponse:
     )
 
 
-@csrf_exempt
 def logout_view(request: HttpRequest):
     # Django handles the invalidating and client-side removal of auth tokens itself
     logout(request)
