@@ -1,4 +1,5 @@
 import base64
+import html
 import json
 import uuid
 from imghdr import what
@@ -153,7 +154,10 @@ class FeedConsumer(AsyncWebsocketConsumer):
             if len(caption) > MAX_CHAR_LENGTH:
                 return None
 
-            post_data = {"user": user.email, "caption": data.get("caption", "")}
+            post_data = {
+                "user": html.escape(user.email),
+                "caption": html.escape(data.get("caption", "")),
+            }
 
             # Handle image if it is present *no tautology*
             if (
