@@ -5,16 +5,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Cache-control" content="no-cache">
+
+
+
     <title>Project Evergreen</title>
      <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+     <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+
+     <div class="logo">
+        <img src="{% static 'images/plant.jpg' %}" alt="A logo pic of a plant" width = "100" height = "100">
+    </div>
+
+    <div class="logout" {{ hidden1 }}>
+        <form action="/logout" method="post" enctype="application/x-www-form-urlencoded">
+            Welcome {{ email }}!
+            <input type="submit" value="Logout">
+        </form>
+    </div>
 </head>
+
+{% autoescape on %}
 <body onload="start()">
     <header>
         <h1>Project Evergreen</h1>
         <nav>
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
+            <a href="#plant-chat">Plant Chat</a>
+            
         </nav>
     </header>
 
@@ -30,49 +49,48 @@
             <p>Join our Discord: <a href="https://discord.com/invite/QMHjt65z7a">https://discord.com/invite/QMHjt65z7a</a></p>
         </section>
     </main>
-
     <div class="authenticate-in">
-        Registration:
-        <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
-            {% csrf_token %}
-            <label>UB Email:
-                <input type="email" id="email" name="email"/>
-            </label>
-            <br/>
-            <label>Password:&nbsp;
-                <input type="password" id="password" name="password">
+            Registration:
+            <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
+                {% csrf_token %}
+                <label>UB Email:
+                    <input type="email" id="email" name="email"/>
+                </label>
+                <br/>
+                <label>Password:&nbsp;
+                    <input type="password" id="password" name="password">
 
-            </label>
+                </label>
 
-            <button type="button" onclick="validate()">Validate Registration</button>
+                <button type="button" onclick="validate()">Validate Registration</button>
 
-            <br/>
-            <label>Confirm Password:&nbsp;
-                <input type="password" id="confirm_password" name="confirm_password">
-            </label>
-            <input type="submit" value="Post">
-            <br/>
-            <br/>
-        </form>
+                <br/>
+                <label>Confirm Password:&nbsp;
+                    <input type="password" id="confirm_password" name="confirm_password">
+                </label>
+                <input type="submit" value="Post">
+                <br/>
+                <br/>
+            </form>
 
-        <div id="passwordMessage"></div>
+            <div id="passwordMessage"></div>
 
 
 
-        Login:
-        <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
-            {% csrf_token %}
-            <label>UB Email:
-                <input type="email" name="email"/>
-            </label>
-            <br/>
-            <label>Password:&nbsp;
-                <input type="password" name="password">
-            </label>
-            <input type="submit" value="Post">
-            <br/>
-        </form>
-    </div>
+            Login:
+            <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+                {% csrf_token %}
+                <label>UB Email:
+                    <input type="email" name="email"/>
+                </label>
+                <br/>
+                <label>Password:&nbsp;
+                    <input type="password" name="password">
+                </label>
+                <input type="submit" value="Post">
+                <br/>
+            </form>
+        </div>
 
     <script>
     var validateUrl = "{% url 'validate' %}";
@@ -120,7 +138,145 @@
 </script>
 
 
+    <section id="plant-chat">
+        <h2>Plant Chat</h2>
+        <h3>RULES FOR PEACEFUL HUMAN-PLANT ENGAGEMENT</h3>
+        <ul>
+            <li>Must be logged in to post</li>
+            <li>Only png, jpg, and gif formats supported</li>
+            <li>Must post a caption along with an image</li>
+            <li>All content must be less than 8 MB</li>
+            <li>All plant "glow-up" photos must include a banana for scale</li>
+        </ul>
+
+
+
+
+        <div class="contents">
+
+
+            <script>
+            var validateUrl = "{% url 'validate' %}";
+
+            async function validate() {
+                const password = document.getElementById("password").value;
+                const email = document.getElementById("email").value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                const response = await fetch("{% url 'validate' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded",
+                                "X-CSRFToken": csrfToken,
+                            },
+                            body: `password=${encodeURIComponent(password)}&email=${encodeURIComponent(email)}`
+                        });
+
+
+                const result = await response.json();
+
+                const messageDiv = document.getElementById("passwordMessage");
+                let out = [];
+
+                if (String(result.valid_pass) === "False") {
+                    out.push("PASSWORDS MUST BE 12 OR GREATER IN LENGTH");
+                }
+                if (String(result.valid_email) === "False") {
+                    out.push("ONLY VALID UB EMAILS ACCEPTED");
+                }
+
+                if (out.length === 0) {
+                    messageDiv.style.color = "green";
+                    messageDiv.innerHTML = "VALID EMAIL AND PASS";
+                } else {
+                    messageDiv.style.color = "red";
+                    messageDiv.innerHTML = out.join("<br>");
+                }
+            }
+            </script>
+
+            <div class="feed">
+                <div id="feed-box"></div>
+                </div>
+
+                <div class="post_form"></div>
+                    <hr>
+                    <form id="uploadForm" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        Image:
+                        <input id="postImage" type="file" name="image_upload" onsubmit="event.preventDefault()";>
+                        <br>
+                        Caption:
+                        <input id="postCaption" type="text" name="caption" onkeypress="handleEnterKey(event)">
+                        <button type="button" onclick="uploadPost()">Upload</button>
+                    </form>
+                </div>
+
+                {% for post in posts %}
+                    <div class="feed_posts">
+                        <div class="post-header">
+                            <span>{{ post.user }}</span>
+                        </div>
+                        <div class="post-content">
+                            <img src="{{ post.image.url }}" alt="Post image">
+                            <p>{{ post.caption }}</p>
+                        </div>
+
+                        <div class="post-interactions">
+                            <div class="likeButton">
+                                    {% csrf_token %}
+                                    <button type="button"
+                                        onclick="likePost('{{ post.id }}')"
+                                        data-post-id="{{ post.id }}">
+                                    ({{ post.likes }}) like
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="dislikeButton">
+                                <form action="dislikePost/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
+                                    {% csrf_token %}
+                                    <button type="button" onclick="dislikePost('{{ post.id }}')">
+                                        Unlike
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="comment_Post">
+                                <form action="addComment/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
+                                    {% csrf_token %}
+                                    <input type="text" name="comment" placeholder="Add a comment...">
+                                    <button type="button" onclick="addComment('{{ post.id }}')">Comment</button>
+                                </form>
+                            </div>
+
+                            <div class="deleteButton_Post">
+                                <form action="deletePost/{{ post.id }}" method="post" enctype="application/x-www-form-urlencoded">
+                                    {% csrf_token %}
+                                    <button type="button" onclick="deletePost('{{ post.id }}')">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="comments-section">
+                            {% for comment in post.comments %}
+                                <div class="comment">
+                                    <span class="comment-user">{{ comment.user }}</span>
+                                    <span class="comment-text">{{ comment.comment }}</span>
+                                    {% if comment.user == request.user %}
+                                        <button type="button" onclick="deleteComment('{{ comment.id }}')">×</button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
     <script src="{% static 'js/functions.js' %}"></script>
-    <img src="{% static 'images/plant.jpg' %}" alt="A logo pic of a plant">
 </body>
+
+{% endautoescape %}
 </html>
