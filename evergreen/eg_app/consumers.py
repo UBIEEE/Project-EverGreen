@@ -25,14 +25,14 @@ class FeedConsumer(AsyncWebsocketConsumer):
         print("WebSocket connection attempt received!")
 
         # Add to group
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)  # type: ignore
         await self.accept()
         print("(GOOD) WebSocket connection accepted successfully!")
 
     # disconnects connection handler
     async def disconnect(self, close_code):
 
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)  # type: ignore
         print(f"(BAD) WebSocket disconnected with code: {close_code}")
 
     # updated to all clients
@@ -61,7 +61,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
                     post_data = await self.get_post_data(post_id)
 
                     # Broadcast the updated likes to ALL clients
-                    await self.channel_layer.group_send(
+                    await self.channel_layer.group_send(  # type: ignore
                         self.room_group_name,
                         {
                             "type": "like_update",
@@ -79,7 +79,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
                     # BROADCAST TO ALL CLIENTS
                     posts_data = await self.get_all_posts()
 
-                    await self.channel_layer.group_send(
+                    await self.channel_layer.group_send(  # type: ignore
                         self.room_group_name,
                         {
                             "type": "feed_update",
@@ -114,21 +114,22 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
             post_image_url = ""
 
-            if post.image and hasattr(post.image, "url"):
-                post_image_url = post.image.url
+            if post.image and hasattr(post.image, "url"):  # type: ignore
+                post_image_url = post.image.url  # type: ignore
 
             user_has_liked = False
 
             if current_user.is_authenticated:
-                user_has_liked = post.userLikes.filter(id=current_user.id).exists()
+                user_has_liked = post.userLikes.filter(id=current_user.id).exists()  # type: ignore
 
             post_data = {
-                "id": str(post.id),
-                "user": post.user,
+                "id": str(post.id),  # type: ignore
+                "user": post.user,  # type: ignore
                 "image": {"url": post_image_url},
-                "caption": post.caption + "\n",  # Add newline after caption
-                "likes": post.likes,
-                "likers_display": post.get_likers_display(),
+                "caption": post.caption  # type: ignore
+                + "\n",  # Add newline after caption # type: ignore
+                "likes": post.likes,  # type: ignore
+                "likers_display": post.get_likers_display(),  # type: ignore
                 "has_liked": user_has_liked,
                 "comments": [],  # start w/ empty!
             }
@@ -202,12 +203,12 @@ class FeedConsumer(AsyncWebsocketConsumer):
             user = self.scope["user"]
             has_liked = (
                 str(user.username) != "AnonymousUser"
-                and post.userLikes.filter(id=user.id).exists()
+                and post.userLikes.filter(id=user.id).exists()  # type: ignore
             )
 
             return {
-                "likes": post.likes,
-                "likers_display": post.get_likers_display(),
+                "likes": post.likes,  # type: ignore
+                "likers_display": post.get_likers_display(),  # type: ignore
                 "has_liked": has_liked,
             }
         except Post.DoesNotExist:
@@ -248,18 +249,18 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
             if str(user.username) != "AnonymousUser":
 
-                if not post.userLikes.contains(user):
-                    post.likes += 1
-                    post.userLikes.add(user)
+                if not post.userLikes.contains(user):  # type: ignore
+                    post.likes += 1  # type: ignore
+                    post.userLikes.add(user)  # type: ignore
 
                 else:
-                    post.likes -= 1
-                    post.userLikes.remove(user)
+                    post.likes -= 1  # type: ignore
+                    post.userLikes.remove(user)  # type: ignore
 
                 post.save()
 
-                return True, post.likes
-            return False, post.likes
+                return True, post.likes  # type: ignore
+            return False, post.likes  # type: ignore
 
         except Post.DoesNotExist:
             return False, 0
