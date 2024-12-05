@@ -6,7 +6,7 @@ import uuid
 class RelayDevice(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, unique=True)
     call_name = models.CharField(
-        blank=False, unique=True, max_length=128
+        db_index=True, blank=False, unique=True, max_length=128
     )  # basically this specific device's username
 
     vendor = models.CharField(null=True)
@@ -17,7 +17,7 @@ class RelayDevice(models.Model):
     expected_message_interval = models.DurationField(null=True)
 
     bcrypted_hashed_authentication_token = models.BinaryField(
-        max_length=96
+        max_length=128
     )  # max length of bytes
 
 

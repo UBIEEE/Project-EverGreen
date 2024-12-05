@@ -1,11 +1,7 @@
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.http import (
-    HttpRequest,
-    HttpResponse,
-    HttpResponseBadRequest,
-)
-from relay_handler.models import RelayDevice
+from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, FileResponse
+from relay_handler.models import RelayDevice, RelayUpload
 import bcrypt
 import relay_processor
 
@@ -32,7 +28,7 @@ def relay_request(request: HttpRequest):
         relay_device: RelayDevice = RelayDevice.objects.get(
             call_name=received_call_name
         )
-    except:
+    except Exception:
         return HttpResponseBadRequest()
 
     received_auth_token_string: str = request.POST["Relay-Device-Auth-Token"]
@@ -55,4 +51,10 @@ def relay_request(request: HttpRequest):
 
 
 # FIXME
-def view_time_lapse(): ...
+@login_required()
+def view_time_lapse(request: HttpRequest):
+    """Returns the time lapse .mp4 file."""
+    relay_upload = (
+        RelayUpload.objects.latest()
+    )  # FIXME: not general, will only work when there is a single RelayDevice!
+    return FileResponse(relay_upload.file.chunks())
