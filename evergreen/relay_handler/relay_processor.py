@@ -25,7 +25,7 @@ def handle_time_lapse_upload_from_pi(
             upload_timestamp
         )
         uploading_file: File = File(file=time_lapse_file, name=time_lapse_name)
-    except:
+    except Exception:
         return False
 
     RelayUpload.objects.create(
