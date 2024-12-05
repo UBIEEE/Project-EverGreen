@@ -21,17 +21,13 @@ def relay_request(request: HttpRequest):
     token from the server since they never actually access the webpage. Authentication is
     done solely based on authentication tokens placed in the device, which it uploads with all
     of its requests to the server."""
-
     if request.method != "POST":
         return HttpResponseBadRequest()
 
-    if (
-        "Call-Name" not in request.headers
-        or "Relay-Device-Auth-Token" not in request.headers
-    ):
+    if "Call-Name" not in request.POST or "Relay-Device-Auth-Token" not in request.POST:
         return HttpResponseBadRequest()
 
-    received_call_name: str = request.headers["Call-Name"]
+    received_call_name: str = request.POST["Call-Name"]
 
     try:
         relay_device: RelayDevice = RelayDevice.objects.get(
@@ -40,7 +36,7 @@ def relay_request(request: HttpRequest):
     except:
         return HttpResponseBadRequest()
 
-    received_auth_token_string: str = request.headers["Relay-Device-Auth-Token"]
+    received_auth_token_string: str = request.POST["Relay-Device-Auth-Token"]
     received_auth_token_binary: bytes = received_auth_token_string.encode(
         encoding="ascii"
     )
