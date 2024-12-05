@@ -4,16 +4,15 @@ from django.http import (
     HttpRequest,
     HttpResponse,
     HttpResponseBadRequest,
-    HttpResponseNotFound,
-    HttpResponseRedirect,
-    JsonResponse,
 )
 from relay_handler.models import RelayDevice
 import bcrypt
+import relay_processor
 
 # Create your views here.
 
 
+# FIXME
 @csrf_exempt
 def relay_request(request: HttpRequest):
     """Accepts an attempt at a RelayDevice uploading data for the server to process.
@@ -24,11 +23,11 @@ def relay_request(request: HttpRequest):
     if request.method != "POST":
         return HttpResponseBadRequest()
 
+    # bail on this request early if it doesn't have what we want
     if "Call-Name" not in request.POST or "Relay-Device-Auth-Token" not in request.POST:
         return HttpResponseBadRequest()
 
     received_call_name: str = request.POST["Call-Name"]
-
     try:
         relay_device: RelayDevice = RelayDevice.objects.get(
             call_name=received_call_name
@@ -45,6 +44,15 @@ def relay_request(request: HttpRequest):
         received_auth_token_binary, relay_device.bcrypted_hashed_authentication_token
     ):
         # process data here
-        return HttpResponse(status=204)
+        if relay_processor.handle_time_lapse_upload_from_pi(
+            request=request, relay_device=relay_device
+        ):
+            return HttpResponse(status=204)
+        else:
+            return HttpResponseBadRequest("Failed to store. ")
 
     return HttpResponseBadRequest()
+
+
+# FIXME
+def view_time_lapse(): ...
