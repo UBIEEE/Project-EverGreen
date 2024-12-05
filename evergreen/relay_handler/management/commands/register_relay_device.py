@@ -1,4 +1,5 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
+
 from relay_handler.relay_crypto import register_new_relay_device
 
 
@@ -11,9 +12,9 @@ class Command(BaseCommand):
         parser.add_argument("device_type", type=str)
 
     def handle(self, *args, **options):
-        call_name: str = str(args[0])
-        vendor: str = str(args[1])
-        device_type: str = str(args[2])
+        call_name: str = str(options["call_name"])
+        vendor: str = str(options["vendor"])
+        device_type: str = str(options["device_type"])
         password = register_new_relay_device(
             call_name=call_name, vendor=vendor, device_type=device_type
         )

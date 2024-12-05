@@ -1,9 +1,10 @@
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpRequest, HttpResponse, HttpResponseBadRequest, FileResponse
-from relay_handler.models import RelayDevice, RelayUpload
 import bcrypt
-import relay_processor
+from django.contrib.auth.decorators import login_required
+from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseBadRequest
+from django.views.decorators.csrf import csrf_exempt
+
+import relay_handler.relay_processor as relay_processor
+from relay_handler.models import RelayDevice, RelayUpload
 
 # Create your views here.
 
@@ -13,9 +14,9 @@ import relay_processor
 def relay_request(request: HttpRequest):
     """Accepts an attempt at a RelayDevice uploading data for the server to process.
     This has to be csrf_exempt because the RelayDevice's will not be able to get a csrf
-    token from the server since they never actually access the webpage. Authentication is
-    done solely based on authentication tokens placed in the device, which it uploads with all
-    of its requests to the server."""
+    token from the server since they never actually access the webpage.
+    Authentication is done solely based on authentication tokens placed in the device,
+    which it uploads with all of its requests to the server."""
     if request.method != "POST":
         return HttpResponseBadRequest()
 

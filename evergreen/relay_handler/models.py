@@ -1,5 +1,6 @@
-from django.db import models
 import uuid
+
+from django.db import models
 
 
 # Create your models here.
@@ -17,7 +18,7 @@ class RelayDevice(models.Model):
     expected_message_interval = models.DurationField(null=True)
 
     bcrypted_hashed_authentication_token = models.BinaryField(
-        max_length=128
+        max_length=128, blank=False, null=False
     )  # max length of bytes
 
 

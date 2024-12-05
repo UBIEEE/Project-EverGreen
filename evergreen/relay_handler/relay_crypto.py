@@ -1,7 +1,9 @@
-import bcrypt
-import secrets
-from relay_handler.models import RelayDevice
 import datetime
+import secrets
+
+import bcrypt
+
+from relay_handler.models import RelayDevice
 
 # TODO: It would probably be a good idea to add a peppering mechanism
 
@@ -29,13 +31,16 @@ def register_new_relay_device(
         device_type=device_type,
         initial_activation=initial_activation,
         expected_message_interval=expected_message_interval,
+        bcrypted_hashed_authentication_token=bcrypted_hash,
     )
     return password_text
 
 
 def validate_raw_auth_token(device: RelayDevice, raw_token_text: str):
-    """Checks the auth token for a RelayDevice against the salted and hashed version stored in the database.
-    Returns true if the token is valid for this RelayDevice AND if the RelayDevice is active, and false otherwise.
+    """Checks the auth token for a RelayDevice against the salted and hashed version
+    stored in the database.
+    Returns true if the token is valid for this RelayDevice AND if the RelayDevice
+    is active, and false otherwise.
     """
     inputted_token_binary: bytes = raw_token_text.encode(encoding="ascii")
     validity = bcrypt.checkpw(

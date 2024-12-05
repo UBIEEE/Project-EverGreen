@@ -25,14 +25,14 @@ class FeedConsumer(AsyncWebsocketConsumer):
         print("WebSocket connection attempt received!")
 
         # Add to group
-        await self.channel_layer.group_add(self.room_group_name, self.channel_name)  # type: ignore
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
         print("(GOOD) WebSocket connection accepted successfully!")
 
     # disconnects connection handler
     async def disconnect(self, close_code):
 
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)  # type: ignore
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         print(f"(BAD) WebSocket disconnected with code: {close_code}")
 
     # updated to all clients
@@ -120,7 +120,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
             user_has_liked = False
 
             if current_user.is_authenticated:
-                user_has_liked = post.userLikes.filter(id=current_user.id).exists()  # type: ignore
+                user_has_liked = post.userLikes.filter(id=current_user.id).exists()
 
             post_data = {
                 "id": str(post.id),  # type: ignore
