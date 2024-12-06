@@ -18,9 +18,9 @@ def handle_time_lapse_upload_from_pi(
 ) -> bool:
     if len(request.FILES) != 1:
         return False
-    time_lapse_item: tuple[str, UploadedFile] = request.FILES.popitem()
-    index_of_uploaded_file_in_tuple = 1
-    time_lapse_file: UploadedFile = time_lapse_item[index_of_uploaded_file_in_tuple]
+    time_lapse_file = list(request.FILES.values())[0]
+    # index_of_uploaded_file_in_tuple = 1
+    # time_lapse_file: UploadedFile = time_lapse_item[index_of_uploaded_file_in_tuple]
     # TODO: Verify MIME type
     time_lapse_name: str = time_lapse_file.name
     try:

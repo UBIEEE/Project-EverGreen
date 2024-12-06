@@ -29,7 +29,8 @@ def register_new_relay_device(
         call_name=call_name,
         vendor=vendor,
         device_type=device_type,
-        initial_activation=initial_activation,
+        initial_activation_datetime=initial_activation,
+        currently_active=True,
         expected_message_interval=expected_message_interval,
         bcrypted_hashed_authentication_token=bcrypted_hash,
     )
