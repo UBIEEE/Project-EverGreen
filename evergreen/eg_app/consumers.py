@@ -14,9 +14,15 @@ from django.core.files.base import ContentFile
 
 
 class FeedConsumer(AsyncWebsocketConsumer):
+
+    MAX_FRAME_SIZE = 8000000
+
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.room_group_name = "feed"
+        self.buffer = b""
+        self.upload_size = 0
 
     # connects to socket
     async def connect(self):
@@ -43,7 +49,31 @@ class FeedConsumer(AsyncWebsocketConsumer):
         print("Feed update sent successfully!")
 
     # handle receiving like events!
-    async def receive(self, text_data):
+    async def receive(self, text_data=None, bytes_data=None):
+
+        # check to see if FRAME is greater than 8MB
+        if text_data and len(text_data.encode()) > self.MAX_FRAME_SIZE:
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "error",
+                        "message": f"(txt)Too high. Limit: {self.MAX_FRAME_SIZE}MB",
+                    }
+                )
+            )
+            return
+        # same here, but with text content. It should stop premature, so no upload.
+        if bytes_data and len(bytes_data) > self.MAX_FRAME_SIZE:
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "error",
+                        "message": f"(bytes)To high. Limit: {self.MAX_FRAME_SIZE}MB",
+                    }
+                )
+            )
+            return
+
         try:
             data = json.loads(text_data)
             if data["type"] == "like":
