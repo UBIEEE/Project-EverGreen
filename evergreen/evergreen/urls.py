@@ -21,6 +21,8 @@ from django.contrib import admin
 from django.urls import path
 
 from eg_app import views
+import relay_handler
+import relay_handler.views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -34,6 +36,7 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
+    path("time-lapse", relay_handler.views.view_time_lapse, name="time-lapse"),
 ]
 
 if settings.DEBUG:

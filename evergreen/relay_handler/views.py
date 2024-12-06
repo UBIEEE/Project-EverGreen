@@ -52,10 +52,13 @@ def relay_request(request: HttpRequest):
 
 
 # FIXME
-@login_required()
+# @login_required() # I'd like to but seems to complicated
 def view_time_lapse(request: HttpRequest):
     """Returns the time lapse .mp4 file."""
-    relay_upload = (
-        RelayUpload.objects.latest()
-    )  # FIXME: not general, will only work when there is a single RelayDevice!
+    try:
+        relay_upload = RelayUpload.objects.latest(
+            "datetime_uploaded"
+        )  # FIXME: not general, will only work when there is a single RelayDevice!
+    except Exception:
+        return HttpResponseBadRequest("Not available yet. ")
     return FileResponse(relay_upload.file.chunks())
