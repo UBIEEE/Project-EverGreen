@@ -20,9 +20,9 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-from eg_app import views
 import relay_handler
 import relay_handler.views
+from eg_app import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),

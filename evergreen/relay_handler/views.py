@@ -1,5 +1,6 @@
 import bcrypt
-from django.contrib.auth.decorators import login_required
+
+# from django.contrib.auth.decorators import login_required
 from django.http import FileResponse, HttpRequest, HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 

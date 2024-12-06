@@ -10,8 +10,8 @@ class RelayDevice(models.Model):
         db_index=True, blank=False, unique=True, max_length=128
     )  # basically this specific device's username
 
-    vendor = models.CharField(null=True)
-    device_type = models.CharField(null=True)
+    vendor = models.CharField(max_length=64, null=True)
+    device_type = models.CharField(max_length=64, null=True)
 
     initial_activation_datetime = models.DateTimeField()
     currently_active = models.BooleanField()
