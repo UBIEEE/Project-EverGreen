@@ -3,7 +3,7 @@ import mimetypes
 import traceback
 from pathlib import Path
 from urllib.parse import quote
-from django.views.decorators.csrf import csrf_exempt
+
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -16,6 +16,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
 import eg_app.util.validators as val
 from eg_app.models import Comments, Post
@@ -280,6 +281,7 @@ def likePost(request, pk) -> JsonResponse:
     return JsonResponse(
         {"status": "error", "message": "Invalid request method"}, status=405
     )
+
 
 @csrf_exempt
 def logout_view(request: HttpRequest):
