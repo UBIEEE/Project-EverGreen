@@ -109,7 +109,6 @@ def addCookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
 
 def validate(request):
     if request.method == "POST":
-
         password = request.POST.get("password")
         email = request.POST.get("email")
 
@@ -206,7 +205,6 @@ def deleteComment(request, commentId):
 
 def login_view(request: HttpRequest):
     if request.method == "POST":
-
         email = request.POST.get("email", "")
         password = request.POST.get("password", "")
 
@@ -223,14 +221,12 @@ def login_view(request: HttpRequest):
             pass
 
         if str(user) == "hartloff@buffalo.edu":
-            target_url = 'https://youtube.com/watch?v=JRHARtLZLk8'
+            target_url = "https://youtube.com/watch?v=JRHARtLZLk8"
             return HttpResponseRedirect(target_url)
 
         if str(user) == "jesse@buffalo.edu":
-            target_url = 'https://youtube.com/watch?v=dQw4w9WgXcQ'
+            target_url = "https://youtube.com/watch?v=dQw4w9WgXcQ"
             return HttpResponseRedirect(target_url)
-
-
 
         return HttpResponseRedirect(ROOT_PATH)
 
@@ -238,7 +234,6 @@ def login_view(request: HttpRequest):
 
 
 def updateFeed(request) -> JsonResponse:
-
     posts = Post.objects.all().order_by("-timestamp")
     posts_data = []
     current_user = request.user

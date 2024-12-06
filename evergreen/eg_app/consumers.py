@@ -14,14 +14,12 @@ from django.core.files.base import ContentFile
 
 
 class FeedConsumer(AsyncWebsocketConsumer):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.room_group_name = "feed"
 
     # connects to socket
     async def connect(self):
-
         print("WebSocket connection attempt received!")
 
         # Add to group
@@ -31,13 +29,11 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     # disconnects connection handler
     async def disconnect(self, close_code):
-
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         print(f"(BAD) WebSocket disconnected with code: {close_code}")
 
     # updated to all clients
     async def feed_update(self, event):
-
         # sending a lovey message to websocket
         await self.send(
             text_data=json.dumps(
@@ -72,7 +68,6 @@ class FeedConsumer(AsyncWebsocketConsumer):
                         },
                     )
             elif data["type"] == "upload_post":
-
                 post = await self.handle_post_upload(data)
 
                 if post:
@@ -102,7 +97,6 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_all_posts(self):
-
         Post = apps.get_model("eg_app", "Post")
 
         posts = Post.objects.all().order_by("-timestamp")
@@ -164,7 +158,6 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 data.get("image")
                 and data.get("image") != "data:application/octet-stream;base64,"
             ):
-
                 # Remove the data URL prefix
                 format, imgstr = data["image"].split(";base64,")
                 image_bytes = base64.b64decode(imgstr)
@@ -243,11 +236,9 @@ class FeedConsumer(AsyncWebsocketConsumer):
     def update_like(self, post_id, user):
         Post = apps.get_model("eg_app", "Post")
         try:
-
             post = Post.objects.get(pk=post_id)
 
             if str(user.username) != "AnonymousUser":
-
                 if not post.userLikes.contains(user):
                     post.likes += 1
                     post.userLikes.add(user)

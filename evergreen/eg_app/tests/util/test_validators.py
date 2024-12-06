@@ -6,7 +6,6 @@ from eg_app.util.validators import validate_email, validate_password
 
 
 class TestValidateEmail(TestCase):
-
     def test_not_buffalo_email(self):
         self.assertFalse(validate_email("username@gmail.com"))
 
@@ -38,7 +37,6 @@ class TestValidateEmail(TestCase):
 
 
 class TestValidatePassword(TestCase):
-
     def test_too_short(self):
         self.assertFalse(validate_password("EightChr"))
         self.assertFalse(validate_password("ElevenChars"))

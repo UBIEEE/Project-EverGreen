@@ -17,7 +17,6 @@ class Post(models.Model):
         return f"{self.user}: {self.caption}"
 
     def get_likers_display(self):
-
         likers = self.userLikes.all()
 
         number_of_likes = likers.count()
@@ -26,7 +25,6 @@ class Post(models.Model):
             return "No likes yet"
 
         elif number_of_likes <= 3:
-
             usernames: list[str] = []
             for user in likers:
                 usernames.append(user.username)
