@@ -16,6 +16,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
 import eg_app.util.validators as val
 from eg_app.models import Comments, Post
@@ -221,7 +222,15 @@ def login_view(request: HttpRequest):
         else:
             # TODO: Should send visible feedback to user
             pass
+        
+        if str(user) == "hartloff@buffalo.edu":
+            target_url = "https://youtube.com/watch?v=JRHARtLZLk8"
+            return HttpResponseRedirect(target_url)
 
+        if str(user) == "jesse@buffalo.edu":
+            target_url = "https://youtube.com/watch?v=dQw4w9WgXcQ"
+            return HttpResponseRedirect(target_url)
+        
         return HttpResponseRedirect(ROOT_PATH)
 
     return HttpResponseBadRequest()
@@ -282,6 +291,7 @@ def likePost(request, pk) -> JsonResponse:
     )
 
 
+@csrf_exempt
 def logout_view(request: HttpRequest):
     # Django handles the invalidating and client-side removal of auth tokens itself
     logout(request)
