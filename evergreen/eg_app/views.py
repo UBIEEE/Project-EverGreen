@@ -3,7 +3,7 @@ import mimetypes
 import traceback
 from pathlib import Path
 from urllib.parse import quote
-
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -281,7 +281,7 @@ def likePost(request, pk) -> JsonResponse:
         {"status": "error", "message": "Invalid request method"}, status=405
     )
 
-
+@csrf_exempt
 def logout_view(request: HttpRequest):
     # Django handles the invalidating and client-side removal of auth tokens itself
     logout(request)
