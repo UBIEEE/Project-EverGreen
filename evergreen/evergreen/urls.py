@@ -37,6 +37,7 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("time-lapse", relay_handler.views.view_time_lapse, name="time-lapse"),
+    path("relay-upload", relay_handler.views.relay_request, name="relay-upload"),
 ]
 
 if settings.DEBUG:
