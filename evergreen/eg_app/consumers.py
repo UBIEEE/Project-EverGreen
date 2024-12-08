@@ -131,6 +131,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 "likers_display": post.get_likers_display(),
                 "has_liked": user_has_liked,
                 "comments": [],  # start w/ empty!
+
             }
 
             all_posts_data.append(post_data)
@@ -139,7 +140,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
         return all_posts_data
 
     @database_sync_to_async
-    def handle_post_upload(self, data):
+    def handle_post_upload(self, data):#call sense of time code in here
         Post = apps.get_model("eg_app", "Post")
 
         try:

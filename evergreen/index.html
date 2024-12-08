@@ -208,6 +208,16 @@
                         <br>
                         Caption:
                         <input id="postCaption" type="text" name="caption" onkeypress="handleEnterKey(event)">
+
+                        <label for="plantAge">How old is the plant</label>
+                        <input id="ageInt" type="text" name="ageInt">
+                        <select name="ageUnit" id="ageUnit">
+                            <option value="Days">Days</option>
+                            <option value="Weeks">Weeks</option>
+                            <option value="Months">Months</option>
+                            <option value="years">Years</option>
+                        </select>
+
                         <button type="button" onclick="uploadPost()">Upload</button>
                     </form>
                 </div>

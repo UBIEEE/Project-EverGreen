@@ -1,5 +1,6 @@
 import html
 import mimetypes
+import string
 import traceback
 from pathlib import Path
 from urllib.parse import quote
@@ -241,12 +242,27 @@ def updateFeed(request) -> JsonResponse:
             "likes": post.likes,
             "likers_display": post.get_likers_display(),
             "has_liked": current_user.is_authenticated
+            # "time_stamp" : post.timestamp add funtion to take
+
             and post.userLikes.filter(id=current_user.id).exists(),
             "comments": [],
         }
         posts_data.append(post_dict)
 
     return JsonResponse({"posts": posts_data})
+
+
+def validateAge(age: string, ageLength: string) -> bool:
+    validAge = False
+    validAgeLength = False
+    validLengths = {"Years","Weeks","Months","Days"}
+    age =  html.escape(age)
+    ageLength =  html.escape(ageLength)
+    if(age.isnumeric()):
+        validAge = True
+    if(ageLength in validLengths):
+        validAgeLength = True
+    return validAge & validAgeLength
 
 
 def likePost(request, pk) -> JsonResponse:

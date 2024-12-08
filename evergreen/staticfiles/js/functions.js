@@ -161,6 +161,10 @@ function uploadPost() {
   const caption = formData.get("caption");
   const image = formData.get("image_upload")
 
+  const ageInt = Number(formData.get("age"));
+  const ageUnit = formData.get("age");
+
+
   if (!caption || caption.trim() === "") {
     console.error("Caption is required");
     return;
@@ -168,9 +172,35 @@ function uploadPost() {
 
   if (image && image.size > MAX_IMAGE_BYTES){
     alert("IMAGE size must be less than 8 MB!")
-  }  
+  }
 
-  if (caption.length > MAX_CHAR_LENGTH){
+  switch (ageInt) {
+    case "Days":
+      if (ageInt < 0 || ageInt > 31) {
+        alert("Day must be from 1 - 31")
+      }
+      break
+
+    case "Weeks":
+      if (ageInt < 0 || ageInt > 4) {
+        alert("Day must be from 1 - 4")
+      }
+      break
+
+    case "Month":
+      if (ageInt < 0 || ageInt > 12) {
+        alert("Month must be from 1 - 12 ")
+      }
+      break
+
+    default:
+      if (ageUnit.trim() === "") {
+        alert("Plant ages are required")
+      }
+  }
+
+
+if (caption.length > MAX_CHAR_LENGTH){
     alert('Message too long, Bee movie scripts included')
   }
 
