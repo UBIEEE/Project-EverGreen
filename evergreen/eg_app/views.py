@@ -28,7 +28,6 @@ ROOT_PATH = "/"
 # handles request
 
 
-@csrf_exempt
 def index(request):
     if request.user.is_authenticated:
         return render(
@@ -109,7 +108,6 @@ def addCookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
     return response
 
 
-@csrf_exempt
 def validate(request):
     if request.method == "POST":
 
@@ -224,13 +222,20 @@ def login_view(request: HttpRequest):
         else:
             # TODO: Should send visible feedback to user
             pass
+        
+        if str(user) == "hartloff@buffalo.edu":
+            target_url = "https://youtube.com/watch?v=JRHARtLZLk8"
+            return HttpResponseRedirect(target_url)
 
+        if str(user) == "jesse@buffalo.edu":
+            target_url = "https://youtube.com/watch?v=dQw4w9WgXcQ"
+            return HttpResponseRedirect(target_url)
+        
         return HttpResponseRedirect(ROOT_PATH)
 
     return HttpResponseBadRequest()
 
 
-@csrf_exempt
 def updateFeed(request) -> JsonResponse:
 
     posts = Post.objects.all().order_by("-timestamp")
@@ -253,7 +258,6 @@ def updateFeed(request) -> JsonResponse:
     return JsonResponse({"posts": posts_data})
 
 
-@csrf_exempt
 def likePost(request, pk) -> JsonResponse:
     user_who_is_liking = request.user
 

@@ -6,6 +6,9 @@ The project can be found at: https://projectevergreen.live/
 
 ## Managing the Local Environment
 
+### Env
+On a fresh clone of the repository, make sure that when testing locally to rename the .env.example to .env before running docker-compose. This is for security of the repository.
+
 ### Poetry
 The development environment is being managed using [Poetry](https://python-poetry.org/). Please make sure that you have Poetry installed:
 ```shell
@@ -38,5 +41,6 @@ The database migrations should be automatically applied by Docker when it spins 
 You can use the command `docker compose exec django python manage.py createsuperuser` to make your admin user from a separate terminal. You can then go to the `/admin` panel and login with those credentials that you used to create the super user. 
 
 # Redirects
+
 
 Please note that requests to port 8080 are redirected to port 80 or 443 as static files are hosted through nginx. Port 443 is used in instances where certs are present. Port 80 is used in instances where they are not present, in which case they are then upgraded to 443 with certs.

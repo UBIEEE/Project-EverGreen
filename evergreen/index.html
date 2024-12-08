@@ -14,7 +14,7 @@
      <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
 
      <div class="logo">
-        <img src="{% static 'images/plant.jpg' %}" alt="A logo pic of a plant" width = "100" height = "100">
+        <img src="{% static 'images/plant.jpg' %}" alt="A logo pic of a plant" width = "150" height = "150">
     </div>
 
     <div class="logout" {{ hidden1 }}>
@@ -32,6 +32,7 @@
         <nav>
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
+            <a href="#plant-time-lapse">Plant Time-lapse</a>
             <a href="#plant-chat">Plant Chat</a>
             
         </nav>
@@ -48,6 +49,12 @@
             <p>If you have any questions or want to join our club, feel free to reach out!</p>
             <p>Join our Discord: <a href="https://discord.com/invite/QMHjt65z7a">https://discord.com/invite/QMHjt65z7a</a></p>
         </section>
+
+        <section id="plant-time-lapse">
+            <h2>Time-lapse</h2>
+            <video width="1280" height="720" controls autoplay loop muted><source src=/time-lapse type="video/mp4"></video>
+        </section>
+
     </main>
     <div class="authenticate-in">
             Registration:

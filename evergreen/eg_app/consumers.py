@@ -14,10 +14,13 @@ from django.core.files.base import ContentFile
 
 
 class FeedConsumer(AsyncWebsocketConsumer):
+    MAX_FRAME_SIZE = 8000000
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.room_group_name = "feed"
+        self.buffer = b""
+        self.upload_size = 0
 
     # connects to socket
     async def connect(self):
@@ -47,7 +50,31 @@ class FeedConsumer(AsyncWebsocketConsumer):
         print("Feed update sent successfully!")
 
     # handle receiving like events!
-    async def receive(self, text_data):
+    async def receive(self, text_data=None, bytes_data=None):
+
+        # check to see if FRAME is greater than 8MB
+        if text_data and len(text_data.encode()) > self.MAX_FRAME_SIZE:
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "error",
+                        "message": f"(txt)Too high. Limit: {self.MAX_FRAME_SIZE}MB",
+                    }
+                )
+            )
+            return
+        # same here, but with text content. It should stop premature, so no upload.
+        if bytes_data and len(bytes_data) > self.MAX_FRAME_SIZE:
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "type": "error",
+                        "message": f"(bytes)To high. Limit: {self.MAX_FRAME_SIZE}MB",
+                    }
+                )
+            )
+            return
+
         try:
             data = json.loads(text_data)
             if data["type"] == "like":
@@ -61,7 +88,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
                     post_data = await self.get_post_data(post_id)
 
                     # Broadcast the updated likes to ALL clients
-                    await self.channel_layer.group_send(
+                    await self.channel_layer.group_send(  # type: ignore
                         self.room_group_name,
                         {
                             "type": "like_update",
@@ -79,7 +106,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
                     # BROADCAST TO ALL CLIENTS
                     posts_data = await self.get_all_posts()
 
-                    await self.channel_layer.group_send(
+                    await self.channel_layer.group_send(  # type: ignore
                         self.room_group_name,
                         {
                             "type": "feed_update",
@@ -114,8 +141,8 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
             post_image_url = ""
 
-            if post.image and hasattr(post.image, "url"):
-                post_image_url = post.image.url
+            if post.image and hasattr(post.image, "url"):  # type: ignore
+                post_image_url = post.image.url  # type: ignore
 
             user_has_liked = False
 
@@ -123,12 +150,13 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 user_has_liked = post.userLikes.filter(id=current_user.id).exists()
 
             post_data = {
-                "id": str(post.id),
-                "user": post.user,
+                "id": str(post.id),  # type: ignore
+                "user": post.user,  # type: ignore
                 "image": {"url": post_image_url},
-                "caption": post.caption + "\n",  # Add newline after caption
-                "likes": post.likes,
-                "likers_display": post.get_likers_display(),
+                "caption": post.caption  # type: ignore
+                + "\n",  # Add newline after caption # type: ignore
+                "likes": post.likes,  # type: ignore
+                "likers_display": post.get_likers_display(),  # type: ignore
                 "has_liked": user_has_liked,
                 "comments": [],  # start w/ empty!
             }
@@ -202,12 +230,12 @@ class FeedConsumer(AsyncWebsocketConsumer):
             user = self.scope["user"]
             has_liked = (
                 str(user.username) != "AnonymousUser"
-                and post.userLikes.filter(id=user.id).exists()
+                and post.userLikes.filter(id=user.id).exists()  # type: ignore
             )
 
             return {
-                "likes": post.likes,
-                "likers_display": post.get_likers_display(),
+                "likes": post.likes,  # type: ignore
+                "likers_display": post.get_likers_display(),  # type: ignore
                 "has_liked": has_liked,
             }
         except Post.DoesNotExist:
@@ -248,18 +276,18 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
             if str(user.username) != "AnonymousUser":
 
-                if not post.userLikes.contains(user):
-                    post.likes += 1
-                    post.userLikes.add(user)
+                if not post.userLikes.contains(user):  # type: ignore
+                    post.likes += 1  # type: ignore
+                    post.userLikes.add(user)  # type: ignore
 
                 else:
-                    post.likes -= 1
-                    post.userLikes.remove(user)
+                    post.likes -= 1  # type: ignore
+                    post.userLikes.remove(user)  # type: ignore
 
                 post.save()
 
-                return True, post.likes
-            return False, post.likes
+                return True, post.likes  # type: ignore
+            return False, post.likes  # type: ignore
 
         except Post.DoesNotExist:
             return False, 0
