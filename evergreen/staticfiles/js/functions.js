@@ -161,8 +161,8 @@ function uploadPost() {
   const caption = formData.get("caption");
   const image = formData.get("image_upload")
 
-  const ageInput = formData.get("age");
-  const ageUnit = formData.get("age");
+  const ageInput = formData.get("ageInt");
+  const ageUnit = formData.get("ageUnit");
 
 
   if (!caption || caption.trim() === "") {
@@ -204,12 +204,11 @@ function uploadPost() {
         alert("Month must be from 1 - 12 ")
       }
       break
-    
+
     default:
       if (ageUnit.trim() === "") {
         alert("Plant ages are required")
       }
-
   }
 
 
