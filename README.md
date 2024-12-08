@@ -78,7 +78,7 @@ We believe both the features for the time-lapse uploads from the Pi _and_ the ad
 
 6. Once you are inside the container, you will execute the command to register a new device. In the root directory of the django container, run the command `python manage.py register_relay_device <call-name> <vendor> <device-type>`. Make sure that the inputs you use contain only valid ASCII alphanumeric characters. For example, if I was registering a RPi whose name I wanted to be "picam", I would do `python manage.py register_relay_device "picam" "RaspberryPi" "4b"`. This command should output a password/auth-token that you will use to send requests. Copy this password _and_ the call-name that you named the device so that you have them for later. _You will use this terminal again later, keep it open._
 
-7. Copy the information you used to register the device into the corresponding variables in `device_spoofer.py`. Also, change the value of the `filename` variable to be the filename of the first file you would like to test that you placed inside the `capture/` directory. For example, if you placed the file named `recording1.mp4` inside of `capture/`, you would have `filename = "recording.mp4`. 
+7. Copy the information you used to register the device into the corresponding variables in `device_spoofer.py`. Also, change the value of the `filename` variable to be the filename of the first file you would like to test that you placed inside the `capture/` directory. For example, if you placed the file named `recording1.mp4` inside of `capture/`, you would have `filename = "recording1.mp4`. 
 
 ```python
 # contents of device_spoofer.py
