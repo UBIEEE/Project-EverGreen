@@ -1,6 +1,7 @@
 # This file runs on the Raspberry Pi.
 # It requires to have  'capture' and 'output' directories created inside the directory this is placed in.
 # Configuration should be in a .env in the same directory as this file.
+# Make sure this file is executed inside of a tmux terminal so that it continues to run after you close ssh.
 
 import datetime
 import logging

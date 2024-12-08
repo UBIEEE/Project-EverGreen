@@ -11,11 +11,12 @@ VENDOR = "<vendor>"
 DEVICE_TYPE = "<device-type>"
 AUTH_TOKEN = "<password>"
 
+filename = f"name.mp4"
+
+
 now = datetime.datetime.now(datetime.timezone.utc)
 current_time = int(now.timestamp())
 
-
-filename = f"name.mp4"
 capture_full_path = pathlib.Path(os.getcwd()) / "capture" / filename
 
 data = {
