@@ -126,11 +126,14 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 "id": str(post.id),
                 "user": post.user,
                 "image": {"url": post_image_url},
-                "caption": post.caption + "\n",  # Add newline after caption
+                " ": post.caption + "\n",  # Add newline after caption
+                "ageInt" :post.ageInt,
+                "ageUnit" : post.ageUnit,
                 "likes": post.likes,
                 "likers_display": post.get_likers_display(),
                 "has_liked": user_has_liked,
                 "comments": [],  # start w/ empty!
+
 
             }
 
@@ -152,12 +155,22 @@ class FeedConsumer(AsyncWebsocketConsumer):
             caption = data.get("caption", "")
             MAX_CHAR_LENGTH = 280
 
+            ageInt = data.get("ageInt","")
+            ageUnit = data.get("ageUnit","")
+
+
             if len(caption) > MAX_CHAR_LENGTH:
                 return None
+
+            if len(ageInt) > MAX_CHAR_LENGTH or len(ageUnit) > MAX_CHAR_LENGTH:
+                return None
+
 
             post_data = {
                 "user": html.escape(user.email),
                 "caption": html.escape(data.get("caption", "")),
+                "ageInt" : html.escape(ageInt),
+                "ageUnit" : html.escape(ageUnit)
             }
 
             # Handle image if it is present *no tautology*
