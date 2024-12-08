@@ -42,5 +42,4 @@ You can use the command `docker compose exec django python manage.py createsuper
 
 # Redirects
 
-
 Please note that requests to port 8080 are redirected to port 80 or 443 as static files are hosted through nginx. Port 443 is used in instances where certs are present. Port 80 is used in instances where they are not present, in which case they are then upgraded to 443 with certs.
