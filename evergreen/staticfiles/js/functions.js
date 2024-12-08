@@ -174,9 +174,6 @@ function uploadPost() {
     alert("IMAGE size must be less than 8 MB!")
   }
 
-  if (typeof ageInput != 'number'){
-    alert("Must enter a number")
-  }
 
   const ageInt = Number(ageInput)
 

@@ -15,6 +15,8 @@ from django.core.files.base import ContentFile
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+from time import time
+
 
 class FeedConsumer(AsyncWebsocketConsumer):
 
@@ -105,12 +107,9 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_all_posts(self):
-
         Post = apps.get_model("eg_app", "Post")
 
         posts = Post.objects.all().order_by("-timestamp")
-        # YYYY-MM-DD HH:MM:SS
-
         all_posts_data = []
 
         for post in posts:
@@ -123,12 +122,12 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
             user_has_liked = False
 
+
             if current_user.is_authenticated:
                 user_has_liked = post.userLikes.filter(id=current_user.id).exists()
 
             # "plant is 2 weeks old"
-            date = self.parseTime(post.timestamp)
-            newPlantAge = self.timeAgo(date)
+            newPlantAge = self.timeAgo(post.timestamp)
             post_data = {
                 "id": str(post.id),
                 "user": post.user,
@@ -147,13 +146,13 @@ class FeedConsumer(AsyncWebsocketConsumer):
         # Return the complete list of post data
         return all_posts_data
 
-    @database_sync_to_async
-    def parseTime(self, timeStamp: str) -> datetime:
-        date, time = timeStamp.split(" ")
-        year, month, day = map(int, date.split("-"))
-        hour, minute, second = map(int, time.split(":"))
-
-        return datetime(year, month, day, hour, minute, second)
+    # @database_sync_to_async
+    # def parseTime(self, timeStamp: str) -> datetime:
+    #     date, time = timeStamp.split(" ")
+    #     year, month, day = map(int, date.split("-"))
+    #     hour, minute, second = map(int, time.split(":"))
+    #
+    #     return datetime(year, month, day, hour, minute, second)
 
     @database_sync_to_async
     def timeAgo(self, date: datetime) -> str:
@@ -177,7 +176,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
 
     @database_sync_to_async
-    def handle_post_upload(self, data):  # call sense of time code in here
+    def handle_post_upload(self, data):
         Post = apps.get_model("eg_app", "Post")
 
         try:
@@ -189,11 +188,11 @@ class FeedConsumer(AsyncWebsocketConsumer):
             caption = data.get("caption", "")
             MAX_CHAR_LENGTH = 280
 
-            ageInt = data.get("ageInt", "")
-            ageUnit = data.get("ageUnit", "")
-
             if len(caption) > MAX_CHAR_LENGTH:
                 return None
+
+            ageInt = html.escape(data.get("ageInt", ""))
+            ageUnit = html.escape(data.get("ageUnit", ""))
 
             if len(ageInt) > MAX_CHAR_LENGTH or len(ageUnit) > MAX_CHAR_LENGTH:
                 return None
@@ -201,13 +200,14 @@ class FeedConsumer(AsyncWebsocketConsumer):
             post_data = {
                 "user": html.escape(user.email),
                 "caption": html.escape(data.get("caption", "")),
-                "plantAge": html.escape("plant is " + str(ageInt) + " " + str(ageUnit) + "old"),
+                "plantAge":  f"plant is {ageInt} {ageUnit} old",
+                "timeStamp" : datetime.now()
             }
 
             # Handle image if it is present *no tautology*
             if (
-                data.get("image")
-                and data.get("image") != "data:application/octet-stream;base64,"
+                    data.get("image")
+                    and data.get("image") != "data:application/octet-stream;base64,"
             ):
 
                 # Remove the data URL prefix
@@ -246,8 +246,8 @@ class FeedConsumer(AsyncWebsocketConsumer):
             post = Post.objects.get(pk=post_id)
             user = self.scope["user"]
             has_liked = (
-                str(user.username) != "AnonymousUser"
-                and post.userLikes.filter(id=user.id).exists()
+                    str(user.username) != "AnonymousUser"
+                    and post.userLikes.filter(id=user.id).exists()
             )
 
             return {
