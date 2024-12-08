@@ -161,7 +161,7 @@ function uploadPost() {
   const caption = formData.get("caption");
   const image = formData.get("image_upload")
 
-  const ageInt = Number(formData.get("age"));
+  const ageInput = formData.get("age");
   const ageUnit = formData.get("age");
 
 
@@ -174,7 +174,13 @@ function uploadPost() {
     alert("IMAGE size must be less than 8 MB!")
   }
 
-  switch (ageInt) {
+  if (typeof ageInput != 'number'){
+    alert("Must enter a number")
+  }
+
+  const ageInt = Number(ageInput)
+
+  switch (ageUnit) {
     case "Days":
       if (ageInt < 0 || ageInt > 31) {
         alert("Day must be from 1 - 31")
@@ -187,16 +193,23 @@ function uploadPost() {
       }
       break
 
-    case "Month":
+    case "Months":
       if (ageInt < 0 || ageInt > 12) {
         alert("Month must be from 1 - 12 ")
       }
       break
 
+    case "Years":
+      if (ageInt < 0) {
+        alert("Month must be from 1 - 12 ")
+      }
+      break
+    
     default:
       if (ageUnit.trim() === "") {
         alert("Plant ages are required")
       }
+
   }
 
 
