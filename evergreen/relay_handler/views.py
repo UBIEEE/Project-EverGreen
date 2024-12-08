@@ -33,6 +33,11 @@ def relay_request(request: HttpRequest):
     except Exception:
         return HttpResponseBadRequest()
 
+    if not relay_device.currently_active:
+        return HttpResponseBadRequest(
+            f"Device '{relay_device.call_name}' is currently deactivated. "
+        )
+
     received_auth_token_string: str = request.POST["Relay-Device-Auth-Token"]
     received_auth_token_binary: bytes = received_auth_token_string.encode(
         encoding="ascii"
@@ -45,7 +50,7 @@ def relay_request(request: HttpRequest):
         if relay_processor.handle_time_lapse_upload_from_pi(
             request=request, relay_device=relay_device
         ):
-            return HttpResponse(status=204)
+            return HttpResponse(status=204, content="Upload accepted. ")
         else:
             return HttpResponseBadRequest("Failed to store. ")
 

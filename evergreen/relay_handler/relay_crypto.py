@@ -20,6 +20,7 @@ def register_new_relay_device(
     """Creates a new RelayDevice in the database.
     Returns the raw password for the RelayDevice which is a url safe string.
     """
+
     salt: bytes = bcrypt.gensalt()
     password_text: str = secrets.token_urlsafe(nbytes=64)
     password_binary: bytes = password_text.encode(encoding="ascii")
@@ -35,6 +36,18 @@ def register_new_relay_device(
         bcrypted_hashed_authentication_token=bcrypted_hash,
     )
     return password_text
+
+
+def activate_existing_relay_device(call_name: str):
+    relay_device: RelayDevice = RelayDevice.objects.get(call_name=call_name)
+    relay_device.currently_active = True
+    relay_device.save(update_fields=["currently_active"])
+
+
+def deactivate_existing_relay_device(call_name: str):
+    relay_device: RelayDevice = RelayDevice.objects.get(call_name=call_name)
+    relay_device.currently_active = False
+    relay_device.save(update_fields=["currently_active"])
 
 
 def validate_raw_auth_token(device: RelayDevice, raw_token_text: str):

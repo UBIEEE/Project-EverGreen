@@ -222,7 +222,7 @@ def login_view(request: HttpRequest):
         else:
             # TODO: Should send visible feedback to user
             pass
-        
+
         if str(user) == "hartloff@buffalo.edu":
             target_url = "https://youtube.com/watch?v=JRHARtLZLk8"
             return HttpResponseRedirect(target_url)
@@ -230,7 +230,7 @@ def login_view(request: HttpRequest):
         if str(user) == "jesse@buffalo.edu":
             target_url = "https://youtube.com/watch?v=dQw4w9WgXcQ"
             return HttpResponseRedirect(target_url)
-        
+
         return HttpResponseRedirect(ROOT_PATH)
 
     return HttpResponseBadRequest()
