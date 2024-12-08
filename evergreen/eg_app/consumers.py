@@ -12,6 +12,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.apps import apps
 from django.core.files.base import ContentFile
 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 
 class FeedConsumer(AsyncWebsocketConsumer):
 
@@ -106,6 +109,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
         Post = apps.get_model("eg_app", "Post")
 
         posts = Post.objects.all().order_by("-timestamp")
+        # YYYY-MM-DD HH:MM:SS
 
         all_posts_data = []
 
@@ -122,19 +126,20 @@ class FeedConsumer(AsyncWebsocketConsumer):
             if current_user.is_authenticated:
                 user_has_liked = post.userLikes.filter(id=current_user.id).exists()
 
+            # "plant is 2 weeks old"
+            date = self.parseTime(post.timestamp)
+            newPlantAge = self.timeAgo(date)
             post_data = {
                 "id": str(post.id),
                 "user": post.user,
                 "image": {"url": post_image_url},
                 " ": post.caption + "\n",  # Add newline after caption
-                "ageInt" :post.ageInt,
-                "ageUnit" : post.ageUnit,
                 "likes": post.likes,
                 "likers_display": post.get_likers_display(),
                 "has_liked": user_has_liked,
                 "comments": [],  # start w/ empty!
-
-
+                "time_stamp" : post.timestamp,
+                "plantAge": newPlantAge
             }
 
             all_posts_data.append(post_data)
@@ -143,7 +148,36 @@ class FeedConsumer(AsyncWebsocketConsumer):
         return all_posts_data
 
     @database_sync_to_async
-    def handle_post_upload(self, data):#call sense of time code in here
+    def parseTime(self, timeStamp: str) -> datetime:
+        date, time = timeStamp.split(" ")
+        year, month, day = map(int, date.split("-"))
+        hour, minute, second = map(int, time.split(":"))
+
+        return datetime(year, month, day, hour, minute, second)
+
+    @database_sync_to_async
+    def timeAgo(self, date: datetime) -> str:
+        now = datetime.now()
+        difference = relativedelta(now, date)
+
+        years = difference.years
+        months = difference.months
+        weeks = (difference.days) // 7
+        days = difference.days % 7
+
+        if years > 0:
+            return f"plant is {years} years old"
+        if months > 0:
+            return f"plant is {months} years old"
+        if weeks > 0:
+            return f"plant is {weeks} years old"
+        if days > 0:
+            return f"plant is {days} years old"
+
+
+
+    @database_sync_to_async
+    def handle_post_upload(self, data):  # call sense of time code in here
         Post = apps.get_model("eg_app", "Post")
 
         try:
@@ -155,9 +189,8 @@ class FeedConsumer(AsyncWebsocketConsumer):
             caption = data.get("caption", "")
             MAX_CHAR_LENGTH = 280
 
-            ageInt = data.get("ageInt","")
-            ageUnit = data.get("ageUnit","")
-
+            ageInt = data.get("ageInt", "")
+            ageUnit = data.get("ageUnit", "")
 
             if len(caption) > MAX_CHAR_LENGTH:
                 return None
@@ -165,12 +198,10 @@ class FeedConsumer(AsyncWebsocketConsumer):
             if len(ageInt) > MAX_CHAR_LENGTH or len(ageUnit) > MAX_CHAR_LENGTH:
                 return None
 
-
             post_data = {
                 "user": html.escape(user.email),
                 "caption": html.escape(data.get("caption", "")),
-                "ageInt" : html.escape(ageInt),
-                "ageUnit" : html.escape(ageUnit)
+                "plantAge": html.escape("plant is " + str(ageInt) + " " + str(ageUnit) + "old"),
             }
 
             # Handle image if it is present *no tautology*
