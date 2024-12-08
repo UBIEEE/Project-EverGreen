@@ -20,7 +20,6 @@ def register_new_relay_device(
     """Creates a new RelayDevice in the database.
     Returns the raw password for the RelayDevice which is a url safe string.
     """
-
     salt: bytes = bcrypt.gensalt()
     password_text: str = secrets.token_urlsafe(nbytes=64)
     password_binary: bytes = password_text.encode(encoding="ascii")
