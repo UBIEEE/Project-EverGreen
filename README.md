@@ -65,7 +65,7 @@ We believe both the features for the time-lapse uploads from the Pi _and_ the ad
 > [!TIP] 
 > These testing procedures are long and delicate. Please read _all_ of the testing procedure before starting to avoid making errors.
 
-1. Locate the file `device_spoofer.py` inside the `device_uploading` directory. Copy this to a totally new and separate location on your computer from the directory/repo for this project. For example, if you cloned this repo so that it is at `~Projects/Grading/Project-EverGreen/` then you could move this file to `~/Projects/Grading/Spoofing/`.
+1. Locate the file `device_spoofer.py` inside the `device_uploading` directory. Copy this to a totally new and separate location on your computer from the directory/repo for this project. For example, if you cloned this repo so that it is at `~/Projects/Grading/Project-EverGreen/` then you could move this file to `~/Projects/Grading/Spoofing/`.
 
 2. Inside of the directory in which you copied `device_spoofer.py`, also create a new directory that is named `capture`. For example, if you placed `device_spoofer.py` at `~/Projects/Grading/Spoofing/device_spoofer.py`, you should have a directory `~/Projects/Grading/Spoofing/capture/`.
 
