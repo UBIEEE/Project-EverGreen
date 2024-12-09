@@ -4,8 +4,6 @@ Project Evergreen is a group project for the class [CSE312: Web Applications](ht
 
 The project can be found at: https://projectevergreen.live/
 
-
-
 ## Managing the Local Environment
 
 ### Env
@@ -44,4 +42,4 @@ You can use the command `docker compose exec django python manage.py createsuper
 
 # Redirects
 
-Please note that requests to port 8080 are redirected to port 80 or 443 as static files are hosted through nginx. Port 80 is used in instances where self signed certificates are not present, and 443 is used when they are.
+Please note that requests to port 8080 are redirected to port 80 or 443 as static files are hosted through nginx. Port 443 is used in instances where certs are present. Port 80 is used in instances where they are not present. Requests to port 80 will be upgraded to HTTPS (443) if that is in use.
