@@ -35,5 +35,6 @@ url = "http://localhost/relay-upload"
 
 response = requests.post(url=url, data=data, files=files)
 
-print(response.content)
-print(response.reason)
+print(f"Response code: {response.status_code}")
+print(f"Response content: {response.content}")
+print(f"Response reason: {response.reason}")
