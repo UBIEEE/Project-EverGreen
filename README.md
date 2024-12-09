@@ -4,8 +4,6 @@ Project Evergreen is a group project for the class [CSE312: Web Applications](ht
 
 The project can be found at: https://projectevergreen.live/
 
-
-
 ## Managing the Local Environment
 
 ### Env
@@ -44,7 +42,7 @@ You can use the command `docker compose exec django python manage.py createsuper
 
 # Redirects
 
-Please note that requests to port 8080 are redirected to port 80 or 443 as static files are hosted through nginx. Port 80 is used in instances where self signed certificates are not present, and 443 is used when they are.
+Please note that requests to port 8080 are redirected to port 80 or 443 as static files are hosted through nginx. Port 443 is used in instances where certs are present. Port 80 is used in instances where they are not present. Requests to port 80 will be upgraded to HTTPS (443) if that is in use.
 
 
 # Creativity and Documentation: Sending time-lapse videos from IoT device / admin commands to register IoT device.
@@ -103,4 +101,3 @@ We believe both the features for the time-lapse uploads from the Pi _and_ the ad
 11. We will now re-activate the device you just registered. Return back to the terminal inside the django container. Now run the command `python manage.py activate_relay_device <call-name>` with the same call-name you used to register beforehand. Going of the previous example, this would be `python manage.py activate_relay_device "picam"`. Return back to the `device_spoofer.py` file and change the filename variable to one of the other `.mp4` files you placed inside the `capture/` directory that you have not used yet. Run the `device_spoofer.py` script again and verify that it printed out a response code and message indicating that your upload request to the server was accepted. Go the your browser and refresh the page to confirm that the new video appears, you might have to wait ~30s for the app to process the new upload. (Some browsers may use a caching scheme which may prevent the new video from displaying right away on refresh, if this is the case simply open `localhost` from a new private window to verify the new video).
 
 12. Change the variables for `AUTH_TOKEN` and/or `CALL_NAME` to random strings in `device_spoofer.py`. Run `device_spoofer.py` and verify that the requests you send with these invalid credentials are rejected by the server.
-
