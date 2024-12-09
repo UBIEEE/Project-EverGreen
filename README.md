@@ -78,16 +78,16 @@ We believe both the features for the time-lapse uploads from the Pi _and_ the ad
 
 6. Once you are inside the container, you will execute the command to register a new device. In the root directory of the django container, run the command `python manage.py register_relay_device <call-name> <vendor> <device-type>`. Make sure that the inputs you use contain only valid ASCII alphanumeric characters. For example, if I was registering a RPi whose name I wanted to be "picam", I would do `python manage.py register_relay_device "picam" "RaspberryPi" "4b"`. This command should output a password/auth-token that you will use to send requests. Copy this password _and_ the call-name that you named the device so that you have them for later. _You will use this terminal again later, keep it open._
 
-7. Copy the information you used to register the device into the corresponding variables in `device_spoofer.py`. Also, change the value of the `filename` variable to be the filename of the first file you would like to test that you placed inside the `capture/` directory. For example, if you placed the file named `recording1.mp4` inside of `capture/`, you would have `filename = "recording1.mp4`. 
+7. Copy the information you used to register the device into the corresponding variables on lines 9-14 in `device_spoofer.py`. Also, change the value of the `filename` variable to be the filename of the first file you would like to test that you placed inside the `capture/` directory. For example, if you placed the file named `recording1.mp4` inside of `capture/`, you would have `filename = "recording1.mp4"`. Ensure that `CALL_NAME` is exactly the call name you used to register with and that `AUTH_TOKEN` is exactly the password outputted by the `register_relay_device` command.
 
 ```python
 # contents of device_spoofer.py
-9  CALL_NAME = "<call-name>"
+ 9 CALL_NAME = "<call-name>" # replace these
 10 VENDOR = "<vendor>"
 11 DEVICE_TYPE = "<device-type>"
 12 AUTH_TOKEN = "<password>"
 13 
-14 filename = f"name.mp4"
+14 filename = "<filename-with-extension>"
 ```
 
 8. Run the python file `device_spoofer.py` with the command `python3 device_spoofer.py`. Verify that the program gave a status code and response printed to the terminal indicating the the request/upload was successful. Go the your browser and refresh the page to confirm that the new video appears, you might have to wait ~30s for the app to process the new upload. (Some browsers may use a caching scheme which may prevent the new video from displaying right away on refresh, if this is the case simply open `localhost` from a new private window to verify the new video). 
