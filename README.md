@@ -40,14 +40,14 @@ The database migrations should be automatically applied by Docker when it spins 
 
 You can use the command `docker compose exec django python manage.py createsuperuser` to make your admin user from a separate terminal. You can then go to the `/admin` panel and login with those credentials that you used to create the super user. 
 
-# Redirects
+## Redirects
 
 Please note that requests to port 8080 are redirected to port 80 or 443 as static files are hosted through nginx. Port 443 is used in instances where certs are present. Port 80 is used in instances where they are not present. Requests to port 80 will be upgraded to HTTPS (443) if that is in use.
 
 
-# Creativity and Documentation: Sending time-lapse videos from IoT device / admin commands to register IoT device.
+## Creativity and Documentation: Sending time-lapse videos from IoT device / admin commands to register IoT device.
 
-## Feature Explanation
+### Feature Explanation
 
 Since this webserver is meant to control IoT devices and receive data form IoT devices, we implemented a feature where a user can create an IoT device that uploads data to the server securely.
 
@@ -60,9 +60,10 @@ Additionally, to help an admin user manage these devices, we have created admin 
 
 We believe both the features for the time-lapse uploads from the Pi _and_ the admin commands both count as separate valid features for the purposes of Part 3 Objective 3. Even if you do not count the Pi stuff since we cannot have you run the script on a Pi to our web server to test, the admin commands should still be sufficient to count as the additional feature.
 
-## Testing Procedure
+### Testing Procedure
 
-> [!TIP] These testing procedures are long and delicate. Please read _all_ of the testing procedure before starting to avoid making errors.
+> [!TIP] 
+> These testing procedures are long and delicate. Please read _all_ of the testing procedure before starting to avoid making errors.
 
 1. Locate the file `device_spoofer.py` inside the `device_uploading` directory. Copy this to a totally new and separate location on your computer from the directory/repo for this project. For example, if you cloned this repo so that it is at `~Projects/Grading/Project-EverGreen/` then you could move this file to `~/Projects/Grading/Spoofing/`.
 
@@ -92,9 +93,11 @@ We believe both the features for the time-lapse uploads from the Pi _and_ the ad
 
 9. Run the python file `device_spoofer.py` with the command `python3 device_spoofer.py` inside the new directory you made for spoofing. Verify that the program gave a status code and response printed to the terminal indicating the the request/upload was successful. Go the your browser and refresh the page to confirm that the new video appears, you might have to wait ~30s for the app to process the new upload. (Some browsers may use a caching scheme which may prevent the new video from displaying right away on refresh, if this is the case simply open `localhost` from a new private window to verify the new video).
 
-> [!IMPORTANT] The `device_spoofer.py` script uses the `requests` package, if you do not already have it installed on your system you will have to install it with `pip3 install requests` or whatever other way you use to install 3rd party python packages on your system.
+> [!IMPORTANT] 
+> The `device_spoofer.py` script uses the `requests` package, if you do not already have it installed on your system you will have to install it with `pip3 install requests` or whatever other way you use to install 3rd party python packages on your system.
 
-> [!CAUTION] The testing procedures were written assuming that you are working from a fresh clone of the repo. If you created self-signed certs for the website the requests module is liable to blow up with SSL errors.
+> [!CAUTION] 
+> The testing procedures were written assuming that you are working from a fresh clone of the repo. If you created self-signed certs for the website the requests module is liable to blow up with SSL errors.
 
 10. We will now de-activate the device you just registered. Return back to the terminal inside the django container. Now run the command `python manage.py deactivate_relay_device <call-name>` with the same call-name you used to register beforehand. Going of the previous example, this would be `python manage.py deactivate_relay_device "PiCam"`. Return back to the `device_spoofer.py` file and change the filename variable to one of the other `.mp4` files you placed inside the `capture/` directory. Run the `device_spoofer.py` script again and verify that it printed out a response code and message indicating that your upload request to the server was rejected. Verify that the video playing on the webpage did not change to the new video you attempted to send.
 
