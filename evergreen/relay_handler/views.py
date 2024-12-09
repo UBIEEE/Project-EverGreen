@@ -19,11 +19,11 @@ def relay_request(request: HttpRequest):
     Authentication is done solely based on authentication tokens placed in the device,
     which it uploads with all of its requests to the server."""
     if request.method != "POST":
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest("Expected a POST request.")
 
     # bail on this request early if it doesn't have what we want
     if "Call-Name" not in request.POST or "Relay-Device-Auth-Token" not in request.POST:
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest("Request does not follow spec.")
 
     received_call_name: str = request.POST["Call-Name"]
     try:
@@ -31,7 +31,12 @@ def relay_request(request: HttpRequest):
             call_name=received_call_name
         )
     except Exception:
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest("Failed to find device. ")
+
+    if not relay_device.currently_active:
+        return HttpResponseBadRequest(
+            f"Device '{relay_device.call_name}' is currently deactivated. "
+        )
 
     received_auth_token_string: str = request.POST["Relay-Device-Auth-Token"]
     received_auth_token_binary: bytes = received_auth_token_string.encode(
@@ -45,11 +50,11 @@ def relay_request(request: HttpRequest):
         if relay_processor.handle_time_lapse_upload_from_pi(
             request=request, relay_device=relay_device
         ):
-            return HttpResponse(status=204)
+            return HttpResponse(status=204, content="Upload accepted. ")
         else:
             return HttpResponseBadRequest("Failed to store. ")
 
-    return HttpResponseBadRequest()
+    return HttpResponseBadRequest("Invalid token.")
 
 
 # FIXME

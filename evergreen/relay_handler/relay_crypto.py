@@ -37,6 +37,18 @@ def register_new_relay_device(
     return password_text
 
 
+def activate_existing_relay_device(call_name: str):
+    relay_device: RelayDevice = RelayDevice.objects.get(call_name=call_name)
+    relay_device.currently_active = True
+    relay_device.save(update_fields=["currently_active"])
+
+
+def deactivate_existing_relay_device(call_name: str):
+    relay_device: RelayDevice = RelayDevice.objects.get(call_name=call_name)
+    relay_device.currently_active = False
+    relay_device.save(update_fields=["currently_active"])
+
+
 def validate_raw_auth_token(device: RelayDevice, raw_token_text: str):
     """Checks the auth token for a RelayDevice against the salted and hashed version
     stored in the database.
