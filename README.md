@@ -71,7 +71,7 @@ We believe both the features for the time-lapse uploads from the Pi _and_ the ad
 
 3. Place at least three unique `.mp4` files that are less than 40MB in size with unique names inside of the `capture` directory you just created. These will be used for testing. It is important that they are all different files with different contents _and_ different filenames.
 
-4. Spin up the containers to launch the app locally. You can do this using the command `docker compose up --build --force-recreate` from the directory you placed the project/repo.
+4. If you have not already done so, please create a `.env` file from the `.env.example` in the root directory of `Project-EverGreen` for environment configuration. Spin up the containers to launch the app locally. You can do this using the command `docker compose up --build --force-recreate` from the directory you placed the project/repo.
 
 5. Once the containers are finished, navigate to `localhost` using your browser and verify that the Project Evergreen site shows up. It is ok and expected for no video to be showing at this point where the time-lapse is supposed to be.
 
