@@ -1,6 +1,9 @@
+import hmac
 import re
 
 import email_validator as ev
+
+from eg_app.models import User
 
 
 def validate_email(email: str, check_deliverability=False) -> bool:
@@ -49,3 +52,23 @@ def validate_password(password: str) -> bool:
     :returns: `True` if the password passes requirements, `False` otherwise
     """
     return 12 <= len(password) and len(password) < 256
+
+
+def validate_password_pair(password: str, password_confirmation: str):
+    return hmac.compare_digest(password, password_confirmation) and validate_password(
+        password
+    )
+
+
+def user_is_registered(email: str):
+    return len(User.objects.filter(email=email)) == 0
+
+
+def validate_credentials_on_register(
+    email: str, password: str, password_confirmation: str
+):
+    return (
+        not user_is_registered(email)
+        and validate_email(email, True)
+        and validate_password_pair(password, password_confirmation)
+    )
