@@ -22,21 +22,20 @@ def validate_email(email: str, check_deliverability=False) -> bool:
 
     try:
         email_info = ev.validate_email(email, check_deliverability=check_deliverability)
-
-        local = email_info.local_part
-        domain = email_info.domain
-
-        l_len = 4 <= len(local) and len(local) <= 8
-        # If the local part (before the @) is [4-8] characters long, inclusive
-        l_match = re.match(r"^[a-z]+[0-9]*$", local, re.I) is not None
-        # If the local part (before the @) is exactly a valid UBIT name
-        d_match = re.match(r"^(?:[a-z]*\.)?buffalo\.edu$", string=domain) is not None
-        # If the domain (after the @) is exactly (optional subdomain).buffalo.edu
-
-        return l_len and l_match and d_match
-
     except ev.EmailNotValidError:
         return False
+
+    local = email_info.local_part
+    domain = email_info.domain
+
+    l_len = 4 <= len(local) and len(local) <= 8
+    # If the local part (before the @) is [4-8] characters long, inclusive
+    l_match = re.match(r"^[a-z]+[0-9]*$", local, re.I) is not None
+    # If the local part (before the @) is exactly a valid UBIT name
+    d_match = re.match(r"^(?:[a-z]*\.)?buffalo\.edu$", string=domain) is not None
+    # If the domain (after the @) is exactly (optional subdomain).buffalo.edu
+
+    return l_len and l_match and d_match
 
 
 def validate_password(password: str) -> bool:
