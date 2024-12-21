@@ -61,7 +61,7 @@ def validate_password_pair(password: str, password_confirmation: str):
 
 
 def user_is_registered(email: str):
-    return len(User.objects.filter(email=email)) == 0
+    return User.objects.filter(email=email).exists()
 
 
 def validate_credentials_on_register(
