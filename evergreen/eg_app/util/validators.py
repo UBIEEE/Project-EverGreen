@@ -1,4 +1,3 @@
-import hmac
 import re
 
 import email_validator as ev
