@@ -55,9 +55,7 @@ def validate_password(password: str) -> bool:
 
 
 def validate_password_pair(password: str, password_confirmation: str):
-    return hmac.compare_digest(password, password_confirmation) and validate_password(
-        password
-    )
+    return (password == password_confirmation) and validate_password(password)
 
 
 def user_is_registered(email: str):
