@@ -112,7 +112,6 @@ def validate(request: HttpRequest):
     if request.method != "POST":
         return HttpResponseBadRequest()
 
-
     password: str = request.POST.get("password", "")
     email: str = request.POST.get("email", "")
 
