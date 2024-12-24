@@ -1,4 +1,6 @@
 [flake8]
 max-line-length = 88
 extend-ignore = E203,E701
-exclude = .git,__pycache__,.venv,venv
+exclude = .git,__pycache__,.venv,venv,./evergreen/staticfiles/admin
+#https://en.wikipedia.org/wiki/Cyclomatic_complexity
+max-complexity = 10  

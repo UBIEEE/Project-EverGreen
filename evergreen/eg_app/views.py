@@ -108,62 +108,44 @@ def addCookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
     return response
 
 
-def validate(request):
-    if request.method == "POST":
+def validate(request: HttpRequest):
+    if request.method != "POST":
+        return HttpResponseBadRequest()
 
-        password = request.POST.get("password")
-        email = request.POST.get("email")
+    password: str = request.POST.get("password", "")
+    email: str = request.POST.get("email", "")
 
-        valid_pass = True
-        valid_email = True
+    valid_pass = val.validate_password(password)
+    valid_email = val.validate_email(email)
 
-        if not val.validate_password(password):
-            valid_pass = False
-
-        if not val.validate_email(email):
-            valid_email = False
-
-        return JsonResponse(
-            {"valid_pass": str(valid_pass), "valid_email": str(valid_email)}
-        )
-
-    return HttpResponseBadRequest()
+    return JsonResponse(
+        {"valid_pass": str(valid_pass), "valid_email": str(valid_email)}
+    )
 
 
 def register(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        email = request.POST.get("email", "")
-        password = request.POST.get("password", "")
-        passwordConf = request.POST.get("confirm_password", "")
+    if request.method != "POST":
+        return HttpResponseBadRequest()
 
-        email = html.escape(email)
-        password = html.escape(password)
-        passwordConf = html.escape(passwordConf)
+    email = request.POST.get("email", "")
+    password = request.POST.get("password", "")
+    password_confirmation = request.POST.get("confirm_password", "")
 
-        # Make sure passwords match
-        if password != passwordConf:
-            return HttpResponseRedirect(ROOT_PATH)
+    email = html.escape(email)
+    password = html.escape(password)
+    password_confirmation = html.escape(password_confirmation)
 
-        # Make sure email & pwd are valid
-        if not (val.validate_email(email, True) and val.validate_password(password)):
-            return HttpResponseRedirect(ROOT_PATH)
-
-        # Make sure email doesn't already exist
-        if len(User.objects.filter(email=email)) != 0:
-            return HttpResponseRedirect(ROOT_PATH)
-
+    if val.validate_credentials_on_register(email, password, password_confirmation):
         # Now confirmed valid, create account
         # (Django takes raw password, handles salting/hashing itself before storing)
-        newAcct = User.objects.create_user(
+        new_account = User.objects.create_user(
             username=email, email=email, password=password
         )
-        newAcct.save()
+        new_account.save()
 
-        # TODO: Should send visible feedback to user
+    # TODO: Should send visible feedback to user
 
-        return HttpResponseRedirect(ROOT_PATH)
-
-    return HttpResponseBadRequest()
+    return HttpResponseRedirect(ROOT_PATH)
 
 
 def deletePost(request, pk):
