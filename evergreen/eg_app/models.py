@@ -10,7 +10,7 @@ class Post(models.Model):
     image = models.ImageField(upload_to="image_upload", blank=True, null=True)
     caption = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    userLikes = models.ManyToManyField(User, blank=True)
+    users_who_liked = models.ManyToManyField(User, blank=True)
     likes = models.PositiveIntegerField(default=0)
 
     def __str__(self):
@@ -18,7 +18,7 @@ class Post(models.Model):
 
     def get_likers_display(self):
 
-        likers = self.userLikes.all()
+        likers = self.users_who_liked.all()
 
         number_of_likes = likers.count()
 

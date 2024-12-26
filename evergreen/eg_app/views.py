@@ -37,20 +37,20 @@ def index(request):
         return render(request, "index.html", {"hidden1": "hidden"})
 
 
-def getFileType(filePath: str) -> tuple[str | None, str | None]:
+def get_file_type(file_path: str) -> tuple[str | None, str | None]:
     # returns tuple {type, encoding}
-    contentType = mimetypes.guess_type(filePath)
-    return contentType
+    content_type = mimetypes.guess_type(file_path)
+    return content_type
 
 
-def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:
+def file_handler(request: HttpRequest, filename: str) -> HttpResponse:
     # can handle img and text
 
     # get the absolute path
-    sanitizedFileName = quote(fileName)
-    path = Path(settings.STATIC_ROOT) / sanitizedFileName
+    sanitized_filename = quote(filename)
+    path = Path(settings.STATIC_ROOT) / sanitized_filename
 
-    allowedType: set[str] = {
+    allowed_types: set[str] = {
         ".css",
         ".html",
         ".js",
@@ -66,16 +66,16 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:
         ".ico",
     }  # can add more
 
-    if not str(path.suffix.lower()) in allowedType:  # to deal with user uploads
+    if not str(path.suffix.lower()) in allowed_types:  # to deal with user uploads
         return HttpResponseNotFound("404 - File type not allowed")
 
     # deal with /../ attacks
-    rootPath = Path(settings.STATIC_ROOT).resolve()
-    if not path.resolve().is_relative_to(rootPath):
+    root_path = Path(settings.STATIC_ROOT).resolve()
+    if not path.resolve().is_relative_to(root_path):
         return HttpResponseNotFound("404 Not Found")
 
     if path.exists() and path.is_file():  # make sure it's not a directory
-        contentType, encoding = getFileType(str(path))
+        content_type, encoding = get_file_type(str(path))
 
         try:
             with open(path, "rb") as file:
@@ -84,8 +84,8 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:
             return HttpResponseNotFound("404 Not Found")
             # return render(request, '404.html', status=404) when making 404 pages
 
-        if contentType:
-            response = HttpResponse(content, content_type=contentType)
+        if content_type:
+            response = HttpResponse(content, content_type=content_type)
         else:
             response = HttpResponse(content)
 
@@ -101,10 +101,10 @@ def fileHandler(request: HttpRequest, fileName: str) -> HttpResponse:
         return HttpResponseNotFound("404 Not Found")
 
 
-def addCookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
+def add_cookies(response: HttpResponse, cookies: dict[str, str]) -> HttpResponse:
     """add all cookies from the give dic to the response"""
-    for cookieName, cookieValue in cookies.items():
-        response.set_cookie(cookieName, cookieValue)
+    for cookie_name, cookie_value in cookies.items():
+        response.set_cookie(cookie_name, cookie_value)
     return response
 
 
@@ -148,7 +148,7 @@ def register(request: HttpRequest) -> HttpResponse:
     return HttpResponseRedirect(ROOT_PATH)
 
 
-def deletePost(request, pk):
+def delete_post(request, pk):
     post = Post.objects.get(pk=pk)
 
     if post.user == request.user:
@@ -156,31 +156,31 @@ def deletePost(request, pk):
     return redirect("/")
 
 
-def dislikePost(request, pk):
+def dislike_post(request, pk):
     post = Post.objects.get(pk=pk)
 
-    if post.userLikes.contains(request.user):
+    if post.users_who_liked.contains(request.user):
         post.likes -= 1
-        post.userLikes.remove(request.user)
+        post.users_who_liked.remove(request.user)
         post.save()
     return redirect("/")
 
 
-def addComment(request, postId):
-    post = Post.objects.get(id=postId)
+def add_comment(request, post_id):
+    post = Post.objects.get(id=post_id)
     # user = request.user.email
     user = "guest@buffalo.edu"
     comment = request.POST["comment"]
 
     comment = html.escape(comment)
 
-    postComment = Comments.objects.create(post=post, user=user, comment=comment)
-    postComment.save()
+    post_comment = Comments.objects.create(post=post, user=user, comment=comment)
+    post_comment.save()
     return redirect("/")
 
 
-def deleteComment(request, commentId):
-    comment = Comments.objects.get(commentId)
+def delete_comment(request, comment_id):
+    comment = Comments.objects.get(comment_id)
 
     if comment.user == request.user:
         comment.delete()
@@ -218,7 +218,7 @@ def login_view(request: HttpRequest):
     return HttpResponseBadRequest()
 
 
-def updateFeed(request) -> JsonResponse:
+def update_feed(request) -> JsonResponse:
 
     posts = Post.objects.all().order_by("-timestamp")
     posts_data = []
@@ -232,7 +232,7 @@ def updateFeed(request) -> JsonResponse:
             "likes": post.likes,
             "likers_display": post.get_likers_display(),
             "has_liked": current_user.is_authenticated
-            and post.userLikes.filter(id=current_user.id).exists(),
+            and post.users_who_liked.filter(id=current_user.id).exists(),
             "comments": [],
         }
         posts_data.append(post_dict)
@@ -240,7 +240,7 @@ def updateFeed(request) -> JsonResponse:
     return JsonResponse({"posts": posts_data})
 
 
-def likePost(request, pk) -> JsonResponse:
+def like_post(request, pk) -> JsonResponse:
     user_who_is_liking = request.user
 
     if request.method == "POST":
@@ -249,12 +249,14 @@ def likePost(request, pk) -> JsonResponse:
 
             if str(
                 user_who_is_liking.username
-            ) != "AnonymousUser" and not post.userLikes.contains(user_who_is_liking):
+            ) != "AnonymousUser" and not post.users_who_liked.contains(
+                user_who_is_liking
+            ):
                 post.likes += 1
-                post.userLikes.add(user_who_is_liking)
+                post.users_who_liked.add(user_who_is_liking)
             elif str(user_who_is_liking.username) != "AnonymousUser":
                 post.likes -= 1
-                post.userLikes.remove(user_who_is_liking)
+                post.users_who_liked.remove(user_who_is_liking)
             post.save()
             return JsonResponse({"status": "success", "likes": post.likes})
 
