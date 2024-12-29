@@ -16,7 +16,9 @@ from eg_app.models import Post
 
 
 class FeedConsumer(AsyncWebsocketConsumer):
-    MAX_FRAME_SIZE = 8000000
+    MAX_FRAME_SIZE = 8_000_000
+    MAX_IMAGE_SIZE_BYTES = 8_000_000
+    MAX_CHARACTERS_IN_MESSAGE = 280
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -181,9 +183,8 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 return None
 
             caption = data.get("caption", "")
-            max_char_length = 280
 
-            if len(caption) > max_char_length:
+            if len(caption) > self.MAX_CHARACTERS_IN_MESSAGE:
                 return None
 
             post_data = {
@@ -201,9 +202,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 format, imgstr = data["image"].split(";base64,")
                 image_bytes = base64.b64decode(imgstr)
 
-                max_image_size = 8000000
-
-                if len(image_bytes) > max_image_size:
+                if len(image_bytes) > self.MAX_IMAGE_SIZE_BYTES:
                     return None
 
                 # check the magic bytes!
