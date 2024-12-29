@@ -4,17 +4,17 @@ import json
 import uuid
 from imghdr import what
 
-# from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-
-# from channels.layers import get_channel_layer
-from django.apps import apps
 from django.core.files.base import ContentFile
+
+from eg_app.models import Post
 
 
 class FeedConsumer(AsyncWebsocketConsumer):
-    MAX_FRAME_SIZE = 8000000
+    MAX_FRAME_SIZE = 8_000_000
+    MAX_IMAGE_SIZE_BYTES = 8_000_000
+    MAX_CHARACTERS_IN_MESSAGE = 280
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -130,8 +130,6 @@ class FeedConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_all_posts(self):
 
-        Post = apps.get_model("eg_app", "Post")
-
         posts = Post.objects.all().order_by("-timestamp")
 
         all_posts_data = []
@@ -147,7 +145,9 @@ class FeedConsumer(AsyncWebsocketConsumer):
             user_has_liked = False
 
             if current_user.is_authenticated:
-                user_has_liked = post.userLikes.filter(id=current_user.id).exists()
+                user_has_liked = post.users_who_liked.filter(
+                    id=current_user.id
+                ).exists()
 
             post_data = {
                 "id": str(post.id),  # type: ignore
@@ -168,7 +168,6 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def handle_post_upload(self, data):
-        Post = apps.get_model("eg_app", "Post")
 
         try:
             user = self.scope["user"]
@@ -177,9 +176,8 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 return None
 
             caption = data.get("caption", "")
-            MAX_CHAR_LENGTH = 280
 
-            if len(caption) > MAX_CHAR_LENGTH:
+            if len(caption) > self.MAX_CHARACTERS_IN_MESSAGE:
                 return None
 
             post_data = {
@@ -197,9 +195,7 @@ class FeedConsumer(AsyncWebsocketConsumer):
                 format, imgstr = data["image"].split(";base64,")
                 image_bytes = base64.b64decode(imgstr)
 
-                MAX_IMAGE_SIZE = 8000000
-
-                if len(image_bytes) > MAX_IMAGE_SIZE:
+                if len(image_bytes) > self.MAX_IMAGE_SIZE_BYTES:
                     return None
 
                 # check the magic bytes!
@@ -224,13 +220,12 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_post_data(self, post_id):
-        Post = apps.get_model("eg_app", "Post")
         try:
             post = Post.objects.get(pk=post_id)
             user = self.scope["user"]
             has_liked = (
                 str(user.username) != "AnonymousUser"
-                and post.userLikes.filter(id=user.id).exists()  # type: ignore
+                and post.users_who_liked.filter(id=user.id).exists()  # type: ignore
             )
 
             return {
@@ -264,25 +259,23 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_post(self, post_id):
-        Post = apps.get_model("eg_app", "Post")
         return Post.objects.get(pk=post_id)
 
     @database_sync_to_async
     def update_like(self, post_id, user):
-        Post = apps.get_model("eg_app", "Post")
         try:
 
             post = Post.objects.get(pk=post_id)
 
             if str(user.username) != "AnonymousUser":
 
-                if not post.userLikes.contains(user):  # type: ignore
+                if not post.users_who_liked.contains(user):  # type: ignore
                     post.likes += 1  # type: ignore
-                    post.userLikes.add(user)  # type: ignore
+                    post.users_who_liked.add(user)  # type: ignore
 
                 else:
                     post.likes -= 1  # type: ignore
-                    post.userLikes.remove(user)  # type: ignore
+                    post.users_who_liked.remove(user)  # type: ignore
 
                 post.save()
 
