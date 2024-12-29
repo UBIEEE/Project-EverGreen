@@ -4,12 +4,9 @@ import json
 import uuid
 from imghdr import what
 
-# from asgiref.sync import async_to_sync
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-# from channels.layers import get_channel_layer
-# from django.apps import apps
 from django.core.files.base import ContentFile
 
 from eg_app.models import Post
@@ -134,8 +131,6 @@ class FeedConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_all_posts(self):
 
-        # Post = apps.get_model("eg_app", "Post")
-
         posts = Post.objects.all().order_by("-timestamp")
 
         all_posts_data = []
@@ -174,7 +169,6 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def handle_post_upload(self, data):
-        # Post = apps.get_model("eg_app", "Post")
 
         try:
             user = self.scope["user"]
@@ -227,7 +221,6 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_post_data(self, post_id):
-        # Post = apps.get_model("eg_app", "Post")
         try:
             post = Post.objects.get(pk=post_id)
             user = self.scope["user"]
@@ -267,12 +260,10 @@ class FeedConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_post(self, post_id):
-        # Post = apps.get_model("eg_app", "Post")
         return Post.objects.get(pk=post_id)
 
     @database_sync_to_async
     def update_like(self, post_id, user):
-        # Post = apps.get_model("eg_app", "Post")
         try:
 
             post = Post.objects.get(pk=post_id)
