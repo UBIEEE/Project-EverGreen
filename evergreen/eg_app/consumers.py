@@ -6,7 +6,6 @@ from imghdr import what
 
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-
 from django.core.files.base import ContentFile
 
 from eg_app.models import Post
