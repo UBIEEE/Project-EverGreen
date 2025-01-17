@@ -1,0 +1,18 @@
+# Specify that these filetypes will be checked out with LF on all platforms instead of CRLF
+# This is necessary because we were having issues with people getting the docker-entrypoint.sh's
+# working properly with docker compose when checked out on Windows without changing their git settings.
+# As far as I'm aware there is no way to have git automatically detect text files on checkout in this 
+# configuration file so it has to be done manually.
+*.py text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.env text eol=lf
+*.conf text eol=lf
+*.sh text eol=lf
+.flake8 text eol=lf
+Dockerfile text eol=lf
+Makefile text eol=lf
