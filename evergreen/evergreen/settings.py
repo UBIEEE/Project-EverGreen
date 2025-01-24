@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import secrets
 import sys
 from pathlib import Path
 
@@ -18,15 +19,30 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
+# Many of these configurations were used from Django's
+# "Quick-start development settings". Do not assume that any
+# values placed withing this file necessarily have a meaning
+# that the team has decided on for any particular reason unless
+# there are comments explaining so.
+
+
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-=mwfbc26f&ixkoi@58!3-_)e#)ega^i4(g*l6h7)405_x-_7nu"
+high_entropy_number_of_bytes = 64
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY", secrets.token_urlsafe(high_entropy_number_of_bytes)
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # THIS HAS TO BE SET TO FALSE TO GET no-sniff headers!!!
-DEBUG = False
+# the user should supply either "true" or "false" in the .env file
+# this statement will convert those string values into the proper
+# boolean value, otherwise the value would likely be a non-empty
+# string and therefore would always evaluate as truthy in python
+# which would be a huge vulnerability as this would possibly
+# result in an accidental deployment with the DEBUG set to true
+DEBUG: bool = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "*", "https://localhost"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost", "https://localhost"]
@@ -103,6 +119,11 @@ DATABASES = {
     }
 }
 
+# When we are testing this overrides the configuration so that it uses sqlite locally
+# instead of reaching out to a Postgres db which we have not setup for
+# our testing environment This means that Postgres specific db features will not work
+# with testing and testing will not be totally accurate until we have switched to using
+# Postgres in our testing environment
 if (
     "manage.py" in sys.argv
     and "test" in sys.argv
