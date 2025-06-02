@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "project-evergreen"
+version = "0.1.0"
+description = "Project for CSE312 in Fall 2024."
+authors = [
+    "Eric Butcher <ericbutc@buffalo.edu>",
+    "Alex McHugh <apmchugh@buffalo.edu>",
+    "Sumanyu Janaparedy <sumanyuj@buffalo.edu>",
+    "Rances Colon <rancesco@buffalo.edu>",
+    "Gianna Germain <ggermain@buffalo.edu>",
+]
+readme = "README.md"
+package-mode = false
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+bcrypt = "^4.2.0"
+Django = "^5.1.5"
+email-validator = "^2.2.0"
+psycopg = { extras = ["binary"], version = "^3.2.3" }
+django-bootstrap = "^0.2.4"
+flake8 = "^7.1.1"
+isort = "^5.13.2"
+mypy = "^1.13.0"
+pillow = "^11.0.0"
+black = "^24.10.0"
+channels = "^4.2.0"
+daphne = "^4.1.2"
+uuid = "^1.30"
+what = "^0.5.0"
+pep8-naming = "^0.14.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+
+
+[tool.mypy]
+disable_error_code = ["import-untyped"]
+

@@ -10,22 +10,42 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
+import secrets
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
+# Many of these configurations were used from Django's
+# "Quick-start development settings". Do not assume that any
+# values placed withing this file necessarily have a meaning
+# that the team has decided on for any particular reason unless
+# there are comments explaining so.
+
+
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-=mwfbc26f&ixkoi@58!3-_)e#)ega^i4(g*l6h7)405_x-_7nu"
+high_entropy_number_of_bytes = 64
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY", secrets.token_urlsafe(high_entropy_number_of_bytes)
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# THIS HAS TO BE SET TO FALSE TO GET no-sniff headers!!!
+# the user should supply either "true" or "false" in the .env file
+# this statement will convert those string values into the proper
+# boolean value, otherwise the value would likely be a non-empty
+# string and therefore would always evaluate as truthy in python
+# which would be a huge vulnerability as this would possibly
+# result in an accidental deployment with the DEBUG set to true
+DEBUG: bool = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0", "*", "https://localhost"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost", "https://localhost"]
 
 
 # Application definition
@@ -37,7 +57,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "channels",
+    "eg_app",
+    "relay_handler",
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -54,7 +78,7 @@ ROOT_URLCONF = "evergreen.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -66,6 +90,16 @@ TEMPLATES = [
         },
     },
 ]
+# CORS_ALLOW_ALL_ORIGINS = True  # Only for DEV!!
+CORS_ALLOW_CREDENTIALS = True
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "CONFIG": {
+            "capacity": 1500,  # MAX MESSAGES
+        },
+    }
+}
 
 WSGI_APPLICATION = "evergreen.wsgi.application"
 
@@ -73,12 +107,34 @@ WSGI_APPLICATION = "evergreen.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": "database",  # service name from docker-compose.yml
+        "PORT": 5432,
     }
 }
+
+# When we are testing this overrides the configuration so that it uses sqlite locally
+# instead of reaching out to a Postgres db which we have not setup for
+# our testing environment This means that Postgres specific db features will not work
+# with testing and testing will not be totally accurate until we have switched to using
+# Postgres in our testing environment
+if (
+    "manage.py" in sys.argv
+    and "test" in sys.argv
+    and (sys.argv.index("test") == (sys.argv.index("manage.py") + 1))
+):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": "sqlite_db",
+        }
+    }
 
 
 # Password validation
@@ -86,7 +142,7 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa: E501
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -110,6 +166,7 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+ASGI_APPLICATION = "evergreen.asgi.application"
 
 
 # Static files (CSS, JavaScript, Images)
@@ -121,3 +178,13 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+SERVE_MEDIA_FILES = True

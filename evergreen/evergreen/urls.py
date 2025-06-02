@@ -15,9 +15,33 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
+import relay_handler
+import relay_handler.views
+from eg_app import views
+
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", views.index, name="index"),
+    path("validate", views.validate, name="validate"),
+    path("updateFeed", views.update_feed, name="updateFeed"),
+    path("deletePost", views.delete_post, name="deletePost"),
+    path("likePost/<uuid:pk>", views.like_post, name="likePost"),
+    path("addComment", views.add_comment, name="addComment"),
+    path("deleteComment", views.delete_comment, name="deleteComment"),
+    path("register", views.register, name="register"),
+    path("login", views.login_view, name="login"),
+    path("logout", views.logout_view, name="logout"),
+    path("time-lapse", relay_handler.views.view_time_lapse, name="time-lapse"),
+    path("relay-upload", relay_handler.views.relay_request, name="relay-upload"),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # FOR PROD, or DEBUG=FALSE
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
