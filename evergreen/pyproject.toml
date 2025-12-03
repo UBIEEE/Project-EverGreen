@@ -16,7 +16,7 @@ package-mode = false
 [tool.poetry.dependencies]
 python = "^3.10"
 bcrypt = "^4.2.0"
-Django = "^5.1.5"
+Django = "^5.1.15"
 email-validator = "^2.2.0"
 psycopg = { extras = ["binary"], version = "^3.2.3" }
 django-bootstrap = "^0.2.4"
